@@ -35,7 +35,7 @@ def cumulative_return(prices: pd.Series, start_date: pd.Timestamp) -> float | No
 
 
 def calc_returns(prices: pd.Series) -> dict:
-    """Calcula retornos para YTD, 1a, 3a, 5a, anualizado."""
+    """Calcula retornos para YTD, 1a, 3a, 5a, 10a, anualizado, desde início."""
     prices = prices.dropna().sort_index()
     if prices.empty:
         return {}
@@ -47,6 +47,8 @@ def calc_returns(prices: pd.Series) -> dict:
     r_1y = cumulative_return(prices, last_date - pd.DateOffset(years=1))
     r_3y = cumulative_return(prices, last_date - pd.DateOffset(years=3))
     r_5y = cumulative_return(prices, last_date - pd.DateOffset(years=5))
+    r_10y = cumulative_return(prices, last_date - pd.DateOffset(years=10))
+    r_since = (prices.iloc[-1] / prices.iloc[0] - 1) * 100
 
     ann = None
     if r_5y is not None:
@@ -57,6 +59,8 @@ def calc_returns(prices: pd.Series) -> dict:
         "1y": round(r_1y, 2) if r_1y is not None else None,
         "3y": round(r_3y, 2) if r_3y is not None else None,
         "5y": round(r_5y, 2) if r_5y is not None else None,
+        "10y": round(r_10y, 2) if r_10y is not None else None,
+        "since": round(r_since, 2),
         "ann": round(ann, 2) if ann is not None else None,
     }
 
@@ -122,7 +126,9 @@ def build_chart_series(prices: pd.Series, period: str) -> dict:
         start = last - pd.DateOffset(years=3)
     elif period == "5y":
         start = last - pd.DateOffset(years=5)
-    else:
+    elif period == "10y":
+        start = last - pd.DateOffset(years=10)
+    else:  # "since" / fallback
         start = prices.index[0]
 
     window = prices[prices.index >= start]

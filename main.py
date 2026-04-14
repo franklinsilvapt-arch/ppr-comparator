@@ -82,7 +82,7 @@ def main():
                 entry["risk"] = calc_metrics.calc_risk(prices, benchmark)
                 entry["series"] = {
                     p: calc_metrics.build_chart_series(prices, p)
-                    for p in ["ytd", "1y", "3y", "5y"]
+                    for p in ["ytd", "1y", "3y", "5y", "10y", "since"]
                 }
                 entry["last_price_date"] = prices.index[-1].strftime("%Y-%m-%d")
                 entry["data_origin"] = "historical"
@@ -97,6 +97,8 @@ def main():
                 "1y": m.get("1y"),
                 "3y": m.get("3y"),
                 "5y": m.get("5y"),
+                "10y": m.get("10y"),
+                "since": m.get("10y") if m.get("10y") is not None else m.get("5y"),
                 "ann": None,
             }
             entry["risk"] = {}

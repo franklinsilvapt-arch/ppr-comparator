@@ -446,7 +446,12 @@
         <button class="lf-period-tab" data-period="1y">1 ano</button>
         <button class="lf-period-tab active" data-period="3y">3 anos</button>
         <button class="lf-period-tab" data-period="5y">5 anos</button>
-        <button class="lf-period-tab" data-period="ann">Anualizado</button>
+        <button class="lf-period-tab" data-period="10y">10 anos</button>
+        <button class="lf-period-tab" data-period="since">Desde início</button>
+      </div>
+      <div class="lf-period-tabs" id="lf-mode-tabs" style="margin-left:8px;">
+        <button class="lf-period-tab active" data-mode="eur">€ 1000</button>
+        <button class="lf-period-tab" data-mode="pct">%</button>
       </div>
     </div>
     <div class="lf-chart-wrap">
@@ -615,10 +620,14 @@
   // métricas pré-calculadas pela CMVM). A curva resultante é estimada,
   // não real - sinalizado na nota do gráfico.
   function generateSeries(fund, period) {
-    const points = { ytd: 90, '1y': 252, '3y': 756, '5y': 1260, ann: 1260 };
+    const points = { ytd: 90, '1y': 252, '3y': 756, '5y': 1260, '10y': 2520, since: 2520 };
     const n = points[period] || 252;
-    const ret = fund.returns[period];
-    if (ret == null || Number.isNaN(ret)) return null;
+    let ret = fund.returns[period];
+    if (ret == null || Number.isNaN(ret)) {
+      // fallback para o melhor disponível
+      ret = fund.returns['10y'] ?? fund.returns['5y'] ?? fund.returns['3y'] ?? fund.returns['1y'];
+      if (ret == null) return null;
+    }
     const target = ret / 100;
 
     let seed = 0;
@@ -660,9 +669,11 @@
   // STATE
   // -----------------------------------------------------------
   const state = {
-    selected: ['sgf-dr-financas', 'invest-ar', 'casa-inv-sg'],
-    period: '3y'
+    selected: ['sgf-dr-financas', 'invest-ar', 'casa-inv-sg-cat01'],
+    period: '3y',
+    mode: 'eur',  // 'eur' = base €1000, 'pct' = retorno %
   };
+  const BASE_EUR = 1000;
   const SERIES_COLORS = ['#2f7d4f', '#3b6bd9', '#c4891f', '#8e44ad', '#c24a4a', '#0d9488'];
   const MAX_SELECT = 3;
 
@@ -761,45 +772,38 @@
     const ctx = canvas.getContext('2d');
     const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id));
 
-    const isAnnualized = state.period === 'ann';
+    // line chart - usa série real do backend se existir, senão gera
+    // estimativa a partir do retorno cumulativo CMVM.
+    // Cada série é convertida em pontos de retorno % desde a base.
+    const estimated = [];
+    const seriesList = selectedFunds.map(f => {
+      const real = f._backendSeries && f._backendSeries[state.period];
+      if (real && real.data && real.data.length) {
+        // backend devolve já em % desde base (calc_metrics.build_chart_series)
+        return { labels: real.labels, dataPct: real.data, _real: true };
+      }
+      const synth = generateSeries(f, state.period);
+      if (!synth) return null;
+      estimated.push(f.name);
+      return {
+        labels: synth.labels,
+        dataPct: synth.data.map(v => +(v - 100).toFixed(2)),
+        _real: false,
+      };
+    });
 
-    let datasets;
-    let labels;
+    const firstWithData = seriesList.find(s => s);
+    let labels = firstWithData ? firstWithData.labels : [];
+    const isEur = state.mode === 'eur';
 
-    if (isAnnualized) {
-      // bar chart mode para retorno anualizado (5y)
-      labels = selectedFunds.map(f => f.name);
-      datasets = [{
-        label: 'Retorno anualizado (5a)',
-        data: selectedFunds.map(f => f.returns.ann),
-        backgroundColor: selectedFunds.map((_, i) => SERIES_COLORS[i]),
-        borderRadius: 6,
-        maxBarThickness: 60
-      }];
-    } else {
-      // line chart - usa série real do backend se existir, senão gera
-      // estimativa a partir do retorno cumulativo CMVM.
-      const estimated = [];
-      const seriesList = selectedFunds.map(f => {
-        const real = f._backendSeries && f._backendSeries[state.period];
-        if (real && real.data && real.data.length) {
-          return { labels: real.labels, data: real.data, _real: true };
-        }
-        const synth = generateSeries(f, state.period);
-        if (!synth) return null;
-        estimated.push(f.name);
-        return {
-          labels: synth.labels,
-          data: synth.data.map(v => +(v - 100).toFixed(2)),
-          _real: false,
-        };
-      });
-
-      const firstWithData = seriesList.find(s => s);
-      labels = firstWithData ? firstWithData.labels : [];
-      datasets = selectedFunds.map((f, i) => seriesList[i] ? {
+    let datasets = selectedFunds.map((f, i) => {
+      if (!seriesList[i]) return null;
+      const data = isEur
+        ? seriesList[i].dataPct.map(v => +(BASE_EUR * (1 + v / 100)).toFixed(2))
+        : seriesList[i].dataPct.map(v => +v.toFixed(2));
+      return {
         label: f.name,
-        data: seriesList[i].data.map(v => +(+v).toFixed(2)),
+        data,
         borderColor: SERIES_COLORS[i],
         backgroundColor: SERIES_COLORS[i] + '15',
         borderWidth: 2,
@@ -808,20 +812,27 @@
         pointHoverRadius: 4,
         tension: 0.1,
         fill: false,
-      } : null).filter(Boolean);
+      };
+    }).filter(Boolean);
 
-      const noteEl = document.getElementById('lf-chart-note');
-      if (noteEl) {
-        noteEl.textContent = estimated.length
-          ? `Curva estimada (tracejada) a partir das métricas CMVM para: ${estimated.join(', ')}`
-          : '';
-      }
+    const noteEl = document.getElementById('lf-chart-note');
+    if (noteEl) {
+      const baseTxt = isEur
+        ? `Investimento simulado de €${BASE_EUR} no início do período.`
+        : 'Retorno acumulado em % desde o início do período.';
+      const estTxt = estimated.length
+        ? ` Curva estimada (tracejada) para: ${estimated.join(', ')}.`
+        : '';
+      noteEl.textContent = baseTxt + estTxt;
     }
+
+    const fmtEur = v => '€' + v.toLocaleString('pt-PT', { maximumFractionDigits: 0 });
+    const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(2) + '%';
 
     if (chart) chart.destroy();
 
     chart = new Chart(ctx, {
-      type: isAnnualized ? 'bar' : 'line',
+      type: 'line',
       data: { labels, datasets },
       options: {
         responsive: true,
@@ -829,7 +840,6 @@
         interaction: { mode: 'index', intersect: false },
         plugins: {
           legend: {
-            display: !isAnnualized,
             position: 'bottom',
             labels: {
               usePointStyle: true,
@@ -845,25 +855,14 @@
             bodyFont: { size: 13 },
             callbacks: {
               title: (items) => {
-                if (isAnnualized) return items[0].label;
-                const d = items[0].parsed.x !== undefined ? new Date(items[0].label) : new Date(labels[items[0].dataIndex]);
+                const d = new Date(labels[items[0].dataIndex]);
                 return d.toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' });
               },
-              label: (item) => {
-                const val = item.parsed.y;
-                return ` ${item.dataset.label}: ${val >= 0 ? '+' : ''}${val.toFixed(2)}%`;
-              }
+              label: (item) => ` ${item.dataset.label}: ${isEur ? fmtEur(item.parsed.y) : fmtPct(item.parsed.y)}`
             }
           }
         },
-        scales: isAnnualized ? {
-          y: {
-            beginAtZero: true,
-            ticks: { callback: v => v + '%', font: { size: 11.5 } },
-            grid: { color: '#eef0f4' }
-          },
-          x: { grid: { display: false } }
-        } : {
+        scales: {
           x: {
             type: 'category',
             grid: { display: false },
@@ -883,7 +882,10 @@
             }
           },
           y: {
-            ticks: { callback: v => (v >= 0 ? '+' : '') + v + '%', font: { size: 11.5 }, color: '#5b6478' },
+            ticks: {
+              callback: v => isEur ? fmtEur(v) : ((v >= 0 ? '+' : '') + v + '%'),
+              font: { size: 11.5 }, color: '#5b6478'
+            },
             grid: { color: '#eef0f4' }
           }
         }
@@ -997,6 +999,14 @@
       document.querySelectorAll('#lf-period-tabs .lf-period-tab').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       state.period = btn.dataset.period;
+      renderChart();
+    });
+  });
+  document.querySelectorAll('#lf-mode-tabs .lf-period-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#lf-mode-tabs .lf-period-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.mode = btn.dataset.mode;
       renderChart();
     });
   });
