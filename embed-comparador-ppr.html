@@ -604,12 +604,16 @@
     if (USING_MOCK || !DATA_AS_OF) {
       badge.classList.add('stale');
       text.textContent = 'Dados de demonstração';
+      badge.title = LOAD_ERROR
+        ? `Fetch falhou: ${LOAD_ERROR}\nURL: ${DATA_URL}`
+        : 'A carregar...';
       return;
     }
     const d = new Date(DATA_AS_OF);
     const formatted = d.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' });
     const daysOld = Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
     text.textContent = `Atualizado a ${formatted}`;
+    badge.title = `${FUNDS.length} fundos carregados`;
     if (daysOld > 14) badge.classList.add('stale');
     else badge.classList.remove('stale');
   }
@@ -669,10 +673,11 @@
   // STATE
   // -----------------------------------------------------------
   const state = {
-    selected: ['sgf-dr-financas', 'invest-ar', 'casa-inv-sg-cat01'],
+    selected: [],       // preenchido em init() a partir de FUNDS (após fetch ou fallback mock)
     period: '3y',
     mode: 'eur',  // 'eur' = base €1000, 'pct' = retorno %
   };
+  const PREFERRED_DEFAULTS = ['invest-ar', 'casa-inv-sg-founders', 'sgf-dr-financas'];
   const BASE_EUR = 1000;
   const SERIES_COLORS = ['#2f7d4f', '#3b6bd9', '#c4891f', '#8e44ad', '#c24a4a', '#0d9488'];
   const MAX_SELECT = 3;
@@ -1053,6 +1058,8 @@
   // -----------------------------------------------------------
   // DATA LOADING
   // -----------------------------------------------------------
+  let LOAD_ERROR = null;
+
   async function loadData() {
     try {
       const bust = Math.floor(Date.now() / (5 * 60 * 1000));  // 5min bucket
@@ -1066,13 +1073,25 @@
       FUNDS = json.funds.map(normalizeBackendFund);
       DATA_AS_OF = json.data_as_of || json.latest_data_date || null;
       USING_MOCK = false;
-
-      // Ajusta selecao default: primeiros 3 do feed real
-      state.selected = FUNDS.slice(0, 3).map(f => f.id);
     } catch (e) {
-      console.warn('[comparador-ppr] fetch falhou, usando dados mock:', e.message);
+      LOAD_ERROR = e.message || String(e);
+      console.warn('[comparador-ppr] fetch falhou, usando dados mock:', LOAD_ERROR);
       USING_MOCK = true;
     }
+    // Seleção inicial: tenta ids preferidos; preenche até 3 com primeiros
+    // fundos reais com histórico, senão quaisquer. Filtra ids inválidos.
+    const available = new Set(FUNDS.map(f => f.id));
+    let sel = PREFERRED_DEFAULTS.filter(id => available.has(id));
+    if (sel.length < 3) {
+      const withHistory = FUNDS.filter(f => f.dataOrigin === 'historical' && !sel.includes(f.id));
+      const fallback = FUNDS.filter(f => !sel.includes(f.id));
+      const pool = withHistory.concat(fallback);
+      for (const f of pool) {
+        if (sel.length >= 3) break;
+        if (!sel.includes(f.id)) sel.push(f.id);
+      }
+    }
+    state.selected = sel;
     updateBadge();
   }
 
