@@ -798,22 +798,51 @@
       };
     });
 
-    const firstWithData = seriesList.find(s => s);
-    let labels = firstWithData ? firstWithData.labels : [];
+    // Rebaseamento a data comum: se há múltiplos fundos com séries reais
+    // de dimensões diferentes (ex: Founders começa 2020, Prime começa
+    // 2021), alinhar todos à data mais recente de arranque para que a
+    // comparação faça sentido (caso contrário, o fundo mais antigo parte
+    // já com ganho acumulado).
+    const validSeries = seriesList.filter(Boolean);
+    if (validSeries.length >= 2) {
+      const cutoff = validSeries.map(s => s.labels[0]).reduce((a, b) => (a > b ? a : b));
+      validSeries.forEach(s => {
+        if (s.labels[0] >= cutoff) return;
+        const idx = s.labels.findIndex(l => l >= cutoff);
+        if (idx > 0) {
+          const base = s.dataPct[idx];
+          s.labels = s.labels.slice(idx);
+          s.dataPct = s.dataPct.slice(idx).map(v => +(v - base).toFixed(2));
+        }
+      });
+    }
+
+    // União das datas para servir de eixo X; cada série é alinhada com
+    // null nas datas em que não tem ponto (spanGaps junta a linha).
+    const allLabelsSet = new Set();
+    validSeries.forEach(s => s.labels.forEach(l => allLabelsSet.add(l)));
+    let labels = Array.from(allLabelsSet).sort();
     const isEur = state.mode === 'eur';
 
     let datasets = selectedFunds.map((f, i) => {
-      if (!seriesList[i]) return null;
-      const data = isEur
-        ? seriesList[i].dataPct.map(v => +(BASE_EUR * (1 + v / 100)).toFixed(2))
-        : seriesList[i].dataPct.map(v => +v.toFixed(2));
+      const s = seriesList[i];
+      if (!s) return null;
+      const m = new Map(s.labels.map((l, j) => [l, s.dataPct[j]]));
+      const alignedPct = labels.map(l => (m.has(l) ? m.get(l) : null));
+      const data = alignedPct.map(v => {
+        if (v == null) return null;
+        return isEur
+          ? +(BASE_EUR * (1 + v / 100)).toFixed(2)
+          : +v.toFixed(2);
+      });
       return {
         label: f.name,
         data,
+        spanGaps: true,
         borderColor: SERIES_COLORS[i],
         backgroundColor: SERIES_COLORS[i] + '15',
         borderWidth: 2,
-        borderDash: seriesList[i]._real ? [] : [4, 4],
+        borderDash: s._real ? [] : [4, 4],
         pointRadius: 0,
         pointHoverRadius: 4,
         tension: 0.1,
