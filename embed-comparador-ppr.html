@@ -634,7 +634,7 @@
           <button class="lpc-tab" data-period="since">Desde início</button>
         </div>
         <div class="lpc-tabs" id="lpc-mode-tabs">
-          <button class="lpc-tab is-active" data-mode="eur">€ 1000</button>
+          <button class="lpc-tab is-active" data-mode="eur">1.000 €</button>
           <button class="lpc-tab" data-mode="pct">%</button>
         </div>
       </div>
@@ -760,11 +760,13 @@
     return '<span style="color:' + color + ';font-weight:600">'
       + sign + v.toFixed(1).replace('.', ',') + '%</span>';
   }
+  // Formato pt-PT: ponto separador de milhares, símbolo de € no fim
+  // separado por espaço não-quebrável (\u00A0). Ex: 1.000 €
   function fmtEur(v) {
-    return '€' + Math.round(v).toLocaleString('pt-PT');
+    return Math.round(v).toLocaleString('pt-PT') + '\u00A0€';
   }
   function fmtEurDec(v) {
-    return '€' + v.toLocaleString('pt-PT', { maximumFractionDigits: 0 });
+    return v.toLocaleString('pt-PT', { maximumFractionDigits: 0 }) + '\u00A0€';
   }
 
   // -----------------------------------------------------------
@@ -993,7 +995,7 @@
     var noteEl = document.getElementById('lpc-chart-note');
     if (noteEl) {
       var baseTxt = isEur
-        ? 'Investimento simulado de €' + BASE_EUR + ' no início do período.'
+        ? 'Investimento simulado de ' + BASE_EUR.toLocaleString('pt-PT') + '\u00A0€ no início do período.'
         : 'Retorno acumulado em % desde o início do período.';
       var estTxt = estimated.length
         ? ' Curva estimada (tracejada) para: ' + estimated.join(', ') + '.'
@@ -1105,7 +1107,7 @@
     var rows = [
       { label: 'ISIN',                    render: function (f) { return f.isin || NA; } },
       { label: 'TEC (custo anual)',       render: function (f) { return fmt(f.tec, '%'); } },
-      { label: 'Subscrição mínima',       render: function (f) { return f.minSubs == null ? NA : '€' + f.minSubs.toLocaleString('pt-PT'); } },
+      { label: 'Subscrição mínima',       render: function (f) { return f.minSubs == null ? NA : f.minSubs.toLocaleString('pt-PT') + '\u00A0€'; } },
       { label: 'Classe de risco',         render: function (f) {
           if (f.riskClass == null) return NA;
           var cls = f.riskClass >= 5 ? 'r-high' : f.riskClass >= 3 ? 'r-mid' : '';
