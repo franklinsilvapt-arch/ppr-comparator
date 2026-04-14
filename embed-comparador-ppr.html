@@ -603,6 +603,15 @@
   color: #96A0B0;
   cursor: help;
   line-height: 0;
+  transition: color 0.15s ease;
+}
+#lf-pc-calc .lpc-info-icon:hover {
+  color: var(--text-tertiary);
+}
+#lf-pc-calc .lpc-label-tip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* ---------- Disclaimer ---------- */
@@ -838,6 +847,18 @@
   }
 
   var NA = '<span style="color:#96A0B0">-</span>';
+  var INFO_SVG = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
+    + '<circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle>'
+    + '<path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>'
+    + '</svg>';
+
+  function labelWithTip(label, tip) {
+    if (!tip) return label;
+    return '<span class="lpc-label-tip">' + label
+      + '<span class="lpc-info-icon" title="' + tip.replace(/"/g, '&quot;') + '">'
+      + INFO_SVG
+      + '</span></span>';
+  }
 
   function fmt(v, suf, dp) {
     if (dp == null) dp = 2;
@@ -1281,8 +1302,7 @@
     ];
 
     body.innerHTML = rows.map(function (r) {
-      var tipAttr = r.tip ? ' title="' + r.tip.replace(/"/g, '&quot;') + '"' : '';
-      return '<tr><th scope="row"' + tipAttr + '>' + r.label + '</th>'
+      return '<tr><th scope="row">' + labelWithTip(r.label, r.tip) + '</th>'
         + pairs.map(function (p) { return '<td>' + r.render(p.fund) + '</td>'; }).join('')
         + '</tr>';
     }).join('');
@@ -1321,8 +1341,7 @@
     ];
 
     body.innerHTML = rows.map(function (r) {
-      return '<tr><th scope="row" title="' + r.tip.replace(/"/g, '&quot;') + '">'
-        + r.label + '</th>'
+      return '<tr><th scope="row">' + labelWithTip(r.label, r.tip) + '</th>'
         + pairs.map(function (p) { return '<td>' + r.render(p.fund) + '</td>'; }).join('')
         + '</tr>';
     }).join('');
