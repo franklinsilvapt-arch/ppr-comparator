@@ -43,7 +43,8 @@ MANUAL_OVERRIDES = [
     {"match": "imga investimento ppr", "site_url": "https://www.imga.pt/fim/ppr/imga-investimento-pproicvm/"},
     {"match": "imga poupança ppr",     "site_url": "https://www.imga.pt/fim/ppr/imga-poupança-pproicvm/"},
     # --- BIZ Capital ---
-    {"match": "biz europa valoriza",   "site_url": "https://bizcapital.eu/biz-europa-ppr/"},
+    {"match": "biz europa valoriza",   "site_url": "https://bizcapital.eu/biz-europa-ppr/",
+     "isin": "PTBZSKHM0003", "min_subs": 100},
     # --- Bankinter (precisa curl_cffi) ---
     # Mega TT: histórico via FT (ISIN → FT symbol → chartapi).
     {"match": "bankinter mega tt",     "site_url": "https://www.bankinter.pt/fundos/fundo-mega-tt",
@@ -52,6 +53,12 @@ MANUAL_OVERRIDES = [
     {"match": "bankinter 50 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-50"},
     {"match": "bankinter 75 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-75"},
     {"match": "bankinter 100 ppr",     "site_url": "https://www.bankinter.pt/fundos/investir-em-fundos"},
+    # Bankinter Obrigações — várias famílias partilham ISIN por família
+    {"match": "obrigações eur 2027",   "isin": "PTBKCCHM0008"},
+    {"match": "obrigações eur 2030",   "isin": "PTBKCKHM0008"},
+    {"match": "obrigações eur 2034",   "isin": None},  # TODO: ISIN não fornecido
+    {"match": "bankinter obrigações ppr / oicvm - categoria", "isin": "PTYBCDLM0005"},
+    {"match": "bankinter rendimento ppr / oicvm - categoria", "isin": "PTYBCJHM0013"},
     # --- BlueCrow ---
     {"match": "bluecrow global opportunities", "site_url": "https://www.bluecrowcapital.com/pt/fundos-em-subscricao/global-opportunities-ppr/211/"},
     # --- GNB (ordem: genérico primeiro, específico depois sobrescreve) ---
@@ -77,7 +84,10 @@ MANUAL_OVERRIDES = [
     # --- BPI (só URL para Global Equities confirmada; outras páginas não expõem ISIN em HTML) ---
     {"match": "bpi reforma global equities",   "site_url": "https://www.bancobpi.pt/particulares/poupar-investir/ppr/bpi-reforma-global-equities-ppr/oicvm"},
     # --- Caixa / CGD ---
-    {"match": "caixa ações líderes globais",   "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Pages/CaixaALG_PPR_OICVM.aspx"},
+    # ISIN correcto do Caixa ALG é PTCXGUHM0006 (o extractor CGD apanha
+    # PTIXAEHM0006 que é outro fundo referenciado na página).
+    {"match": "caixa ações líderes globais",   "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Pages/CaixaALG_PPR_OICVM.aspx",
+     "isin": "PTCXGUHM0006", "min_subs": 100},
     # Caixa Wealth IFI PDFs (um ISIN por PDF; aplica-se a todas as categorias
     # do mesmo sub-fundo - A/B/C/D - com o mesmo ISIN como aproximação, até
     # existir ISIN diferenciado por categoria).
