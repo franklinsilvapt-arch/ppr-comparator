@@ -118,43 +118,83 @@
     font-size: 13px;
     color: var(--lf-text-muted);
   }
-  .lf-chip-row {
+  .lf-pill-row {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    margin-bottom: 12px;
   }
-  .lf-chip {
+  .lf-pill {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 14px;
-    background: #fff;
-    border: 1px solid var(--lf-border);
+    padding: 6px 6px 6px 12px;
+    background: var(--lf-primary);
+    color: #fff;
     border-radius: 999px;
     font-size: 13.5px;
     font-weight: 500;
-    color: var(--lf-text);
-    cursor: pointer;
-    transition: all .15s ease;
     user-select: none;
   }
-  .lf-chip:hover { border-color: #c9cedb; }
-  .lf-chip.active {
-    background: var(--lf-primary);
-    color: #fff;
-    border-color: var(--lf-primary);
+  .lf-pill .lf-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #fff;
   }
-  .lf-chip .lf-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--lf-text-soft);
+  .lf-pill button {
+    width: 22px; height: 22px;
+    border: none; background: rgba(255,255,255,.18); color: #fff;
+    border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0;
   }
-  .lf-chip.active .lf-dot { background: #fff; }
-  .lf-chip.disabled {
-    opacity: .45;
-    cursor: not-allowed;
+  .lf-pill button:hover { background: rgba(255,255,255,.32); }
+  .lf-search-wrap { position: relative; }
+  .lf-search-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--lf-border);
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: inherit;
+    background: #fff;
+    color: var(--lf-text);
+    box-sizing: border-box;
   }
+  .lf-search-input:focus { outline: none; border-color: var(--lf-primary); }
+  .lf-search-input:disabled { background: #f3f4f7; color: var(--lf-text-muted); cursor: not-allowed; }
+  .lf-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: #fff;
+    border: 1px solid var(--lf-border);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(20,28,48,.12);
+    max-height: 320px;
+    overflow-y: auto;
+    z-index: 50;
+    display: none;
+  }
+  .lf-dropdown.open { display: block; }
+  .lf-option {
+    padding: 9px 14px;
+    font-size: 13.5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #f1f3f7;
+  }
+  .lf-option:last-child { border-bottom: none; }
+  .lf-option:hover, .lf-option.highlighted { background: #f5f7fb; }
+  .lf-option .lf-opt-meta {
+    font-size: 11.5px;
+    color: var(--lf-text-muted);
+    flex-shrink: 0;
+  }
+  .lf-option.selected { color: var(--lf-text-muted); background: #fafbfd; cursor: default; }
+  .lf-option.selected::after { content: '✓'; color: var(--lf-primary); margin-left: 8px; }
+  .lf-empty-option { padding: 12px 14px; color: var(--lf-text-muted); font-size: 13px; }
 
   /* ---------- Chart section ---------- */
   .lf-chart-section {
@@ -388,7 +428,12 @@
     <h3>Escolhe até 3 PPR para comparar</h3>
     <span class="lf-counter" id="lf-counter">0 / 3 selecionados</span>
   </div>
-  <div class="lf-chip-row" id="lf-chip-row"></div>
+  <div class="lf-pill-row" id="lf-pill-row"></div>
+  <div class="lf-search-wrap">
+    <input type="text" id="lf-search" class="lf-search-input"
+           placeholder="Pesquisa um PPR pelo nome ou entidade gestora..." autocomplete="off">
+    <div id="lf-dropdown" class="lf-dropdown"></div>
+  </div>
 </div>
 
 <!-- CHART -->
@@ -456,13 +501,14 @@
   'use strict';
 
   // =========================================================
-  // CONFIG: substituir pelo URL do JSON publicado
-  //  - GitHub Pages: https://{user}.github.io/{repo}/latest.json
-  //  - Vercel:       https://teu-projeto.vercel.app/data/latest.json
-  // Se o fetch falhar (ex: preview no Webflow Designer antes de
-  // o pipeline estar em produção), cai automaticamente para MOCK.
+  // CONFIG: URL do JSON publicado.
+  // Por defeito: caminho relativo (funciona em GitHub Pages e em
+  // servidor local na raiz do repo). Em Webflow embed, troca para o
+  // URL absoluto público:
+  //   https://franklinsilvapt-arch.github.io/ppr-comparator/data/latest.json
   // =========================================================
-  const DATA_URL = 'https://SEU-DOMINIO.github.io/ppr-comparator/latest.json';
+  const DATA_URL = (typeof window !== 'undefined' && window.LF_PPR_DATA_URL)
+    || 'https://franklinsilvapt-arch.github.io/ppr-comparator/data/latest.json';
 
   // -----------------------------------------------------------
   // MOCK DATA (fallback + primeira visualizacao em Designer)
@@ -564,13 +610,17 @@
   }
 
 
-  // Gera cotacoes mock diarias para o periodo pedido, com seed por fundo
+  // Gera série sintética diária ancorada no retorno cumulativo CMVM.
+  // Usado quando não há histórico real (a maioria dos fundos vem só com
+  // métricas pré-calculadas pela CMVM). A curva resultante é estimada,
+  // não real - sinalizado na nota do gráfico.
   function generateSeries(fund, period) {
     const points = { ytd: 90, '1y': 252, '3y': 756, '5y': 1260, ann: 1260 };
     const n = points[period] || 252;
-    const target = fund.returns[period] / 100;
+    const ret = fund.returns[period];
+    if (ret == null || Number.isNaN(ret)) return null;
+    const target = ret / 100;
 
-    // seed determinista a partir do id para cotacoes estaveis entre re-renders
     let seed = 0;
     for (let i = 0; i < fund.id.length; i++) seed = (seed * 31 + fund.id.charCodeAt(i)) >>> 0;
     const rand = () => {
@@ -578,7 +628,11 @@
       return seed / 0xFFFFFFFF;
     };
 
-    const vol = fund.risk.vol / 100 / Math.sqrt(252);
+    // vol diária estimada: usa a real se houver, senão deriva da classe de
+    // risco (CRR 1-7 → 2%-25% anual aprox.) ou fallback 8%.
+    const annualVol = (fund.risk && fund.risk.vol)
+      || (fund.riskClass ? [2, 4, 7, 10, 14, 18, 25][Math.min(6, Math.max(0, fund.riskClass - 1))] : 8);
+    const vol = annualVol / 100 / Math.sqrt(252);
     const drift = Math.pow(1 + target, 1/n) - 1;
     const data = [];
     let value = 100;
@@ -593,7 +647,6 @@
       value = value * (1 + drift + shock);
       data.push(value);
     }
-    // normaliza para terminar no retorno alvo
     const finalReturn = (data[data.length - 1] - 100) / 100;
     const adjustFactor = (1 + target) / (1 + finalReturn);
     for (let i = 1; i < data.length; i++) {
@@ -614,28 +667,89 @@
   const MAX_SELECT = 3;
 
   // -----------------------------------------------------------
-  // RENDER - selector chips
+  // RENDER - selector (pills selecionadas + dropdown com pesquisa)
   // -----------------------------------------------------------
-  function renderChips() {
-    const row = document.getElementById('lf-chip-row');
+  const selectorState = { query: '', open: false, highlightIdx: 0 };
+
+  function renderSelector() {
+    renderPills();
+    renderDropdown();
+    document.getElementById('lf-counter').textContent =
+      `${state.selected.length} / ${MAX_SELECT} selecionados`;
+    const input = document.getElementById('lf-search');
+    const full = state.selected.length >= MAX_SELECT;
+    input.disabled = full;
+    input.placeholder = full
+      ? `Limite de ${MAX_SELECT} fundos atingido — remove um para escolher outro`
+      : 'Pesquisa um PPR pelo nome ou entidade gestora...';
+  }
+
+  function renderPills() {
+    const row = document.getElementById('lf-pill-row');
     row.innerHTML = '';
-    FUNDS.forEach((f, idx) => {
-      const active = state.selected.includes(f.id);
-      const disabled = !active && state.selected.length >= MAX_SELECT;
-      const chip = document.createElement('span');
-      chip.className = 'lf-chip' + (active ? ' active' : '') + (disabled ? ' disabled' : '');
-      const colorIdx = state.selected.indexOf(f.id);
-      const dotColor = active ? SERIES_COLORS[colorIdx] : '#8a93a6';
-      chip.innerHTML = `<span class="lf-dot" style="background:${active ? '#fff' : dotColor}"></span>${f.name}`;
-      chip.addEventListener('click', () => {
-        if (disabled) return;
-        if (active) state.selected = state.selected.filter(id => id !== f.id);
-        else state.selected.push(f.id);
+    state.selected.forEach((id, i) => {
+      const f = FUNDS.find(x => x.id === id);
+      if (!f) return;
+      const pill = document.createElement('span');
+      pill.className = 'lf-pill';
+      pill.style.background = SERIES_COLORS[i];
+      pill.innerHTML = `<span class="lf-dot"></span><span>${f.name}</span><button type="button" aria-label="Remover">×</button>`;
+      pill.querySelector('button').addEventListener('click', () => {
+        state.selected = state.selected.filter(x => x !== id);
         renderAll();
       });
-      row.appendChild(chip);
+      row.appendChild(pill);
     });
-    document.getElementById('lf-counter').textContent = `${state.selected.length} / ${MAX_SELECT} selecionados`;
+  }
+
+  function filterFunds(query) {
+    const q = query.trim().toLowerCase();
+    const pool = FUNDS.filter(f => !state.selected.includes(f.id));
+    if (!q) return pool.slice(0, 50);
+    return pool.filter(f =>
+      (f.name || '').toLowerCase().includes(q) ||
+      (f.manager || '').toLowerCase().includes(q)
+    ).slice(0, 50);
+  }
+
+  function renderDropdown() {
+    const dd = document.getElementById('lf-dropdown');
+    if (!selectorState.open || state.selected.length >= MAX_SELECT) {
+      dd.classList.remove('open');
+      return;
+    }
+    const matches = filterFunds(selectorState.query);
+    if (selectorState.highlightIdx >= matches.length) selectorState.highlightIdx = 0;
+
+    if (!matches.length) {
+      dd.innerHTML = '<div class="lf-empty-option">Nenhum PPR encontrado</div>';
+    } else {
+      dd.innerHTML = matches.map((f, i) => `
+        <div class="lf-option ${i === selectorState.highlightIdx ? 'highlighted' : ''}" data-id="${f.id}">
+          <span>${f.name}</span>
+          <span class="lf-opt-meta">${f.manager || ''}</span>
+        </div>
+      `).join('');
+      dd.querySelectorAll('.lf-option').forEach(opt => {
+        opt.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          selectFund(opt.dataset.id);
+        });
+      });
+    }
+    dd.classList.add('open');
+  }
+
+  function selectFund(id) {
+    if (state.selected.includes(id)) return;
+    if (state.selected.length >= MAX_SELECT) return;
+    state.selected.push(id);
+    selectorState.query = '';
+    selectorState.highlightIdx = 0;
+    const input = document.getElementById('lf-search');
+    input.value = '';
+    selectorState.open = false;
+    renderAll();
   }
 
   // -----------------------------------------------------------
@@ -663,32 +777,43 @@
         maxBarThickness: 60
       }];
     } else {
-      // line chart - apenas fundos com série histórica (do backend)
-      const charted = selectedFunds
-        .map((f, i) => ({ f, i }))
-        .filter(({ f }) => {
-          const s = f._backendSeries && f._backendSeries[state.period];
-          return s && s.data && s.data.length;
-        });
+      // line chart - usa série real do backend se existir, senão gera
+      // estimativa a partir do retorno cumulativo CMVM.
+      const estimated = [];
+      const seriesList = selectedFunds.map(f => {
+        const real = f._backendSeries && f._backendSeries[state.period];
+        if (real && real.data && real.data.length) {
+          return { labels: real.labels, data: real.data, _real: true };
+        }
+        const synth = generateSeries(f, state.period);
+        if (!synth) return null;
+        estimated.push(f.name);
+        return {
+          labels: synth.labels,
+          data: synth.data.map(v => +(v - 100).toFixed(2)),
+          _real: false,
+        };
+      });
 
-      labels = charted.length ? charted[0].f._backendSeries[state.period].labels : [];
-      datasets = charted.map(({ f, i }) => ({
+      const firstWithData = seriesList.find(s => s);
+      labels = firstWithData ? firstWithData.labels : [];
+      datasets = selectedFunds.map((f, i) => seriesList[i] ? {
         label: f.name,
-        data: f._backendSeries[state.period].data.map(v => +v.toFixed(2)),
+        data: seriesList[i].data.map(v => +(+v).toFixed(2)),
         borderColor: SERIES_COLORS[i],
         backgroundColor: SERIES_COLORS[i] + '15',
         borderWidth: 2,
+        borderDash: seriesList[i]._real ? [] : [4, 4],
         pointRadius: 0,
         pointHoverRadius: 4,
         tension: 0.1,
-        fill: false
-      }));
+        fill: false,
+      } : null).filter(Boolean);
 
-      const missing = selectedFunds.filter(f => !charted.find(c => c.f.id === f.id));
       const noteEl = document.getElementById('lf-chart-note');
       if (noteEl) {
-        noteEl.textContent = missing.length
-          ? `Sem histórico para: ${missing.map(f => f.name).join(', ')} (apenas métricas CMVM disponíveis)`
+        noteEl.textContent = estimated.length
+          ? `Curva estimada (tracejada) a partir das métricas CMVM para: ${estimated.join(', ')}`
           : '';
       }
     }
@@ -877,10 +1002,42 @@
   });
 
   function renderAll() {
-    renderChips();
+    renderSelector();
     renderChart();
     renderCompareTable();
     renderRiskTable();
+  }
+
+  // wiring do search input
+  function wireSearch() {
+    const input = document.getElementById('lf-search');
+    const dd = document.getElementById('lf-dropdown');
+    input.addEventListener('focus', () => { selectorState.open = true; renderDropdown(); });
+    input.addEventListener('blur', () => { setTimeout(() => { selectorState.open = false; renderDropdown(); }, 150); });
+    input.addEventListener('input', (e) => {
+      selectorState.query = e.target.value;
+      selectorState.open = true;
+      selectorState.highlightIdx = 0;
+      renderDropdown();
+    });
+    input.addEventListener('keydown', (e) => {
+      const matches = filterFunds(selectorState.query);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectorState.highlightIdx = Math.min(matches.length - 1, selectorState.highlightIdx + 1);
+        renderDropdown();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectorState.highlightIdx = Math.max(0, selectorState.highlightIdx - 1);
+        renderDropdown();
+      } else if (e.key === 'Enter' && matches[selectorState.highlightIdx]) {
+        e.preventDefault();
+        selectFund(matches[selectorState.highlightIdx].id);
+      } else if (e.key === 'Escape') {
+        selectorState.open = false;
+        renderDropdown();
+      }
+    });
   }
 
   // -----------------------------------------------------------
@@ -911,6 +1068,7 @@
   async function init() {
     if (typeof Chart === 'undefined') { setTimeout(init, 50); return; }
     await loadData();
+    wireSearch();
     renderAll();
   }
 
