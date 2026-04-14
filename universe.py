@@ -161,12 +161,12 @@ for _cat, (_isin, _min, _tec) in _OXY_MAP.items():
         ov["min_subs"] = _min
     MANUAL_OVERRIDES.append(ov)
 
-# Save & Grow PPR (Casa de Investimentos) — 2 classes únicas (id explícito).
+# Save & Grow PPR (Casa de Investimentos) - 2 classes únicas (id explícito).
 MANUAL_OVERRIDES.extend([
     {
         "match": "save & grow ppr/oicvm - categoria 01",
         "id": "casa-inv-sg-founders",
-        "name": "Casa de Investimentos Save & Grow PPR — Founders",
+        "name": "Casa de Investimentos Save & Grow PPR - Founders",
         "manager": "Casa de Investimentos",
         "isin": "PTCUUBHM0004",
         "tec": 1.45,
@@ -180,7 +180,7 @@ MANUAL_OVERRIDES.extend([
     {
         "match": "save & grow ppr/oicvm - categoria 02",
         "id": "casa-inv-sg-prime",
-        "name": "Casa de Investimentos Save & Grow PPR — Prime",
+        "name": "Casa de Investimentos Save & Grow PPR - Prime",
         "manager": "Casa de Investimentos",
         "isin": "PTCUUAHM0005",
         "tec": 1.66,
@@ -193,7 +193,7 @@ MANUAL_OVERRIDES.extend([
 
 # Fundos não listados na CMVM (vêm só do Excel da Golden SGF). O scraper
 # SGF mapeia o nome no Excel → este id via NAME_TO_FUND_ID em
-# scrapers/golden_sgf.py — manter os ids alinhados.
+# scrapers/golden_sgf.py - manter os ids alinhados.
 # ISINs confirmados nos PDFs Doc-Informativo da Golden SGF + cruzamento
 # por data de autorização/início com histórico no Excel da SGF.
 # min_subs das classes Plus/Start do ETF PDF; demais fundos TBC.
@@ -322,7 +322,7 @@ def get_funds() -> list[dict]:
         return _cache
 
     if not CMVM_JSON.exists():
-        print(f"[universe] {CMVM_JSON} não existe — corre `python -m scrapers.cmvm` primeiro")
+        print(f"[universe] {CMVM_JSON} não existe - corre `python -m scrapers.cmvm` primeiro")
         _cache = []
         return _cache
 
@@ -363,7 +363,7 @@ def _apply_xlsx_overrides(funds: list[dict]) -> None:
     try:
         import pandas as pd
     except ImportError:
-        print("[universe] pandas não disponível — overrides.xlsx ignorado")
+        print("[universe] pandas não disponível - overrides.xlsx ignorado")
         return
     try:
         df = pd.read_excel(xlsx, sheet_name="Overrides")

@@ -339,7 +339,7 @@
   background: var(--blue-bg);
   color: var(--blue-primary);
 }
-/* Toggle €/% — visualmente distinto dos tabs de período.
+/* Toggle €/% - visualmente distinto dos tabs de período.
    Fundo orange suave + letra brand, com outline e peso 600. */
 #lf-pc-calc .lpc-mode-toggle {
   display: inline-flex;
@@ -837,7 +837,7 @@
     };
   }
 
-  var NA = '<span style="color:#96A0B0">—</span>';
+  var NA = '<span style="color:#96A0B0">-</span>';
 
   function fmt(v, suf, dp) {
     if (dp == null) dp = 2;
@@ -852,7 +852,7 @@
     return '<span style="color:' + color + ';font-weight:600">'
       + sign + v.toFixed(1).replace('.', ',') + '%</span>';
   }
-  // Formato pt-PT manual — ponto separador de milhares, sem dependência
+  // Formato pt-PT manual - ponto separador de milhares, sem dependência
   // de toLocaleString (algumas runtimes Chart.js ignoram o locale).
   // Ex: 1234567 → "1.234.567 €"
   function fmtNumPT(n) {
@@ -980,7 +980,7 @@
     }).slice(0, 300);
   }
 
-  // Dropdown partilhada — é posicionada por baixo do slot activo via
+  // Dropdown partilhada - é posicionada por baixo do slot activo via
   // o container do próprio slot (append/remove do DOM).
   var dropdownEl = null;
   function ensureDropdown() {
@@ -1209,7 +1209,7 @@
       var f = p.fund;
       var val = f.returns[state.period];
       var valHtml = (val == null || Number.isNaN(val))
-        ? '<span style="color:#96A0B0">—</span>'
+        ? '<span style="color:#96A0B0">-</span>'
         : '<span class="' + (val >= 0 ? 'pos' : 'neg') + '">'
           + (val >= 0 ? '+' : '') + val.toFixed(1).replace('.', ',') + '%</span>';
       var cell = document.createElement('div');
@@ -1223,7 +1223,7 @@
       strip.appendChild(cell);
     });
 
-    // Warning — perfil de risco divergente
+    // Warning - perfil de risco divergente
     renderRiskWarning(pairs);
   }
 
@@ -1244,7 +1244,7 @@
       + '<path d="M10 8v4M10 14.5v.01" stroke="#B54708" stroke-width="1.6" stroke-linecap="round"/>'
       + '</svg>'
       + '<span>Comparação com perfis de risco diferentes (classe ' + min + ' vs ' + max
-      + ' / 7). Rentabilidades de fundos com maior exposição a acções não são directamente comparáveis com as de fundos mais conservadores — o risco assumido é substancialmente distinto.</span>'
+      + ' / 7). Rentabilidades de fundos com maior exposição a acções não são directamente comparáveis com as de fundos mais conservadores - o risco assumido é substancialmente distinto.</span>'
       + '</div>';
   }
 
@@ -1265,12 +1265,14 @@
 
     var rows = [
       { label: 'ISIN',                    render: function (f) { return f.isin || NA; } },
-      { label: 'TEC (custo anual)',       render: function (f) { return fmt(f.tec, '%'); } },
+      { label: 'TEC (custo anual)',       tip: 'Taxa de encargos correntes. Percentagem anual cobrada pela gestora sobre o valor do fundo.',
+        render: function (f) { return fmt(f.tec, '%'); } },
       { label: 'Subscrição mínima',       render: function (f) { return f.minSubs == null ? NA : f.minSubs.toLocaleString('pt-PT') + '\u00A0€'; } },
-      { label: 'Classe de risco',         render: function (f) {
+      { label: 'Classe de risco',         tip: 'Indicador sintético de risco (ISR) numa escala de 1 (menor risco, potencial retorno menor) a 7 (maior risco, potencial retorno maior). Definido pela gestora ao abrigo do regime PPR.',
+        render: function (f) {
           if (f.riskClass == null) return NA;
           var cls = f.riskClass >= 5 ? 'r-high' : f.riskClass >= 3 ? 'r-mid' : '';
-          return '<span class="lpc-risk-pill ' + cls + '">' + f.riskClass + ' / 7</span>';
+          return '<span class="lpc-risk-pill ' + cls + '">' + f.riskClass + '</span>';
         } },
       { label: 'Rentabilidade 1 ano',     render: function (f) { return formatPct(f.returns['1y']); } },
       { label: 'Rentabilidade 3 anos',    render: function (f) { return formatPct(f.returns['3y']); } },
@@ -1279,7 +1281,8 @@
     ];
 
     body.innerHTML = rows.map(function (r) {
-      return '<tr><th scope="row">' + r.label + '</th>'
+      var tipAttr = r.tip ? ' title="' + r.tip.replace(/"/g, '&quot;') + '"' : '';
+      return '<tr><th scope="row"' + tipAttr + '>' + r.label + '</th>'
         + pairs.map(function (p) { return '<td>' + r.render(p.fund) + '</td>'; }).join('')
         + '</tr>';
     }).join('');
@@ -1438,7 +1441,7 @@
       console.warn('[comparador-ppr] fetch falhou, usando dados mock:', LOAD_ERROR);
       USING_MOCK = true;
     }
-    // Arranque sem fundos seleccionados — utilizador escolhe activamente
+    // Arranque sem fundos seleccionados - utilizador escolhe activamente
     // via os 3 slots. Evita a impressão errada de que os 3 default são
     // sempre a comparação relevante.
     state.selected = [null, null, null];
