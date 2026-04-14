@@ -88,13 +88,18 @@ MANUAL_OVERRIDES = [
     # PTIXAEHM0006 que é outro fundo referenciado na página).
     {"match": "caixa ações líderes globais",   "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Pages/CaixaALG_PPR_OICVM.aspx",
      "isin": "PTCXGUHM0006", "min_subs": 100},
-    # Caixa Wealth IFI PDFs (um ISIN por PDF; aplica-se a todas as categorias
-    # do mesmo sub-fundo - A/B/C/D - com o mesmo ISIN como aproximação, até
-    # existir ISIN diferenciado por categoria).
-    {"match": "caixa wealth ações",            "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Documents/IFI/FII0003641551.PDF"},
-    {"match": "caixa wealth arrojado",         "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Documents/IFI/FII0003641552.pdf"},
-    {"match": "caixa wealth defensivo",        "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Documents/IFI/FII0003642188.pdf"},
-    {"match": "caixa wealth moderado",         "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Documents/IFI/FII0003641550.pdf"},
+    # Caixa Wealth: um ISIN por família (aplica-se a A/B/C/D). ISINs
+    # confirmados pelo utilizador via FT tearsheet.
+    {"match": "caixa wealth ações",            "isin": "PTCXGWHM0020"},
+    {"match": "caixa wealth arrojado",         "isin": "PTCXGBHM0017"},
+    {"match": "caixa wealth defensivo",        "isin": "PTCXGYHM0028"},
+    {"match": "caixa wealth moderado",         "isin": "PTCXGPHM0011"},
+    # Caixa (não-Wealth) individuais
+    {"match": "caixa arrojado ppr",            "isin": "PTCXGHHM0011"},
+    {"match": "caixa defensivo ppr",           "isin": "PTCXGFHM0013"},
+    {"match": "caixa moderado ppr",            "isin": "PTCXGGHM0012"},
+    # Invest Tendências Globais
+    {"match": "invest tendências globais",     "isin": "PTARMJHM0003"},
     # --- Santander ---
     {"match": "santander aforro",              "site_url": "https://www.santander.pt/poupanca-reforma/fundo-aforro-fpr"},
     {"match": "santander poupança prudente",   "site_url": "https://www.santander.pt/poupanca-reforma/poupanca-prudente-fpr"},
@@ -164,11 +169,17 @@ _OXY_MAP = {
     "categoria fr": ("PTOXZUHM0009", 2000,   1.06),
     "categoria fs": ("PTOXZVHM0008", 2000,   1.06),
 }
+# Categoria DA é a única publicamente comercializada ao retail. As
+# restantes são para colaboradores/empresas. Escondemos do selector.
+_OXY_VISIBLE = {"categoria da"}
+
 for _cat, (_isin, _min, _tec) in _OXY_MAP.items():
     ov = {"match": f"oxy capital liquid opportunities a, ppr - {_cat}",
           "isin": _isin, "tec": _tec}
     if _min is not None:
         ov["min_subs"] = _min
+    if _cat not in _OXY_VISIBLE:
+        ov["hidden"] = True
     MANUAL_OVERRIDES.append(ov)
 
 # Save & Grow PPR (Casa de Investimentos) - 2 classes únicas (id explícito).

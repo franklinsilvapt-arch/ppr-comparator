@@ -1443,7 +1443,9 @@
       if (!json.funds || !Array.isArray(json.funds) || json.funds.length === 0) {
         throw new Error('JSON sem fundos');
       }
-      FUNDS = json.funds.map(normalizeBackendFund);
+      FUNDS = json.funds
+        .filter(function (f) { return !f.hidden; })
+        .map(normalizeBackendFund);
       DATA_AS_OF = json.latest_data_date || json.data_as_of || null;
       USING_MOCK = false;
     } catch (e) {
