@@ -33,10 +33,12 @@ MANUAL_OVERRIDES = [
         "source": "yahoo",
     },
     # --- Plataforma IMGA (hospeda ABANCA + IMGA) ---
-    {"match": "ciclo de vida +55",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-plus55/"},
-    {"match": "ciclo de vida -34",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-34/"},
-    {"match": "ciclo de vida 35-44",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-35-44/"},
-    {"match": "ciclo de vida 45-54",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-45-54/"},
+    # ISINs ABANCA obtidos via search FT (IMGA não os expõe no HTML).
+    # O FT fallback no main.py usa estes para puxar a série histórica.
+    {"match": "ciclo de vida +55",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-plus55/", "isin": "PTAFIYHM0012"},
+    {"match": "ciclo de vida -34",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-34/",     "isin": "PTAFIUHM0016"},
+    {"match": "ciclo de vida 35-44",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-35-44/",  "isin": "PTAFIVHM0015"},
+    {"match": "ciclo de vida 45-54",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-45-54/",  "isin": "PTAFIWHM0014"},
     {"match": "imga crescimento ppr",  "site_url": "https://www.imga.pt/fim/ppr/imga-crescimento-pproicvm/"},
     {"match": "imga investimento ppr", "site_url": "https://www.imga.pt/fim/ppr/imga-investimento-pproicvm/"},
     {"match": "imga poupança ppr",     "site_url": "https://www.imga.pt/fim/ppr/imga-poupança-pproicvm/"},
