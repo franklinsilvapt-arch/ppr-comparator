@@ -861,7 +861,7 @@
     var color = v >= 0 ? 'var(--green-text)' : '#B42318';
     var sign = v >= 0 ? '+' : '';
     return '<span style="color:' + color + ';font-weight:600">'
-      + sign + v.toFixed(1).replace('.', ',') + '%</span>';
+      + sign + v.toFixed(2).replace('.', ',') + '%</span>';
   }
   // Formato pt-PT manual - ponto separador de milhares, sem dependência
   // de toLocaleString (algumas runtimes Chart.js ignoram o locale).
@@ -1132,7 +1132,7 @@
     var noteEl = document.getElementById('lpc-chart-note');
     if (noteEl) {
       var baseTxt = isEur
-        ? 'Investimento simulado de ' + BASE_EUR.toLocaleString('pt-PT') + '\u00A0€ no início do período.'
+        ? 'Investimento simulado de ' + fmtNumPT(BASE_EUR) + '\u00A0€ no início do período.'
         : 'Retorno acumulado em % desde o início do período.';
       var estTxt = estimated.length
         ? ' Curva estimada (tracejada) para: ' + estimated.join(', ') + '.'
@@ -1192,7 +1192,8 @@
           y: {
             ticks: {
               callback: function (v) {
-                return isEur ? fmtEurDec(v) : ((v >= 0 ? '+' : '') + v + '%');
+                if (isEur) return fmtEurDec(v);
+                return (v >= 0 ? '+' : '') + v.toFixed(2).replace('.', ',') + '%';
               },
               font: { size: 11.5, family: 'Inter, sans-serif' },
               color: '#697386'
@@ -1212,7 +1213,7 @@
       var valHtml = (val == null || Number.isNaN(val))
         ? '<span style="color:#96A0B0">-</span>'
         : '<span class="' + (val >= 0 ? 'pos' : 'neg') + '">'
-          + (val >= 0 ? '+' : '') + val.toFixed(1).replace('.', ',') + '%</span>';
+          + (val >= 0 ? '+' : '') + val.toFixed(2).replace('.', ',') + '%</span>';
       var cell = document.createElement('div');
       cell.className = 'lpc-return-cell';
       cell.innerHTML =
@@ -1268,7 +1269,7 @@
       { label: 'ISIN',                    render: function (f) { return f.isin || NA; } },
       { label: 'TEC (custo anual)',       tip: 'Taxa de encargos correntes. Percentagem anual cobrada pela gestora sobre o valor do fundo.',
         render: function (f) { return fmt(f.tec, '%'); } },
-      { label: 'Subscrição mínima',       render: function (f) { return f.minSubs == null ? NA : f.minSubs.toLocaleString('pt-PT') + '\u00A0€'; } },
+      { label: 'Subscrição mínima',       render: function (f) { return f.minSubs == null ? NA : fmtNumPT(f.minSubs) + '\u00A0€'; } },
       { label: 'Classe de risco',         tip: 'Indicador sintético de risco (ISR) numa escala de 1 (menor risco, potencial retorno menor) a 7 (maior risco, potencial retorno maior). Definido pela gestora ao abrigo do regime PPR.',
         render: function (f) {
           if (f.riskClass == null) return NA;
@@ -1312,17 +1313,17 @@
     var rows = [
       { label: 'Volatilidade anual',
         tip: 'Desvio-padrão anualizado dos retornos. Mede quanto o fundo oscila.',
-        render: function (f) { return fmt(f.risk.vol, '%', 1); } },
+        render: function (f) { return fmt(f.risk.vol, '%', 2); } },
       { label: 'Sharpe Ratio',
         tip: 'Retorno em excesso por unidade de risco. Acima de 1 é considerado bom.',
         render: function (f) { return fmt(f.risk.sharpe, '', 2); } },
       { label: 'Drawdown máximo',
         tip: 'Maior queda do valor do fundo desde um pico, no período analisado.',
         render: function (f) { return f.risk.maxDD == null ? NA
-          : '<span style="color:#B42318;font-weight:600">' + f.risk.maxDD.toFixed(1).replace('.', ',') + '%</span>'; } },
+          : '<span style="color:#B42318;font-weight:600">' + f.risk.maxDD.toFixed(2).replace('.', ',') + '%</span>'; } },
       { label: 'VaR diário (95%)',
         tip: 'Perda máxima esperada num dia, com 95% de confiança.',
-        render: function (f) { return fmt(f.risk.var95, '%', 1); } },
+        render: function (f) { return fmt(f.risk.var95, '%', 2); } },
       { label: 'Beta',
         tip: 'Sensibilidade do fundo aos movimentos do mercado global de acções, medida contra o MSCI World (ETF URTH em EUR). Beta = 1 significa que o fundo oscila ao mesmo ritmo do mercado; Beta < 1 é menos volátil; Beta > 1 amplifica os movimentos.',
         render: function (f) { return fmt(f.risk.beta, '', 2); } }
