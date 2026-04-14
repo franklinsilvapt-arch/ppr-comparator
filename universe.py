@@ -42,8 +42,30 @@ MANUAL_OVERRIDES = [
     {"match": "imga poupança ppr",     "site_url": "https://www.imga.pt/fim/ppr/imga-poupança-pproicvm/"},
     # --- BIZ Capital ---
     {"match": "biz europa valoriza",   "site_url": "https://bizcapital.eu/biz-europa-ppr/"},
-    # --- Bankinter (precisa curl_cffi) ---
+    # --- Bankinter (precisa curl_cffi) — só Mega TT tem URL confirmado ---
     {"match": "bankinter mega tt",     "site_url": "https://www.bankinter.pt/fundos/fundo-mega-tt"},
+    # --- BlueCrow ---
+    {"match": "bluecrow global opportunities", "site_url": "https://www.bluecrowcapital.com/pt/fundos-em-subscricao/global-opportunities-ppr/211/"},
+    # --- GNB (ordem: genérico primeiro, específico depois sobrescreve) ---
+    {"match": "gnb ppr/oicvm",                 "site_url": "https://www.gnbga.pt/SF_FichaFundo_FO/codfun/14165990076"},
+    {"match": "gnb ppr/oicvm global equities", "site_url": "https://www.gnbga.pt/SF_FichaFundo_FO/codfun/14165992247"},
+    # --- Optimize ---
+    {"match": "optimize ppr/oicvm agressivo",  "site_url": "https://optimize.pt/ppr/agressivo/"},
+    {"match": "optimize ppr/oicvm ativo",      "site_url": "https://optimize.pt/ppr/ativo/"},
+    {"match": "optimize ppr/oicvm equilibrado","site_url": "https://optimize.pt/ppr/equilibrado/"},
+    {"match": "optimize ppr/oicvm moderado",   "site_url": "https://optimize.pt/ppr/moderado/"},
+    # --- Sixty Degrees ---
+    {"match": "sixty degrees ppr/oicvm flexível",     "site_url": "https://sixty-degrees.com/fund/sixty-degrees-ppr-oicvm-flexivel/"},
+    {"match": "sixty degrees ações globais ppr",      "site_url": "https://sixty-degrees.com/fund/sixty-degrees-acoes-globais-ppr-oicvm/"},
+    {"match": "sixty degrees medina ppr",             "site_url": "https://sixty-degrees.com/fund/sixty-degrees-medina-ppr-oiavm-flexivel/"},
+    # --- BPI (só URL para Global Equities confirmada; outras páginas não expõem ISIN em HTML) ---
+    {"match": "bpi reforma global equities",   "site_url": "https://www.bancobpi.pt/particulares/poupar-investir/ppr/bpi-reforma-global-equities-ppr/oicvm"},
+    # --- Caixa / CGD ---
+    {"match": "caixa ações líderes globais",   "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Pages/CaixaALG_PPR_OICVM.aspx"},
+    # --- Smart Invest (Banco Invest, 1 URL cobre os 3) ---
+    {"match": "smart invest ppr",              "site_url": "https://www.bancoinvest.pt/poupanca-e-investimento/pprs/smart-invest"},
+    # --- Oxy Capital (1 URL cobre todas as ~52 categorias) ---
+    {"match": "oxy capital liquid opportunities","site_url": "https://oxycapital.com/public-markets/"},
     # Save & Grow PPR (Casa de Investimentos) tem 2 classes:
     #   Categoria 01 = Founders (ISIN PTCUUBHM0004, pair 1169681)
     #   Categoria 02 = Prime    (ISIN PTCUUAHM0005, pair 1169680)

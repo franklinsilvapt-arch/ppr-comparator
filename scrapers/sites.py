@@ -15,6 +15,7 @@ Adicionar nova gestora:
 """
 from __future__ import annotations
 
+import html
 import re
 import time
 import unicodedata
@@ -26,6 +27,25 @@ except ImportError:
     cffi_requests = None
 
 import requests
+
+
+def _num(s: str) -> float | None:
+    """Converte '1.000' / '1,000.50' / '25' em float, tentando formato pt-PT."""
+    s = s.strip()
+    if not s:
+        return None
+    # Formato pt-PT: 1.000,50 → 1000.50
+    if "," in s and "." in s:
+        s = s.replace(".", "").replace(",", ".")
+    elif "," in s:
+        s = s.replace(",", ".")
+    elif s.count(".") >= 1 and len(s.split(".")[-1]) == 3:
+        # "1.000" como pt-PT milhares
+        s = s.replace(".", "")
+    try:
+        return float(s)
+    except ValueError:
+        return None
 
 
 def _get(url: str, use_cffi: bool = False) -> str | None:
@@ -42,7 +62,10 @@ def _get(url: str, use_cffi: bool = False) -> str | None:
         # diacríticos combinados (ex: c+cedilla em vez de ç) o que quebra
         # regex com classes [çc].
         text = r.content.decode("utf-8", errors="replace")
-        return unicodedata.normalize("NFC", text)
+        text = unicodedata.normalize("NFC", text)
+        # Decode HTML entities (&ccedil; → ç, &#xE7; → ç, &euro; → €, etc)
+        # para que as regex possam usar caracteres Unicode directos.
+        return html.unescape(text)
     except Exception:
         return None
 
@@ -111,12 +134,119 @@ def extract_bankinter(html: str) -> dict:
     return out
 
 
+# --------------------- BlueCrow ---------------------
+
+def extract_bluecrow(html_text: str) -> dict:
+    out: dict = {}
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html_text)
+    if m:
+        out["isin"] = m.group(1)
+    # "Subscrição mínima </strong>€1.000" (após unescape)
+    m = re.search(
+        r"(?i)subscri[çc]ão\s*m[ií]nima[^<]*</strong>[^<\d]*([\d.,]+)",
+        html_text,
+    )
+    if m:
+        out["min_subs"] = _num(m.group(1))
+    return out
+
+
+# --------------------- GNB ---------------------
+
+def extract_gnb(html_text: str) -> dict:
+    out: dict = {}
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html_text)
+    if m:
+        out["isin"] = m.group(1)
+    # "Subscrição Inicial (Mín.) </td> <td> <span ...>25 €"
+    m = re.search(
+        r"(?i)Subscri[çc]ão\s*Inicial\s*\(M[ií]n\.?\)"
+        r"[^<]*</td>\s*<td>[^<]*<span[^>]*>\s*([\d.,]+)\s*€",
+        html_text,
+    )
+    if m:
+        out["min_subs"] = _num(m.group(1))
+    return out
+
+
+# --------------------- Optimize ---------------------
+
+def extract_optimize(html: str) -> dict:
+    out: dict = {}
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html)
+    if m:
+        out["isin"] = m.group(1)
+    # "Valor mínimo de investimento:</p> ... <div ...>1 UP</div>"
+    m = re.search(
+        r"(?i)Valor\s+m[ií]nimo\s+de\s+investimento[^<]*</p>"
+        r".{0,600}?elementor-widget-container\">\s*(.*?)\s*</div>",
+        html, re.DOTALL,
+    )
+    if m:
+        val = re.sub(r"\s+", " ", m.group(1)).strip()
+        # "1 UP" ou "25 €" etc. Tentamos extrair €; caso contrário guardamos
+        # a string crua em min_subs_text.
+        mn = re.search(r"(\d+(?:[.,]\d+)?)\s*€", val)
+        if mn:
+            out["min_subs"] = float(mn.group(1).replace(",", "."))
+        else:
+            out["min_subs_text"] = val[:40]
+    return out
+
+
+# --------------------- Sixty Degrees ---------------------
+
+def extract_sixty(html: str) -> dict:
+    out: dict = {}
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html)
+    if m:
+        out["isin"] = m.group(1)
+    return out
+
+
+# --------------------- CGD / Caixa ---------------------
+
+def extract_cgd(html: str) -> dict:
+    out: dict = {}
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html)
+    if m:
+        out["isin"] = m.group(1)
+    return out
+
+
+# --------------------- Banco BPI ---------------------
+
+def extract_bpi(html: str) -> dict:
+    out: dict = {}
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html)
+    if m:
+        out["isin"] = m.group(1)
+    return out
+
+
+# --------------------- Banco Invest (Smart Invest) ---------------------
+
+def extract_banco_invest(html: str) -> dict:
+    out: dict = {}
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html)
+    if m:
+        out["isin"] = m.group(1)
+    return out
+
+
 # --------------------- Dispatch ---------------------
 
 EXTRACTORS = {
-    "imga.pt":        (extract_imga, False),
-    "bizcapital.eu":  (extract_biz, False),
-    "bankinter.pt":   (extract_bankinter, True),   # precisa curl_cffi
+    "imga.pt":               (extract_imga, False),
+    "bizcapital.eu":         (extract_biz, False),
+    "bankinter.pt":          (extract_bankinter, True),   # precisa curl_cffi
+    "bluecrowcapital.com":   (extract_bluecrow, False),
+    "gnbga.pt":              (extract_gnb, False),
+    "optimize.pt":           (extract_optimize, False),
+    "sixty-degrees.com":     (extract_sixty, False),
+    "cgd.pt":                (extract_cgd, False),
+    "bancobpi.pt":           (extract_bpi, False),
+    "bancoinvest.pt":        (extract_banco_invest, False),
 }
 
 
