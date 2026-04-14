@@ -1092,11 +1092,25 @@
       };
     });
 
-    // Nota: NÃO rebasear para data comum. Cada fundo mostra a sua
-    // própria janela desde a data real de início, preservando o facto
-    // de classes mais antigas (ex: Save & Grow Founders) terem
-    // histórico maior que classes posteriores (Prime).
+    // Rebase a data comum: quando há múltiplos fundos seleccionados,
+    // a comparação só é fair se começar na data em que TODOS têm dados.
+    // Usamos a data de arranque do fundo com menos histórico como ponto
+    // zero e recalculamos as variações a partir daí. Aplicável a todos
+    // os períodos (YTD, 1y, ... Desde início).
     var validSeries = seriesList.filter(Boolean);
+    if (validSeries.length >= 2) {
+      var cutoff = validSeries.map(function (s) { return s.labels[0]; })
+        .reduce(function (a, b) { return a > b ? a : b; });
+      validSeries.forEach(function (s) {
+        if (s.labels[0] >= cutoff) return;
+        var idx = s.labels.findIndex(function (l) { return l >= cutoff; });
+        if (idx > 0) {
+          var base = s.dataPct[idx];
+          s.labels = s.labels.slice(idx);
+          s.dataPct = s.dataPct.slice(idx).map(function (v) { return +(v - base).toFixed(2); });
+        }
+      });
+    }
 
     // União de labels
     var allLabelsSet = new Set();
