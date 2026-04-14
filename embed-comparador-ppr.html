@@ -613,7 +613,8 @@
     const formatted = d.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' });
     const daysOld = Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
     text.textContent = `Atualizado a ${formatted}`;
-    badge.title = `${FUNDS.length} fundos carregados`;
+    const withHist = FUNDS.filter(f => f.dataOrigin === 'historical').length;
+    badge.title = `${FUNDS.length} fundos carregados (${withHist} com histórico real). Data da cotação mais recente no universo.`;
     if (daysOld > 14) badge.classList.add('stale');
     else badge.classList.remove('stale');
   }
@@ -1071,7 +1072,10 @@
         throw new Error('JSON sem fundos');
       }
       FUNDS = json.funds.map(normalizeBackendFund);
-      DATA_AS_OF = json.data_as_of || json.latest_data_date || null;
+      // Mostrar a data mais recente disponível (MAX das últimas cotações)
+      // em vez do MIN — um fundo com Excel desactualizado pela SGF não
+      // deve arrastar o badge para trás.
+      DATA_AS_OF = json.latest_data_date || json.data_as_of || null;
       USING_MOCK = false;
     } catch (e) {
       LOAD_ERROR = e.message || String(e);
