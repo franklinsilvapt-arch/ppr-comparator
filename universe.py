@@ -89,9 +89,76 @@ MANUAL_OVERRIDES = [
     {"match": "smart invest ppr",              "site_url": "https://www.bancoinvest.pt/poupanca-e-investimento/pprs/smart-invest"},
     # --- Oxy Capital (1 URL cobre todas as ~52 categorias) ---
     {"match": "oxy capital liquid opportunities","site_url": "https://oxycapital.com/public-markets/"},
-    # Save & Grow PPR (Casa de Investimentos) tem 2 classes:
-    #   Categoria 01 = Founders (ISIN PTCUUBHM0004, pair 1169681)
-    #   Categoria 02 = Prime    (ISIN PTCUUAHM0005, pair 1169680)
+    # Oxy per-categoria: ISIN + min_subs + TEC do IFI PDF. Overrides
+    # específicos a seguir sobrescrevem o genérico acima.
+    # TEC usa o escalão >€15M AuM (mais baixo; se o fundo ainda estiver
+    # abaixo, o real é marginalmente superior).
+    # Min subs por grupo:
+    #   A/C/E: sem mínimo      B/D: €100.000 (apenas empresas p/ colabs)
+    #   F: €2.000
+]
+
+# Per-categoria ISINs do IFI Oxy (PDF fornecido pelo utilizador).
+# Formato: match_substring → (isin, min_subs, tec)
+_OXY_MAP = {
+    "categoria aa": ("PTOXCRHM0001", None,   0.16),
+    "categoria ba": ("PTOXCSHM0000", 100000, 0.76),
+    "categoria bb": ("PTOYAAHM0001", 100000, 0.76),
+    "categoria bc": ("PTOYABHM0000", 100000, 0.76),
+    "categoria bd": ("PTOYACHM0009", 100000, 0.76),
+    "categoria be": ("PTOYADHM0008", 100000, 0.76),
+    "categoria bf": ("PTOYAEHM0007", 100000, 0.76),
+    "categoria bg": ("PTOYAFHM0006", 100000, 0.76),
+    "categoria ca": ("PTOXCTHM0009", None,   0.16),
+    "categoria da": ("PTOXCUHM0006", 100000, 0.76),
+    "categoria db": ("PTOYAIHM0003", 100000, 0.76),
+    "categoria dc": ("PTOYAJHM0002", 100000, 0.76),
+    "categoria dd": ("PTOYAKHM0009", 100000, 0.76),
+    "categoria de": ("PTOYALHM0008", 100000, 0.76),
+    "categoria df": ("PTOYAMHM0007", 100000, 0.76),
+    "categoria dg": ("PTOYANHM0006", 100000, 0.76),
+    "categoria dh": ("PTOYAOHM0005", 100000, 0.76),
+    "categoria ea": ("PTOXTAHM0001", None,   0.56),
+    "categoria eb": ("PTOYAQHM0003", None,   0.56),
+    "categoria ec": ("PTOYARHM0002", None,   0.56),
+    "categoria ed": ("PTOYASHM0001", None,   0.56),
+    "categoria ee": ("PTOYATHM0000", None,   0.56),
+    "categoria ef": ("PTOYAUHM0007", None,   0.56),
+    "categoria eg": ("PTOYAVHM0006", None,   0.56),
+    "categoria eh": ("PTOYAWHM0005", None,   0.56),
+    "categoria ei": ("PTOYAXHM0004", None,   0.56),
+    "categoria ej": ("PTOXS3HM0000", None,   0.56),
+    "categoria ek": ("PTOXS4HM0009", None,   0.56),
+    "categoria el": ("PTOXS5HM0008", None,   0.56),
+    "categoria fa": ("PTOXTBHM0000", 2000,   1.06),
+    "categoria fb": ("PTOYAYHM0003", 2000,   1.06),
+    "categoria fc": ("PTOYAZHM0002", 2000,   1.06),
+    "categoria fd": ("PTOYA1HM0008", 2000,   1.06),
+    "categoria fe": ("PTOYA2HM0007", 2000,   1.06),
+    "categoria ff": ("PTOYA3HM0006", 2000,   1.06),
+    "categoria fg": ("PTOYA4HM0005", 2000,   1.06),
+    "categoria fh": ("PTOYA5HM0004", 2000,   1.06),
+    "categoria fi": ("PTOYA6HM0003", 2000,   1.06),
+    "categoria fj": ("PTOXSMHM0008", 2000,   1.06),
+    "categoria fk": ("PTOXSNHM0007", 2000,   1.06),
+    "categoria fl": ("PTOXSOHM0006", 2000,   1.06),
+    "categoria fm": ("PTOXSPHM0005", 2000,   1.06),
+    "categoria fn": ("PTOXS6HM0007", 2000,   1.06),
+    "categoria fo": ("PTOXS7HM0006", 2000,   1.06),
+    "categoria fp": ("PTOXS8HM0005", 2000,   1.06),
+    "categoria fq": ("PTOXS9HM0004", 2000,   1.06),
+    "categoria fr": ("PTOXZUHM0009", 2000,   1.06),
+    "categoria fs": ("PTOXZVHM0008", 2000,   1.06),
+}
+for _cat, (_isin, _min, _tec) in _OXY_MAP.items():
+    ov = {"match": f"oxy capital liquid opportunities a, ppr - {_cat}",
+          "isin": _isin, "tec": _tec}
+    if _min is not None:
+        ov["min_subs"] = _min
+    MANUAL_OVERRIDES.append(ov)
+
+# Save & Grow PPR (Casa de Investimentos) — 2 classes únicas (id explícito).
+MANUAL_OVERRIDES.extend([
     {
         "match": "save & grow ppr/oicvm - categoria 01",
         "id": "casa-inv-sg-founders",
@@ -112,7 +179,7 @@ MANUAL_OVERRIDES = [
         "investing_pair_id": 1169680,
         "source": "investing",
     },
-]
+])
 
 # Fundos não listados na CMVM (vêm só do Excel da Golden SGF). O scraper
 # SGF mapeia o nome no Excel → este id via NAME_TO_FUND_ID em
