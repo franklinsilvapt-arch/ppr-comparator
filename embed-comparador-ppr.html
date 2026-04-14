@@ -772,7 +772,7 @@
   <!-- DISCLAIMER -->
   <div class="lpc-disclaimer">
     <strong>Âmbito.</strong> A lista principal inclui PPR sob a forma de <em>Fundos de Investimento</em> (FI-PPR), regulados pela CMVM. Foram também incluídos os PPR da Golden SGF, que são <em>Fundos de Pensões Abertos</em> (FP-PPR, regulados pela ASF) e não constam da lista CMVM, por terem procura relevante.<br><br>
-    <strong>Dados.</strong> Cotações e métricas fornecidas pelas sociedades gestoras, CMVM (<em>DataActionGetPPRs</em>), Excel público da Golden SGF, Yahoo Finance e Investing.com. Linhas tracejadas no gráfico correspondem a curvas estimadas a partir dos retornos acumulados publicados pela CMVM (fundos sem histórico diário disponível). Rentabilidades líquidas de comissões de gestão e depósito. Rentabilidades passadas não são garantia de rentabilidades futuras. Este comparador tem fins meramente informativos e não constitui aconselhamento financeiro.
+    <strong>Dados.</strong> Cotações e métricas fornecidas pelas sociedades gestoras, CMVM (<em>DataActionGetPPRs</em>), Excel público da Golden SGF, Yahoo Finance, Investing.com e Financial Times. O comparador inclui apenas fundos com histórico diário público disponível. Rentabilidades líquidas de comissões de gestão e depósito. Rentabilidades passadas não são garantia de rentabilidades futuras. Este comparador tem fins meramente informativos e não constitui aconselhamento financeiro.
   </div>
 
 </div>
@@ -1433,8 +1433,11 @@
       if (!json.funds || !Array.isArray(json.funds) || json.funds.length === 0) {
         throw new Error('JSON sem fundos');
       }
+      // Mostrar apenas fundos com histórico diário real. Os CMVM-only
+      // (que apareciam com curva tracejada estimada) são ocultados do
+      // selector — evita sugerir comparações pouco fidedignas.
       FUNDS = json.funds
-        .filter(function (f) { return !f.hidden; })
+        .filter(function (f) { return !f.hidden && f.data_origin === 'historical'; })
         .map(normalizeBackendFund);
       DATA_AS_OF = json.latest_data_date || json.data_as_of || null;
       USING_MOCK = false;
