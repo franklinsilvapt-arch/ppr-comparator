@@ -263,12 +263,10 @@
   letter-spacing: -0.1px;
   color: var(--text-secondary);
   cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
   border-radius: 8px;
   transition: background 0.15s ease, color 0.15s ease;
+  white-space: normal;
+  word-break: break-word;
 }
 #lf-pc-calc .lpc-option:hover,
 #lf-pc-calc .lpc-option.is-highlighted {
@@ -1025,10 +1023,7 @@
     } else {
       dd.innerHTML = matches.map(function (f, i) {
         return '<div class="lpc-option ' + (i === selectorState.highlightIdx ? 'is-highlighted' : '')
-          + '" data-id="' + f.id + '">'
-          + '<span>' + f.name + '</span>'
-          + '<span class="lpc-option-meta">' + (f.manager || '') + '</span>'
-          + '</div>';
+          + '" data-id="' + f.id + '">' + f.name + '</div>';
       }).join('');
       dd.querySelectorAll('.lpc-option').forEach(function (opt) {
         opt.addEventListener('mousedown', function (e) {
