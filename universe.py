@@ -122,7 +122,14 @@ MANUAL_OVERRIDES = [
     # --- Santander ---
     {"match": "santander aforro",              "site_url": "https://www.santander.pt/poupanca-reforma/fundo-aforro-fpr"},
     {"match": "santander poupança prudente",   "site_url": "https://www.santander.pt/poupanca-reforma/poupanca-prudente-fpr"},
-    {"match": "santander poupança valorização","site_url": "https://www.santander.pt/poupanca-reforma/poupanca-valorizacao-fpr"},
+    {"match": "santander poupança valorização","site_url": "https://www.santander.pt/poupanca-reforma/poupanca-valorizacao-fpr",
+     "investing_pair_id": 1185153, "source": "investing"},
+    # --- Optimize Ativo via Investing (FT não indexa) ---
+    {"match": "optimize ppr/oicvm ativo",
+     "investing_pair_id": 1165559, "source": "investing"},
+    # --- GNB Global Equities via Investing ---
+    {"match": "gnb ppr/oicvm global equities",
+     "investing_pair_id": 1239690, "source": "investing"},
     # --- Smart Invest (Banco Invest, 1 URL cobre os 3) ---
     {"match": "smart invest ppr",              "site_url": "https://www.bancoinvest.pt/poupanca-e-investimento/pprs/smart-invest",
      "min_subs": 50},
@@ -209,6 +216,42 @@ for _cat in ("categoria em", "categoria en", "categoria eo"):
         "match": f"oxy capital liquid opportunities a, ppr - {_cat}",
         "hidden": True,
     })
+
+# --- Bankinter per-categoria min_subs ---
+# Classe A: 500€, Classe B: 100.000€, Classe C: 250.000€
+# (Mega TT, 100, 25, 50, 75, Obrigações PPR, Rendimento — todos têm A/B/C)
+_BANKINTER_FAMILIES = [
+    "bankinter mega tt ppr / oicvm",
+    "bankinter 100 ppr / oicvm",
+    "bankinter 25 ppr / oicvm",
+    "bankinter 50 ppr / oicvm",
+    "bankinter 75 ppr / oicvm",
+    "bankinter obrigações ppr / oicvm",
+    "bankinter rendimento ppr / oicvm",
+]
+_BANKINTER_CAT_MIN = {"a": 500, "b": 100000, "c": 250000}
+for _fam in _BANKINTER_FAMILIES:
+    for _cat, _min in _BANKINTER_CAT_MIN.items():
+        MANUAL_OVERRIDES.append({
+            "match": f"{_fam} - categoria {_cat}",
+            "min_subs": _min,
+        })
+
+# --- Caixa Wealth per-categoria min_subs ---
+# A: 125.000€, B: 500.000€, C: 1.000.000€, D: 5.000.000€
+_CAIXA_WEALTH_FAMILIES = [
+    "caixa wealth ações ppr/oicvm",
+    "caixa wealth arrojado ppr/oicvm",
+    "caixa wealth defensivo ppr/oicvm",
+    "caixa wealth moderado ppr/oicvm",
+]
+_CAIXA_WEALTH_MIN = {"a": 125000, "b": 500000, "c": 1000000, "d": 5000000}
+for _fam in _CAIXA_WEALTH_FAMILIES:
+    for _cat, _min in _CAIXA_WEALTH_MIN.items():
+        MANUAL_OVERRIDES.append({
+            "match": f"{_fam} - categoria {_cat}",
+            "min_subs": _min,
+        })
 
 # Save & Grow PPR (Casa de Investimentos) - 2 classes únicas (id explícito).
 MANUAL_OVERRIDES.extend([
