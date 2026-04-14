@@ -32,6 +32,11 @@ GVIZ_URL = (
     "https://docs.google.com/spreadsheets/d/{sheet}/gviz/tq?tqx=out:json&gid=0"
 )
 OXY_CAT_DA_ISIN = "PTOXCUHM0006"
+# O PPR foi constituído em 2022-12-21 e iniciou actividade em 2023-03-02.
+# A série na Google Sheet começa em 2018 (track record da estratégia
+# agregada Oxy public markets), mas só a partir da constituição é que
+# reflecte o PPR propriamente dito. Cortamos aqui.
+OXY_PPR_START = "2022-12-21"
 
 
 def fetch_aggregate_series() -> pd.DataFrame:
@@ -83,6 +88,12 @@ def run(funds: list[dict], already_fetched: set | None = None) -> dict[str, pd.D
     if df.empty:
         print("[oxy] sheet vazia")
         return results
+    # Corta para o PPR, rebaseia a 100 na 1ª cotação pós-constituição
+    df = df[df.index >= pd.Timestamp(OXY_PPR_START)]
+    if df.empty:
+        print("[oxy] sem dados pós-constituição")
+        return results
+    df = df / df.iloc[0] * 100
     for f in targets:
         results[f["id"]] = df
         df.to_csv(DATA_DIR / f"{f['id']}.csv")

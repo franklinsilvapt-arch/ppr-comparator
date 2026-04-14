@@ -182,6 +182,14 @@ for _cat, (_isin, _min, _tec) in _OXY_MAP.items():
         ov["hidden"] = True
     MANUAL_OVERRIDES.append(ov)
 
+# As categorias Oxy EM/EN/EO existem na CMVM mas não no IFI de
+# 11-12-2025 (adicionadas numa revisão posterior?). Também não retail.
+for _cat in ("categoria em", "categoria en", "categoria eo"):
+    MANUAL_OVERRIDES.append({
+        "match": f"oxy capital liquid opportunities a, ppr - {_cat}",
+        "hidden": True,
+    })
+
 # Save & Grow PPR (Casa de Investimentos) - 2 classes únicas (id explícito).
 MANUAL_OVERRIDES.extend([
     {
