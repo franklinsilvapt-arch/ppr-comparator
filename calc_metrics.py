@@ -48,20 +48,27 @@ def calc_returns(prices: pd.Series) -> dict:
     r_3y = cumulative_return(prices, last_date - pd.DateOffset(years=3))
     r_5y = cumulative_return(prices, last_date - pd.DateOffset(years=5))
     r_10y = cumulative_return(prices, last_date - pd.DateOffset(years=10))
-    r_since = (prices.iloc[-1] / prices.iloc[0] - 1) * 100
+
+    first = prices.iloc[0]
+    r_since = (prices.iloc[-1] / first - 1) * 100 if first not in (0, None) and np.isfinite(first) else None
 
     ann = None
-    if r_5y is not None:
+    if r_5y is not None and np.isfinite(r_5y):
         ann = ((1 + r_5y / 100) ** (1 / 5) - 1) * 100
 
+    def _safe(v, dp=2):
+        if v is None or not np.isfinite(v):
+            return None
+        return round(float(v), dp)
+
     return {
-        "ytd": round(ytd, 2) if ytd is not None else None,
-        "1y": round(r_1y, 2) if r_1y is not None else None,
-        "3y": round(r_3y, 2) if r_3y is not None else None,
-        "5y": round(r_5y, 2) if r_5y is not None else None,
-        "10y": round(r_10y, 2) if r_10y is not None else None,
-        "since": round(r_since, 2),
-        "ann": round(ann, 2) if ann is not None else None,
+        "ytd": _safe(ytd),
+        "1y": _safe(r_1y),
+        "3y": _safe(r_3y),
+        "5y": _safe(r_5y),
+        "10y": _safe(r_10y),
+        "since": _safe(r_since),
+        "ann": _safe(ann),
     }
 
 
@@ -99,12 +106,17 @@ def calc_risk(prices: pd.Series, benchmark: pd.Series | None = None) -> dict:
             var_bench = aligned.iloc[:, 1].var()
             beta = cov / var_bench if var_bench > 0 else None
 
+    def _safe(v, dp=2):
+        if v is None or not np.isfinite(v):
+            return None
+        return round(float(v), dp)
+
     return {
-        "vol": round(vol, 2),
-        "sharpe": round(sharpe, 2),
-        "maxDD": round(max_dd, 2),
-        "var95": round(var95, 2),
-        "beta": round(beta, 2) if beta is not None else None,
+        "vol": _safe(vol),
+        "sharpe": _safe(sharpe),
+        "maxDD": _safe(max_dd),
+        "var95": _safe(var95),
+        "beta": _safe(beta),
     }
 
 
@@ -136,13 +148,15 @@ def build_chart_series(prices: pd.Series, period: str) -> dict:
         return {"labels": [], "data": []}
 
     base = window.iloc[0]
+    if not np.isfinite(base) or base == 0:
+        return {"labels": [], "data": []}
     normalized = (window / base - 1) * 100
+    normalized = normalized.replace([np.inf, -np.inf], np.nan).dropna()
 
-    # Downsample para o grafico (max ~250 pontos)
     step = max(1, len(normalized) // 250)
     sampled = normalized.iloc[::step]
 
     return {
         "labels": [d.strftime("%Y-%m-%d") for d in sampled.index],
-        "data": [round(v, 2) for v in sampled.values],
+        "data": [round(float(v), 2) for v in sampled.values],
     }

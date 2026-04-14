@@ -775,7 +775,7 @@
   function renderChart() {
     const canvas = document.getElementById('lf-chart');
     const ctx = canvas.getContext('2d');
-    const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id));
+    const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id)).filter(Boolean);
 
     // line chart - usa série real do backend se existir, senão gera
     // estimativa a partir do retorno cumulativo CMVM.
@@ -919,7 +919,7 @@
   // RENDER - compare table
   // -----------------------------------------------------------
   function renderCompareTable() {
-    const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id));
+    const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id)).filter(Boolean);
     const head = document.getElementById('lf-compare-head');
     const body = document.getElementById('lf-compare-body');
     head.innerHTML = '<th></th>' + selectedFunds.map((f, i) => `
@@ -962,7 +962,7 @@
   // RENDER - risk table
   // -----------------------------------------------------------
   function renderRiskTable() {
-    const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id));
+    const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id)).filter(Boolean);
     const head = document.getElementById('lf-risk-head');
     const body = document.getElementById('lf-risk-body');
     head.innerHTML = '<th></th>' + selectedFunds.map((f, i) => `

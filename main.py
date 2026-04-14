@@ -118,7 +118,12 @@ def main():
     }
 
     DATA_DIR.mkdir(exist_ok=True)
-    OUTPUT.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+    # allow_nan=False garante que Infinity/NaN fazem falhar aqui em vez
+    # de gerar JSON inválido que o browser rejeita.
+    OUTPUT.write_text(
+        json.dumps(output, ensure_ascii=False, indent=2, allow_nan=False),
+        encoding="utf-8",
+    )
     print(f"\n✓ {OUTPUT} escrito ({len(output_funds)} fundos)")
     print(f"  Data dos dados: {output['data_as_of']} (mais antigo) → {output['latest_data_date']} (mais recente)")
 
