@@ -749,8 +749,7 @@
 
   <!-- COMPARE TABLE -->
   <div class="lpc-card">
-    <h3 class="lpc-section-title">Comparação detalhada</h3>
-    <p class="lpc-section-hint">ISIN, TEC, subscrição mínima, classe de risco e rentabilidades dos fundos selecionados.</p>
+    <h3 class="lpc-section-title" style="margin-bottom: 24px;">Comparação detalhada</h3>
     <div class="lpc-table-wrap">
       <table class="lpc-table" id="lpc-compare-table">
         <thead><tr id="lpc-compare-head"></tr></thead>
@@ -761,16 +760,7 @@
 
   <!-- RISK TABLE -->
   <div class="lpc-card">
-    <h3 class="lpc-section-title">Métricas de risco</h3>
-    <p class="lpc-section-hint">
-      <span class="lpc-info-icon">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="6" stroke="#96A0B0" stroke-width="1.33"></circle>
-          <path d="M8 7v4M8 5.5v.01" stroke="#96A0B0" stroke-width="1.4" stroke-linecap="round"></path>
-        </svg>
-      </span>
-      Para investidores que queiram aprofundar. Rentabilidade passada não garante rentabilidade futura.
-    </p>
+    <h3 class="lpc-section-title" style="margin-bottom: 24px;">Métricas de risco</h3>
     <div class="lpc-table-wrap">
       <table class="lpc-table" id="lpc-risk-table">
         <thead><tr id="lpc-risk-head"></tr></thead>
@@ -1298,7 +1288,15 @@
       { label: 'Rentabilidade 1 ano',     render: function (f) { return formatPct(f.returns['1y']); } },
       { label: 'Rentabilidade 3 anos',    render: function (f) { return formatPct(f.returns['3y']); } },
       { label: 'Rentabilidade 5 anos',    render: function (f) { return formatPct(f.returns['5y']); } },
-      { label: 'Retorno anualizado (5a)', render: function (f) { return formatPct(f.returns.ann); } }
+      { label: 'Retorno anualizado',
+        tip: 'CAGR (Compound Annual Growth Rate) calculado sobre todo o histórico disponível. Equivale à taxa anual constante que, aplicada ao capital inicial, produziria o retorno total acumulado desde a primeira cotação até hoje.',
+        render: function (f) {
+          var v = formatPct(f.returns.ann);
+          if (f.returns.ann == null) return v;
+          var yrs = f.returns.ann_years;
+          if (yrs) v += ' <span style="color:#96A0B0;font-weight:500;font-size:11px">(' + yrs.toLocaleString('pt-PT').replace('.', ',') + 'a)</span>';
+          return v;
+        } }
     ];
 
     body.innerHTML = rows.map(function (r) {
@@ -1336,7 +1334,7 @@
         tip: 'Perda máxima esperada num dia, com 95% de confiança.',
         render: function (f) { return fmt(f.risk.var95, '%', 1); } },
       { label: 'Beta',
-        tip: 'Sensibilidade aos movimentos do mercado. 1 = move com o mercado.',
+        tip: 'Sensibilidade do fundo aos movimentos do mercado global de acções, medida contra o MSCI World (ETF URTH em EUR). Beta = 1 significa que o fundo oscila ao mesmo ritmo do mercado; Beta < 1 é menos volátil; Beta > 1 amplifica os movimentos.',
         render: function (f) { return fmt(f.risk.beta, '', 2); } }
     ];
 
@@ -1355,7 +1353,7 @@
       root.querySelectorAll('#lpc-period-tabs .lpc-tab').forEach(function (b) { b.classList.remove('is-active'); });
       btn.classList.add('is-active');
       state.period = btn.dataset.period;
-      renderChart();
+      renderAll();
     });
   });
   root.querySelectorAll('#lpc-mode-tabs .lpc-tab').forEach(function (btn) {
@@ -1363,7 +1361,7 @@
       root.querySelectorAll('#lpc-mode-tabs .lpc-tab').forEach(function (b) { b.classList.remove('is-active'); });
       btn.classList.add('is-active');
       state.mode = btn.dataset.mode;
-      renderChart();
+      renderAll();
     });
   });
 
@@ -1382,16 +1380,9 @@
       var clearBtn = slot.querySelector('.lpc-slot-clear');
 
       input.addEventListener('focus', function () {
-        // se slot preenchido, clicar limpa para poder pesquisar
-        if (state.selected[idx]) {
-          clearSlot(idx);
-          // focus novamente no input (após re-render)
-          setTimeout(function () {
-            var newInput = root.querySelectorAll('.lpc-slot')[idx].querySelector('.lpc-slot-input');
-            newInput.focus();
-          }, 0);
-          return;
-        }
+        // Slot preenchido: não abrir dropdown. Utilizador só pode limpar
+        // via botão × — evita perder a seleção por engano ao clicar.
+        if (state.selected[idx]) return;
         selectorState.activeSlot = idx;
         selectorState.query = '';
         selectorState.highlightIdx = 0;

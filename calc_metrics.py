@@ -52,9 +52,15 @@ def calc_returns(prices: pd.Series) -> dict:
     first = prices.iloc[0]
     r_since = (prices.iloc[-1] / first - 1) * 100 if first not in (0, None) and np.isfinite(first) else None
 
+    # Retorno anualizado desde o início (CAGR sobre o histórico completo).
+    # Usa o número exacto de anos entre a 1ª e a última cotação.
     ann = None
-    if r_5y is not None and np.isfinite(r_5y):
-        ann = ((1 + r_5y / 100) ** (1 / 5) - 1) * 100
+    years_span = None
+    if r_since is not None and np.isfinite(r_since):
+        days = (prices.index[-1] - prices.index[0]).days
+        years_span = days / 365.25
+        if years_span >= 0.5:   # <6 meses não faz sentido anualizar
+            ann = ((1 + r_since / 100) ** (1 / years_span) - 1) * 100
 
     def _safe(v, dp=2):
         if v is None or not np.isfinite(v):
@@ -69,6 +75,7 @@ def calc_returns(prices: pd.Series) -> dict:
         "10y": _safe(r_10y),
         "since": _safe(r_since),
         "ann": _safe(ann),
+        "ann_years": round(years_span, 1) if years_span else None,
     }
 
 
