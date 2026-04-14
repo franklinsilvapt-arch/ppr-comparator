@@ -204,27 +204,48 @@ MANUAL_OVERRIDES.extend([
 # Fundos não listados na CMVM (vêm só do Excel da Golden SGF). O scraper
 # SGF mapeia o nome no Excel → este id via NAME_TO_FUND_ID em
 # scrapers/golden_sgf.py - manter os ids alinhados.
-# ISINs confirmados nos PDFs Doc-Informativo da Golden SGF + cruzamento
-# por data de autorização/início com histórico no Excel da SGF.
-# min_subs das classes Plus/Start do ETF PDF; demais fundos TBC.
+#
+# Todos os dados abaixo são extraídos dos Documentos Informativos
+# disponibilizados em https://goldensgf.pt/dos-fundos/. Datas de
+# referência 2023-2025.
+#   TEC = comissão de gestão fixa + comissão de depósito (0.08% max)
+#   min_subs = subscrição inicial para adesão individual (€1.500)
+#              excepto ETF Plus onde é €10.000.
 EXTRA_FUNDS = [
-    {"id": "sgf-dr-financas",                "name": "SGF DR FINANÇAS",                 "manager": "SGF"},
-    {"id": "golden-sgf-top-gestores",        "name": "Golden SGF TOP GESTORES",         "manager": "Golden SGF"},
-    {"id": "golden-sgf-reforma-conservadora","name": "Golden SGF Reforma Conservadora", "manager": "Golden SGF", "isin": "PTFP00000515"},
-    {"id": "golden-sgf-reforma-equilibrada", "name": "Golden SGF Reforma Equilibrada",  "manager": "Golden SGF", "isin": "PTFP00000507"},
-    {"id": "golden-sgf-reforma-dinamica",    "name": "Golden SGF Reforma Dinâmica",     "manager": "Golden SGF", "isin": "PTFP00000879"},
-    {"id": "golden-sgf-reforma-garantida",   "name": "Golden SGF Reforma Garantida",    "manager": "Golden SGF", "isin": "PTFP00000473"},
-    {"id": "golden-sgf-poupanca-ativa",      "name": "Golden SGF Poupança Ativa",       "manager": "Golden SGF", "isin": "PTFP00000416"},
-    {"id": "golden-sgf-poupanca-conservadora","name": "Golden SGF Poupança Conservadora","manager": "Golden SGF", "isin": "PTFP00000424"},
-    {"id": "golden-sgf-poupanca-equilibrada","name": "Golden SGF Poupança Equilibrada", "manager": "Golden SGF", "isin": "PTFP00000432"},
-    {"id": "golden-sgf-poupanca-dinamica",   "name": "Golden SGF Poupança Dinâmica",    "manager": "Golden SGF", "isin": "PTFP00000382"},
-    {"id": "golden-sgf-poupanca-garantida",  "name": "Golden SGF Poupança Garantida",   "manager": "Golden SGF"},
-    {"id": "golden-sgf-etf-plus",            "name": "Golden SGF ETF Plus",             "manager": "Golden SGF", "isin": "PTFP00000762", "min_subs": 10000, "tec": 0.75},
-    {"id": "golden-sgf-etf-start",           "name": "Golden SGF ETF Start",            "manager": "Golden SGF", "isin": "PTFP00000861", "min_subs": 1500,  "tec": 1.00},
-    {"id": "sgf-stoik",                      "name": "PPR SGF Stoik",                   "manager": "SGF",        "isin": "PTFP00000390"},
-    {"id": "sgf-reforma-stoik",              "name": "SGF Reforma Stoik",               "manager": "SGF"},
-    {"id": "sgf-square-acoes",               "name": "SGF Square Ações",                "manager": "SGF"},
-    {"id": "sgf-deco-proteste",              "name": "SGF PPR DECO PROTESTE",           "manager": "SGF",        "isin": "PTFP00000770"},
+    {"id": "sgf-dr-financas",                "name": "SGF DR FINANÇAS",                 "manager": "SGF",
+     "isin": "PTFP00000465", "min_subs": 1500, "tec": 1.00, "risk_class": 5},
+    {"id": "golden-sgf-top-gestores",        "name": "Golden SGF TOP GESTORES",         "manager": "Golden SGF",
+     "isin": "PTFP00000457", "min_subs": 1500, "tec": 1.58, "risk_class": 4},
+    {"id": "golden-sgf-reforma-conservadora","name": "Golden SGF Reforma Conservadora", "manager": "Golden SGF",
+     "isin": "PTFP00000515", "min_subs": 1500, "tec": 1.58, "risk_class": 3},
+    {"id": "golden-sgf-reforma-equilibrada", "name": "Golden SGF Reforma Equilibrada",  "manager": "Golden SGF",
+     "isin": "PTFP00000507", "min_subs": 1500, "tec": 1.58, "risk_class": 3},
+    {"id": "golden-sgf-reforma-dinamica",    "name": "Golden SGF Reforma Dinâmica",     "manager": "Golden SGF",
+     "isin": "PTFP00000879", "min_subs": 1500, "tec": 1.58, "risk_class": 4},
+    {"id": "golden-sgf-reforma-garantida",   "name": "Golden SGF Reforma Garantida",    "manager": "Golden SGF",
+     "isin": "PTFP00000473", "min_subs": 1500, "tec": 1.08, "risk_class": 3},
+    {"id": "golden-sgf-poupanca-ativa",      "name": "Golden SGF Poupança Ativa",       "manager": "Golden SGF",
+     "isin": "PTFP00000416", "min_subs": 1500, "tec": 2.06, "risk_class": 4},
+    {"id": "golden-sgf-poupanca-conservadora","name": "Golden SGF Poupança Conservadora","manager": "Golden SGF",
+     "isin": "PTFP00000424", "min_subs": 1500, "tec": 1.58, "risk_class": 3},
+    {"id": "golden-sgf-poupanca-equilibrada","name": "Golden SGF Poupança Equilibrada", "manager": "Golden SGF",
+     "isin": "PTFP00000432", "min_subs": 1500, "tec": 1.88, "risk_class": 4},
+    {"id": "golden-sgf-poupanca-dinamica",   "name": "Golden SGF Poupança Dinâmica",    "manager": "Golden SGF",
+     "isin": "PTFP00000382", "min_subs": 1500, "tec": 2.08, "risk_class": 4},
+    {"id": "golden-sgf-poupanca-garantida",  "name": "Golden SGF Poupança Garantida",   "manager": "Golden SGF",
+     "isin": "PTFP00000408", "min_subs": 1500, "tec": 1.58, "risk_class": 3},
+    {"id": "golden-sgf-etf-plus",            "name": "Golden SGF ETF Plus",             "manager": "Golden SGF",
+     "isin": "PTFP00000762", "min_subs": 10000, "tec": 0.83, "risk_class": 4},
+    {"id": "golden-sgf-etf-start",           "name": "Golden SGF ETF Start",            "manager": "Golden SGF",
+     "isin": "PTFP00000861", "min_subs": 1500, "tec": 1.08, "risk_class": 4},
+    {"id": "sgf-stoik",                      "name": "PPR SGF Stoik",                   "manager": "SGF",
+     "isin": "PTFP00000390", "min_subs": 1500, "tec": 1.08, "risk_class": 4},
+    {"id": "sgf-reforma-stoik",              "name": "SGF Reforma Stoik",               "manager": "SGF",
+     "min_subs": 1500},   # IFI não fornecido — TEC/ISIN/risk TBD
+    {"id": "sgf-square-acoes",               "name": "SGF Square Ações",                "manager": "SGF",
+     "min_subs": 1500, "tec": 1.58, "risk_class": 3},  # ISIN não exposto no IFI
+    {"id": "sgf-deco-proteste",              "name": "SGF PPR DECO PROTESTE",           "manager": "SGF",
+     "isin": "PTFP00000770", "min_subs": 1500, "tec": 1.58, "risk_class": 4},
 ]
 
 
@@ -350,7 +371,7 @@ def get_funds() -> list[dict]:
             "source": "golden_sgf",
             "tec": ex.get("tec"),
             "min_subs": ex.get("min_subs"),
-            "risk_class": None,
+            "risk_class": ex.get("risk_class"),
             "cmvm_id": None,
             "cmvm_des_tip": None,
             # SGF são Fundos de Pensões PPR (regulados pela ASF), não
