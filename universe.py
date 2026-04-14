@@ -30,6 +30,7 @@ MANUAL_OVERRIDES = [
         "id": "invest-ar",
         "yahoo_ticker": "0P000011IR.F",
         "isin": "PTYINVIM0007",
+        "min_subs": 50,
         "source": "yahoo",
     },
     # --- Plataforma IMGA (hospeda ABANCA + IMGA) ---
@@ -42,9 +43,18 @@ MANUAL_OVERRIDES = [
     {"match": "imga crescimento ppr",  "site_url": "https://www.imga.pt/fim/ppr/imga-crescimento-pproicvm/"},
     {"match": "imga investimento ppr", "site_url": "https://www.imga.pt/fim/ppr/imga-investimento-pproicvm/"},
     {"match": "imga poupança ppr",     "site_url": "https://www.imga.pt/fim/ppr/imga-poupança-pproicvm/"},
+    # IMGA — ISINs do IFI (março 2026). min_subs e TEC por categoria.
+    {"match": "imga poupança ppr / oicvm - categoria a",
+     "isin": "PTYAIVLM0008", "min_subs": 100, "tec": 1.60, "risk_class": 4},
+    {"match": "imga poupança ppr / oicvm - categoria r",
+     "isin": "PTIG1AHM0006", "min_subs": 200, "tec": 1.60, "risk_class": 4},
+    {"match": "imga crescimento ppr/oicvm - categoria fa",
+     "isin": "PTIGA5HM0003", "min_subs": 100, "tec": 1.75, "risk_class": 5},
+    {"match": "imga crescimento ppr/oicvm - categoria fr",
+     "isin": "PTIGA6HM0002", "min_subs": 200, "tec": 1.75, "risk_class": 5},
     # --- BIZ Capital ---
     {"match": "biz europa valoriza",   "site_url": "https://bizcapital.eu/biz-europa-ppr/",
-     "isin": "PTBZSKHM0003", "min_subs": 100},
+     "isin": "PTBZSKHM0003", "min_subs": 100, "risk_class": 4},
     # --- Bankinter (precisa curl_cffi) ---
     # Mega TT: histórico via FT (ISIN → FT symbol → chartapi).
     {"match": "bankinter mega tt",     "site_url": "https://www.bankinter.pt/fundos/fundo-mega-tt",
@@ -52,7 +62,8 @@ MANUAL_OVERRIDES = [
     {"match": "bankinter 25 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-25"},
     {"match": "bankinter 50 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-50"},
     {"match": "bankinter 75 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-75"},
-    {"match": "bankinter 100 ppr",     "site_url": "https://www.bankinter.pt/fundos/investir-em-fundos"},
+    {"match": "bankinter 100 ppr",     "site_url": "https://www.bankinter.pt/fundos/investir-em-fundos",
+     "risk_class": 6},
     # Bankinter Obrigações — várias famílias partilham ISIN por família
     {"match": "obrigações eur 2027",   "isin": "PTBKCCHM0008"},
     {"match": "obrigações eur 2030",   "isin": "PTBKCKHM0008"},
@@ -62,13 +73,15 @@ MANUAL_OVERRIDES = [
     # --- BlueCrow ---
     {"match": "bluecrow global opportunities", "site_url": "https://www.bluecrowcapital.com/pt/fundos-em-subscricao/global-opportunities-ppr/211/"},
     # --- GNB (ordem: genérico primeiro, específico depois sobrescreve) ---
-    {"match": "gnb ppr/oicvm",                 "site_url": "https://www.gnbga.pt/SF_FichaFundo_FO/codfun/14165990076"},
+    {"match": "gnb ppr/oicvm",                 "site_url": "https://www.gnbga.pt/SF_FichaFundo_FO/codfun/14165990076",
+     "risk_class": 3},
     {"match": "gnb ppr/oicvm global equities", "site_url": "https://www.gnbga.pt/SF_FichaFundo_FO/codfun/14165992247"},
     # --- Optimize ---
-    {"match": "optimize ppr/oicvm agressivo",  "site_url": "https://optimize.pt/ppr/agressivo/"},
-    {"match": "optimize ppr/oicvm ativo",      "site_url": "https://optimize.pt/ppr/ativo/"},
-    {"match": "optimize ppr/oicvm equilibrado","site_url": "https://optimize.pt/ppr/equilibrado/"},
-    {"match": "optimize ppr/oicvm moderado",   "site_url": "https://optimize.pt/ppr/moderado/"},
+    # min_subs = 1 UP ≈ 15€ (valor típico da UP; actualizar quando cotação mudar)
+    {"match": "optimize ppr/oicvm agressivo",  "site_url": "https://optimize.pt/ppr/agressivo/", "min_subs": 15},
+    {"match": "optimize ppr/oicvm ativo",      "site_url": "https://optimize.pt/ppr/ativo/",    "min_subs": 15},
+    {"match": "optimize ppr/oicvm equilibrado","site_url": "https://optimize.pt/ppr/equilibrado/","min_subs": 15},
+    {"match": "optimize ppr/oicvm moderado",   "site_url": "https://optimize.pt/ppr/moderado/", "min_subs": 15},
     # Optimize LFO Leopardo: dados vindos do IFI PDF (hardcoded).
     # Premium=P, Discount=D, Standard=S
     {"match": "optimize lfo ppr/oicvm leopardo - categoria p",
@@ -77,12 +90,18 @@ MANUAL_OVERRIDES = [
      "isin": "PTOPZUHM0009", "min_subs": 10000, "tec": 2.19},
     {"match": "optimize lfo ppr/oicvm leopardo - categoria s",
      "isin": "PTOPZVHM0008", "min_subs": 1000, "tec": 2.47},
-    # --- Sixty Degrees ---
+    # --- Sixty Degrees (min_subs por categoria do prospeto mar/2026) ---
     {"match": "sixty degrees ppr/oicvm flexível",     "site_url": "https://sixty-degrees.com/fund/sixty-degrees-ppr-oicvm-flexivel/"},
+    {"match": "sixty degrees ppr/oicvm flexível - categoria i", "min_subs": 100000, "tec": 1.39, "risk_class": 2},
+    {"match": "sixty degrees ppr/oicvm flexível - categoria r", "min_subs": 1,      "tec": 1.89, "risk_class": 2},
+    {"match": "sixty degrees ppr/oicvm flexível - categoria c", "min_subs": 250,    "tec": 1.89, "risk_class": 2},
     {"match": "sixty degrees ações globais ppr",      "site_url": "https://sixty-degrees.com/fund/sixty-degrees-acoes-globais-ppr-oicvm/"},
     {"match": "sixty degrees medina ppr",             "site_url": "https://sixty-degrees.com/fund/sixty-degrees-medina-ppr-oiavm-flexivel/"},
-    # --- BPI (só URL para Global Equities confirmada; outras páginas não expõem ISIN em HTML) ---
-    {"match": "bpi reforma global equities",   "site_url": "https://www.bancobpi.pt/particulares/poupar-investir/ppr/bpi-reforma-global-equities-ppr/oicvm"},
+    # --- BPI — 4 fundos com ISINs do FT tearsheet ---
+    {"match": "bpi reforma global equities",   "isin": "PTYPIEHM0024"},
+    {"match": "bpi reforma investimento",      "isin": "PTYPIQLM0008"},
+    {"match": "bpi reforma obrigações",        "isin": "PTYPIRLM0007"},
+    {"match": "bpi reforma valorização",       "isin": "PTYPJDLM0002"},
     # --- Caixa / CGD ---
     # ISIN correcto do Caixa ALG é PTCXGUHM0006 (o extractor CGD apanha
     # PTIXAEHM0006 que é outro fundo referenciado na página).
@@ -90,7 +109,7 @@ MANUAL_OVERRIDES = [
      "isin": "PTCXGUHM0006", "min_subs": 100},
     # Caixa Wealth: um ISIN por família (aplica-se a A/B/C/D). ISINs
     # confirmados pelo utilizador via FT tearsheet.
-    {"match": "caixa wealth ações",            "isin": "PTCXGWHM0020"},
+    {"match": "caixa wealth ações",            "isin": "PTCXGWHM0020", "risk_class": 6},
     {"match": "caixa wealth arrojado",         "isin": "PTCXGBHM0017"},
     {"match": "caixa wealth defensivo",        "isin": "PTCXGYHM0028"},
     {"match": "caixa wealth moderado",         "isin": "PTCXGPHM0011"},
@@ -105,7 +124,8 @@ MANUAL_OVERRIDES = [
     {"match": "santander poupança prudente",   "site_url": "https://www.santander.pt/poupanca-reforma/poupanca-prudente-fpr"},
     {"match": "santander poupança valorização","site_url": "https://www.santander.pt/poupanca-reforma/poupanca-valorizacao-fpr"},
     # --- Smart Invest (Banco Invest, 1 URL cobre os 3) ---
-    {"match": "smart invest ppr",              "site_url": "https://www.bancoinvest.pt/poupanca-e-investimento/pprs/smart-invest"},
+    {"match": "smart invest ppr",              "site_url": "https://www.bancoinvest.pt/poupanca-e-investimento/pprs/smart-invest",
+     "min_subs": 50},
     # --- Oxy Capital (1 URL cobre todas as ~52 categorias) ---
     {"match": "oxy capital liquid opportunities","site_url": "https://oxycapital.com/public-markets/"},
     # Oxy per-categoria: ISIN + min_subs + TEC do IFI PDF. Overrides
