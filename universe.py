@@ -32,6 +32,18 @@ MANUAL_OVERRIDES = [
         "isin": "PTYINVIM0007",
         "source": "yahoo",
     },
+    # --- Plataforma IMGA (hospeda ABANCA + IMGA) ---
+    {"match": "ciclo de vida +55",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-plus55/"},
+    {"match": "ciclo de vida -34",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-34/"},
+    {"match": "ciclo de vida 35-44",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-35-44/"},
+    {"match": "ciclo de vida 45-54",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-45-54/"},
+    {"match": "imga crescimento ppr",  "site_url": "https://www.imga.pt/fim/ppr/imga-crescimento-pproicvm/"},
+    {"match": "imga investimento ppr", "site_url": "https://www.imga.pt/fim/ppr/imga-investimento-pproicvm/"},
+    {"match": "imga poupança ppr",     "site_url": "https://www.imga.pt/fim/ppr/imga-poupança-pproicvm/"},
+    # --- BIZ Capital ---
+    {"match": "biz europa valoriza",   "site_url": "https://bizcapital.eu/biz-europa-ppr/"},
+    # --- Bankinter (precisa curl_cffi) ---
+    {"match": "bankinter mega tt",     "site_url": "https://www.bankinter.pt/fundos/fundo-mega-tt"},
     # Save & Grow PPR (Casa de Investimentos) tem 2 classes:
     #   Categoria 01 = Founders (ISIN PTCUUBHM0004, pair 1169681)
     #   Categoria 02 = Prime    (ISIN PTCUUAHM0005, pair 1169680)
@@ -154,16 +166,24 @@ def _from_cmvm_entry(item: dict) -> dict:
 
 
 def _apply_overrides(funds: list[dict]) -> list[dict]:
+    """Aplica overrides. Se `id` está definido, assume override único (1 fundo).
+    Senão aplica a TODOS os fundos cujo nome contém `match` (ex: site_url
+    comum a várias categorias do mesmo fundo)."""
     for ov in MANUAL_OVERRIDES:
         match = ov["match"].lower()
+        unique = bool(ov.get("id"))
+        applied = 0
         for f in funds:
-            if match in f["name"].lower():
-                for k, v in ov.items():
-                    if k == "match":
-                        continue
-                    f[k] = v
+            if match not in f["name"].lower():
+                continue
+            for k, v in ov.items():
+                if k == "match":
+                    continue
+                f[k] = v
+            applied += 1
+            if unique:
                 break
-        else:
+        if applied == 0:
             print(f"[universe] aviso: override sem match: {ov['match']!r}")
     return funds
 

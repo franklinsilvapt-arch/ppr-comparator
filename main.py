@@ -15,7 +15,7 @@ if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
 from universe import get_funds
-from scrapers import yahoo, investing, golden_sgf
+from scrapers import yahoo, investing, golden_sgf, sites
 import calc_metrics
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -38,7 +38,11 @@ def main():
     funds = get_funds()
     print(f"Universo: {len(funds)} fundos")
 
-    # 1. Scrape todas as fontes
+    # 0. Scrape sites das gestoras (min_subs, isin, tec)
+    print("\n== SITES GESTORAS ==")
+    sites.run(funds)
+
+    # 1. Scrape todas as fontes de cotações
     print("\n== YAHOO ==")
     yahoo_data = yahoo.run(funds)
 
