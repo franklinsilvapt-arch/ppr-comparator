@@ -39,11 +39,16 @@ MANUAL_OVERRIDES = [
         "match": "save & grow ppr/oicvm - fundo de investimento mobiliário aberto de ações de poupança reforma - categoria 01",
         "id": "casa-inv-sg-cat01",
         "manager": "Casa de Investimentos",
+        "isin": "PTCUUBHM0004",
+        "investing_url": "https://www.investing.com/funds/ptcuubhm0004",
+        "investing_pair_id": 1169681,
+        "source": "investing",
     },
     {
         "match": "save & grow ppr/oicvm - fundo de investimento mobiliário aberto de ações de poupança reforma - categoria 02",
         "id": "casa-inv-sg-cat02",
         "manager": "Casa de Investimentos",
+        # TODO: descobrir investing_pair_id da Categoria 02 e setar source="investing"
     },
 ]
 
