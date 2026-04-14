@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-14T15:16:36.900477+00:00",
+  "generated_at": "2026-04-14T15:31:49.454767+00:00",
   "data_as_of": "2025-11-06",
   "latest_data_date": "2026-04-13",
   "funds": [
@@ -6461,7 +6461,7 @@
       "manager": "Casa de Investimentos",
       "isin": "PTCUUBHM0004",
       "tec": 1.45,
-      "min_subs": null,
+      "min_subs": 250000,
       "risk_class": 6,
       "source": "investing",
       "cmvm_des_tip": "FUNDOS DE AÇÕES DE FUNDOS POUPANÇA-REFORMA HARMONIZADOS",
@@ -9355,7 +9355,7 @@
       "manager": "Casa de Investimentos",
       "isin": "PTCUUAHM0005",
       "tec": 1.66,
-      "min_subs": null,
+      "min_subs": 1000,
       "risk_class": 6,
       "source": "investing",
       "cmvm_des_tip": "FUNDOS DE AÇÕES DE FUNDOS POUPANÇA-REFORMA HARMONIZADOS",

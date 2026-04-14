@@ -165,6 +165,10 @@ MANUAL_OVERRIDES.extend([
         "name": "Casa de Investimentos Save & Grow PPR — Founders",
         "manager": "Casa de Investimentos",
         "isin": "PTCUUBHM0004",
+        "tec": 1.45,
+        # Founders: €250.000 para novas subscrições (primeiros 2630 investidores
+        # já encerrados em 2021). Valores do IFI Save & Grow (11-02-2026).
+        "min_subs": 250000,
         "investing_url": "https://www.investing.com/funds/ptcuubhm0004",
         "investing_pair_id": 1169681,
         "source": "investing",
@@ -175,6 +179,8 @@ MANUAL_OVERRIDES.extend([
         "name": "Casa de Investimentos Save & Grow PPR — Prime",
         "manager": "Casa de Investimentos",
         "isin": "PTCUUAHM0005",
+        "tec": 1.66,
+        "min_subs": 1000,   # IFI: 1.000 EUR inicial; 100 EUR subsequentes
         "investing_url": "https://www.investing.com/funds/ptcuuahm0005",
         "investing_pair_id": 1169680,
         "source": "investing",
