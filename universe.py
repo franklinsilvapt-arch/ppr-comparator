@@ -43,7 +43,9 @@ MANUAL_OVERRIDES = [
     # --- BIZ Capital ---
     {"match": "biz europa valoriza",   "site_url": "https://bizcapital.eu/biz-europa-ppr/"},
     # --- Bankinter (precisa curl_cffi) ---
-    {"match": "bankinter mega tt",     "site_url": "https://www.bankinter.pt/fundos/fundo-mega-tt"},
+    # Mega TT: histórico via FT (ISIN → FT symbol → chartapi).
+    {"match": "bankinter mega tt",     "site_url": "https://www.bankinter.pt/fundos/fundo-mega-tt",
+     "source": "ft"},
     {"match": "bankinter 25 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-25"},
     {"match": "bankinter 50 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-50"},
     {"match": "bankinter 75 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-75"},
