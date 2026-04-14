@@ -36,7 +36,7 @@ MANUAL_OVERRIDES = [
     #   Categoria 01 = Founders (ISIN PTCUUBHM0004, pair 1169681)
     #   Categoria 02 = Prime    (ISIN PTCUUAHM0005, pair 1169680)
     {
-        "match": "save & grow ppr/oicvm - fundo de investimento mobiliário aberto de ações de poupança reforma - categoria 01",
+        "match": "save & grow ppr/oicvm - categoria 01",
         "id": "casa-inv-sg-founders",
         "name": "Casa de Investimentos Save & Grow PPR — Founders",
         "manager": "Casa de Investimentos",
@@ -46,7 +46,7 @@ MANUAL_OVERRIDES = [
         "source": "investing",
     },
     {
-        "match": "save & grow ppr/oicvm - fundo de investimento mobiliário aberto de ações de poupança reforma - categoria 02",
+        "match": "save & grow ppr/oicvm - categoria 02",
         "id": "casa-inv-sg-prime",
         "name": "Casa de Investimentos Save & Grow PPR — Prime",
         "manager": "Casa de Investimentos",
@@ -87,6 +87,25 @@ def _slug(s: str) -> str:
     return s[:60]
 
 
+# Regex que apanha a descrição técnica usada pela CMVM:
+#   "Fundo de Investimento [Mobiliário] [Alternativo] [Aberto]
+#    [de Ações|Obrigações|Poupança] [Flexível] [de] Poupança-?Reforma"
+# Pode aparecer a meio (precedida de "-" ou ",") ou como prefixo. Remove
+# até encontrar "Poupança Reforma"/"Poupança-Reforma", mas pára em "-"
+# para não cortar a " - Categoria X" a seguir.
+_CMVM_TECH_RE = re.compile(
+    r"[\s,-]*Fundo\s+de\s+Investimento[^-]*?Poupan[çc]a[\s-]?Reforma",
+    re.IGNORECASE,
+)
+
+
+def _clean_name(name: str) -> str:
+    """Remove a descrição técnica CMVM redundante dos nomes dos fundos."""
+    n = _CMVM_TECH_RE.sub(" ", name)
+    n = re.sub(r"\s+", " ", n).strip(" -,")
+    return n or name
+
+
 def _guess_manager(name: str) -> str:
     # CMVM payload não traz NOM_ENT preenchido. Heurística: 1ª palavra
     # ou marca antes de "PPR".
@@ -105,8 +124,9 @@ def _f(s: str | None) -> float | None:
 
 
 def _from_cmvm_entry(item: dict) -> dict:
-    name = item.get("NOM_FUN", "").strip()
-    fund_id = f"{_slug(name)}-{item['Id']}"
+    raw_name = item.get("NOM_FUN", "").strip()
+    name = _clean_name(raw_name)
+    fund_id = f"{_slug(raw_name)}-{item['Id']}"
 
     return {
         "id": fund_id,

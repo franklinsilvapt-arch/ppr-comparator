@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-14T13:13:24.525416+00:00",
+  "generated_at": "2026-04-14T13:53:22.636403+00:00",
   "data_as_of": "2025-11-06",
   "latest_data_date": "2026-04-10",
   "funds": [
     {
       "id": "abanca-ppr-oicvm-ciclo-de-vida-55-fundo-de-investimento-aber-304",
-      "name": "ABANCA PPR/OICVM Ciclo de Vida +55 - Fundo de Investimento Aberto de Poupança Reforma",
+      "name": "ABANCA PPR/OICVM Ciclo de Vida +55",
       "manager": "ABANCA PPR",
       "isin": null,
       "tec": 1.57,
@@ -29,7 +29,7 @@
     },
     {
       "id": "abanca-ppr-oicvm-ciclo-de-vida-34-fundo-de-investimento-aber-301",
-      "name": "ABANCA PPR/OICVM Ciclo de Vida -34 - Fundo de Investimento Aberto de Poupança Reforma",
+      "name": "ABANCA PPR/OICVM Ciclo de Vida -34",
       "manager": "ABANCA PPR",
       "isin": null,
       "tec": 2.23,
@@ -53,7 +53,7 @@
     },
     {
       "id": "abanca-ppr-oicvm-ciclo-de-vida-35-44-fundo-de-investimento-a-302",
-      "name": "ABANCA PPR/OICVM Ciclo de Vida 35-44 - Fundo de Investimento Aberto de Poupança Reforma",
+      "name": "ABANCA PPR/OICVM Ciclo de Vida 35-44",
       "manager": "ABANCA PPR",
       "isin": null,
       "tec": 1.92,
@@ -77,7 +77,7 @@
     },
     {
       "id": "abanca-ppr-oicvm-ciclo-de-vida-45-54-fundo-de-investimento-a-303",
-      "name": "ABANCA PPR/OICVM Ciclo de Vida 45-54 - Fundo de Investimento Aberto de Poupança Reforma",
+      "name": "ABANCA PPR/OICVM Ciclo de Vida 45-54",
       "manager": "ABANCA PPR",
       "isin": null,
       "tec": 1.77,
@@ -101,7 +101,7 @@
     },
     {
       "id": "invest-ar",
-      "name": "ALVES RIBEIRO PPR / OICVM - FUNDO DE INVESTIMENTO MOBILIÁRIO ABERTO DE POUPANÇA REFORMA",
+      "name": "ALVES RIBEIRO PPR / OICVM",
       "manager": "ALVES RIBEIRO PPR",
       "isin": "PTYINVIM0007",
       "tec": 1.59,
@@ -3418,7 +3418,7 @@
     },
     {
       "id": "bankinter-100-ppr-oicvm-fundo-de-investimento-mobiliario-abe-317",
-      "name": "Bankinter 100 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Ações de Poupança Reforma - Categoria A",
+      "name": "Bankinter 100 PPR / OICVM - Categoria A",
       "manager": "Bankinter",
       "isin": null,
       "tec": null,
@@ -3442,7 +3442,7 @@
     },
     {
       "id": "bankinter-100-ppr-oicvm-fundo-de-investimento-mobiliario-abe-318",
-      "name": "Bankinter 100 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Ações de Poupança Reforma - Categoria B",
+      "name": "Bankinter 100 PPR / OICVM - Categoria B",
       "manager": "Bankinter",
       "isin": null,
       "tec": null,
@@ -3466,7 +3466,7 @@
     },
     {
       "id": "bankinter-100-ppr-oicvm-fundo-de-investimento-mobiliario-abe-319",
-      "name": "Bankinter 100 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Ações de Poupança Reforma - Categoria C",
+      "name": "Bankinter 100 PPR / OICVM - Categoria C",
       "manager": "Bankinter",
       "isin": null,
       "tec": null,
@@ -3490,7 +3490,7 @@
     },
     {
       "id": "bankinter-25-ppr-oicvm-fundo-de-investimento-mobiliario-aber-320",
-      "name": "Bankinter 25 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria A",
+      "name": "Bankinter 25 PPR / OICVM - Categoria A",
       "manager": "Bankinter",
       "isin": null,
       "tec": 1.68,
@@ -3514,7 +3514,7 @@
     },
     {
       "id": "bankinter-25-ppr-oicvm-fundo-de-investimento-mobiliario-aber-321",
-      "name": "Bankinter 25 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria B",
+      "name": "Bankinter 25 PPR / OICVM - Categoria B",
       "manager": "Bankinter",
       "isin": null,
       "tec": 1.26,
@@ -3538,7 +3538,7 @@
     },
     {
       "id": "bankinter-25-ppr-oicvm-fundo-de-investimento-mobiliario-aber-322",
-      "name": "Bankinter 25 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria C",
+      "name": "Bankinter 25 PPR / OICVM - Categoria C",
       "manager": "Bankinter",
       "isin": null,
       "tec": 1.1,
@@ -3562,7 +3562,7 @@
     },
     {
       "id": "bankinter-50-ppr-oicvm-fundo-de-investimento-mobiliario-aber-323",
-      "name": "Bankinter 50 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria A",
+      "name": "Bankinter 50 PPR / OICVM - Categoria A",
       "manager": "Bankinter",
       "isin": null,
       "tec": 2.03,
@@ -3586,7 +3586,7 @@
     },
     {
       "id": "bankinter-50-ppr-oicvm-fundo-de-investimento-mobiliario-aber-324",
-      "name": "Bankinter 50 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria B",
+      "name": "Bankinter 50 PPR / OICVM - Categoria B",
       "manager": "Bankinter",
       "isin": null,
       "tec": 1.44,
@@ -3610,7 +3610,7 @@
     },
     {
       "id": "bankinter-50-ppr-oicvm-fundo-de-investimento-mobiliario-aber-325",
-      "name": "Bankinter 50 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria C",
+      "name": "Bankinter 50 PPR / OICVM - Categoria C",
       "manager": "Bankinter",
       "isin": null,
       "tec": 1.3,
@@ -3634,7 +3634,7 @@
     },
     {
       "id": "bankinter-75-ppr-oicvm-fundo-de-investimento-mobiliario-aber-326",
-      "name": "Bankinter 75 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria A",
+      "name": "Bankinter 75 PPR / OICVM - Categoria A",
       "manager": "Bankinter",
       "isin": null,
       "tec": 2.39,
@@ -3658,7 +3658,7 @@
     },
     {
       "id": "bankinter-75-ppr-oicvm-fundo-de-investimento-mobiliario-aber-327",
-      "name": "Bankinter 75 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria B",
+      "name": "Bankinter 75 PPR / OICVM - Categoria B",
       "manager": "Bankinter",
       "isin": null,
       "tec": 1.66,
@@ -3682,7 +3682,7 @@
     },
     {
       "id": "bankinter-75-ppr-oicvm-fundo-de-investimento-mobiliario-aber-328",
-      "name": "Bankinter 75 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria C",
+      "name": "Bankinter 75 PPR / OICVM - Categoria C",
       "manager": "Bankinter",
       "isin": null,
       "tec": 1.56,
@@ -3706,7 +3706,7 @@
     },
     {
       "id": "bankinter-mega-tt-ppr-oicvm-fundo-de-investimento-mobiliario-306",
-      "name": "BANKINTER MEGA TT PPR / OICVM - FUNDO DE INVESTIMENTO MOBILIÁRIO ABERTO DE AÇÕES DE POUPANÇA REFORMA - Categoria A",
+      "name": "BANKINTER MEGA TT PPR / OICVM - Categoria A",
       "manager": "BANKINTER MEGA TT",
       "isin": null,
       "tec": 2.51,
@@ -3730,7 +3730,7 @@
     },
     {
       "id": "bankinter-mega-tt-ppr-oicvm-fundo-de-investimento-mobiliario-307",
-      "name": "BANKINTER MEGA TT PPR / OICVM - FUNDO DE INVESTIMENTO MOBILIÁRIO ABERTO DE AÇÕES DE POUPANÇA REFORMA - Categoria B",
+      "name": "BANKINTER MEGA TT PPR / OICVM - Categoria B",
       "manager": "BANKINTER MEGA TT",
       "isin": null,
       "tec": 1.9,
@@ -3754,7 +3754,7 @@
     },
     {
       "id": "bankinter-mega-tt-ppr-oicvm-fundo-de-investimento-mobiliario-308",
-      "name": "BANKINTER MEGA TT PPR / OICVM - FUNDO DE INVESTIMENTO MOBILIÁRIO ABERTO DE AÇÕES DE POUPANÇA REFORMA - Categoria C",
+      "name": "BANKINTER MEGA TT PPR / OICVM - Categoria C",
       "manager": "BANKINTER MEGA TT",
       "isin": null,
       "tec": 1.99,
@@ -3778,7 +3778,7 @@
     },
     {
       "id": "bankinter-obrigacoes-eur-2027-ppr-oicvm-fundo-de-investiment-309",
-      "name": "Bankinter Obrigações EUR 2027 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Obrigações de Poupança Reforma",
+      "name": "Bankinter Obrigações EUR 2027 PPR / OICVM",
       "manager": "Bankinter Obrigações EUR",
       "isin": null,
       "tec": 0.49,
@@ -3802,7 +3802,7 @@
     },
     {
       "id": "bankinter-obrigacoes-eur-2030-ppr-oicvm-fundo-de-investiment-310",
-      "name": "Bankinter Obrigações EUR 2030 PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Obrigações de Poupança Reforma",
+      "name": "Bankinter Obrigações EUR 2030 PPR / OICVM",
       "manager": "Bankinter Obrigações EUR",
       "isin": null,
       "tec": 0.62,
@@ -3826,7 +3826,7 @@
     },
     {
       "id": "bankinter-obrigacoes-ppr-oicvm-fundo-de-investimento-aberto--311",
-      "name": "Bankinter Obrigações PPR / OICVM - Fundo de Investimento Aberto de Obrigações de Poupança Reforma - Categoria A",
+      "name": "Bankinter Obrigações PPR / OICVM - Categoria A",
       "manager": "Bankinter Obrigações PPR",
       "isin": null,
       "tec": 0.97,
@@ -3850,7 +3850,7 @@
     },
     {
       "id": "bankinter-obrigacoes-ppr-oicvm-fundo-de-investimento-aberto--312",
-      "name": "Bankinter Obrigações PPR / OICVM - Fundo de Investimento Aberto de Obrigações de Poupança Reforma - Categoria B",
+      "name": "Bankinter Obrigações PPR / OICVM - Categoria B",
       "manager": "Bankinter Obrigações PPR",
       "isin": null,
       "tec": 0.64,
@@ -3874,7 +3874,7 @@
     },
     {
       "id": "bankinter-obrigacoes-ppr-oicvm-fundo-de-investimento-aberto--313",
-      "name": "Bankinter Obrigações PPR / OICVM - Fundo de Investimento Aberto de Obrigações de Poupança Reforma - Categoria C",
+      "name": "Bankinter Obrigações PPR / OICVM - Categoria C",
       "manager": "Bankinter Obrigações PPR",
       "isin": null,
       "tec": 0.68,
@@ -3898,7 +3898,7 @@
     },
     {
       "id": "bankinter-rendimento-ppr-oicvm-fundo-de-investimento-mobilia-314",
-      "name": "Bankinter Rendimento PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria A",
+      "name": "Bankinter Rendimento PPR / OICVM - Categoria A",
       "manager": "Bankinter Rendimento PPR",
       "isin": null,
       "tec": 0.65,
@@ -3922,7 +3922,7 @@
     },
     {
       "id": "bankinter-rendimento-ppr-oicvm-fundo-de-investimento-mobilia-315",
-      "name": "Bankinter Rendimento PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria B",
+      "name": "Bankinter Rendimento PPR / OICVM - Categoria B",
       "manager": "Bankinter Rendimento PPR",
       "isin": null,
       "tec": 0.54,
@@ -3946,7 +3946,7 @@
     },
     {
       "id": "bankinter-rendimento-ppr-oicvm-fundo-de-investimento-mobilia-316",
-      "name": "Bankinter Rendimento PPR / OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria C",
+      "name": "Bankinter Rendimento PPR / OICVM - Categoria C",
       "manager": "Bankinter Rendimento PPR",
       "isin": null,
       "tec": 0.47,
@@ -3970,7 +3970,7 @@
     },
     {
       "id": "biz-europa-valorizacao-oiavm-ppr-fundo-de-investimento-alter-329",
-      "name": "BIZ EUROPA VALORIZAÇÃO OIAVM/PPR - FUNDO DE INVESTIMENTO ALTERNATIVO ABERTO DE POUPANÇA REFORMA - Categoria A",
+      "name": "BIZ EUROPA VALORIZAÇÃO OIAVM/PPR - Categoria A",
       "manager": "BIZ EUROPA VALORIZAÇÃO",
       "isin": null,
       "tec": null,
@@ -3994,7 +3994,7 @@
     },
     {
       "id": "bluecrow-global-opportunities-ppr-oia-flexivel-fundo-de-inve-330",
-      "name": "BlueCrow Global Opportunities PPR OIA Flexível - Fundo de Investimento Alternativo Mobiliário Aberto Flexível de Poupança Reforma",
+      "name": "BlueCrow Global Opportunities PPR OIA Flexível",
       "manager": "BlueCrow Global Opportunities",
       "isin": null,
       "tec": 0.02,
@@ -4018,7 +4018,7 @@
     },
     {
       "id": "bpi-reforma-global-equities-ppr-oicvm-fundo-de-investimento--331",
-      "name": "BPI Reforma Global Equities PPR/OICVM Fundo de Investimento Aberto de Ações de Poupança Reforma",
+      "name": "BPI Reforma Global Equities PPR/OICVM",
       "manager": "BPI Reforma Global",
       "isin": null,
       "tec": 2.21,
@@ -4042,7 +4042,7 @@
     },
     {
       "id": "bpi-reforma-investimento-ppr-oicvm-fundo-de-investimento-abe-332",
-      "name": "BPI Reforma Investimento PPR/OICVM Fundo de Investimento Aberto de Poupança Reforma",
+      "name": "BPI Reforma Investimento PPR/OICVM",
       "manager": "BPI Reforma Investimento",
       "isin": null,
       "tec": 1.94,
@@ -4066,7 +4066,7 @@
     },
     {
       "id": "bpi-reforma-obrigacoes-ppr-oicvm-fundo-de-investimento-abert-333",
-      "name": "BPI Reforma Obrigações PPR/OICVM Fundo de Investimento Aberto de Poupança Reforma de Obrigações",
+      "name": "BPI Reforma Obrigações PPR/OICVM de Obrigações",
       "manager": "BPI Reforma Obrigações",
       "isin": null,
       "tec": 1.16,
@@ -4090,7 +4090,7 @@
     },
     {
       "id": "bpi-reforma-valorizacao-ppr-oicvm-fundo-de-investimento-aber-334",
-      "name": "BPI Reforma Valorização PPR/OICVM Fundo de Investimento Aberto de Poupança Reforma",
+      "name": "BPI Reforma Valorização PPR/OICVM",
       "manager": "BPI Reforma Valorização",
       "isin": null,
       "tec": 2.32,
@@ -4114,7 +4114,7 @@
     },
     {
       "id": "caixa-acoes-lideres-globais-ppr-oicvm-fundo-de-investimento--335",
-      "name": "CAIXA AÇÕES LÍDERES GLOBAIS PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Ações de Poupança Reforma",
+      "name": "CAIXA AÇÕES LÍDERES GLOBAIS PPR/OICVM",
       "manager": "CAIXA AÇÕES LÍDERES",
       "isin": null,
       "tec": 1.81,
@@ -4138,7 +4138,7 @@
     },
     {
       "id": "caixa-arrojado-ppr-oicvm-fundo-de-investimento-aberto-de-pou-336",
-      "name": "Caixa Arrojado PPR / OICVM - Fundo de Investimento Aberto de Poupança Reforma",
+      "name": "Caixa Arrojado PPR / OICVM",
       "manager": "Caixa Arrojado PPR",
       "isin": null,
       "tec": 2.02,
@@ -4162,7 +4162,7 @@
     },
     {
       "id": "caixa-defensivo-ppr-oicvm-fundo-de-investimento-aberto-de-po-337",
-      "name": "Caixa Defensivo PPR / OICVM - Fundo de Investimento Aberto de Poupança Reforma",
+      "name": "Caixa Defensivo PPR / OICVM",
       "manager": "Caixa Defensivo PPR",
       "isin": null,
       "tec": 1.13,
@@ -4186,7 +4186,7 @@
     },
     {
       "id": "caixa-moderado-ppr-oicvm-fundo-de-investimento-aberto-de-pou-338",
-      "name": "Caixa Moderado PPR / OICVM - Fundo de Investimento Aberto de Poupança Reforma",
+      "name": "Caixa Moderado PPR / OICVM",
       "manager": "Caixa Moderado PPR",
       "isin": null,
       "tec": 1.48,
@@ -4210,7 +4210,7 @@
     },
     {
       "id": "caixa-wealth-acoes-ppr-oicvm-fundo-de-investimento-mobiliari-339",
-      "name": "CAIXA WEALTH AÇÕES PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Ações de Poupança Reforma - Categoria A",
+      "name": "CAIXA WEALTH AÇÕES PPR/OICVM - Categoria A",
       "manager": "CAIXA WEALTH AÇÕES",
       "isin": null,
       "tec": 1.83,
@@ -4234,7 +4234,7 @@
     },
     {
       "id": "caixa-wealth-acoes-ppr-oicvm-fundo-de-investimento-mobiliari-340",
-      "name": "CAIXA WEALTH AÇÕES PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Ações de Poupança Reforma - Categoria B",
+      "name": "CAIXA WEALTH AÇÕES PPR/OICVM - Categoria B",
       "manager": "CAIXA WEALTH AÇÕES",
       "isin": null,
       "tec": 1.68,
@@ -4258,7 +4258,7 @@
     },
     {
       "id": "caixa-wealth-acoes-ppr-oicvm-fundo-de-investimento-mobiliari-341",
-      "name": "CAIXA WEALTH AÇÕES PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Ações de Poupança Reforma - Categoria C",
+      "name": "CAIXA WEALTH AÇÕES PPR/OICVM - Categoria C",
       "manager": "CAIXA WEALTH AÇÕES",
       "isin": null,
       "tec": 1.47,
@@ -4282,7 +4282,7 @@
     },
     {
       "id": "caixa-wealth-arrojado-ppr-oicvm-fundo-de-investimento-mobili-342",
-      "name": "CAIXA WEALTH ARROJADO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria A",
+      "name": "CAIXA WEALTH ARROJADO PPR/OICVM - Categoria A",
       "manager": "CAIXA WEALTH ARROJADO",
       "isin": null,
       "tec": 2.08,
@@ -4306,7 +4306,7 @@
     },
     {
       "id": "caixa-wealth-arrojado-ppr-oicvm-fundo-de-investimento-mobili-343",
-      "name": "CAIXA WEALTH ARROJADO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria B",
+      "name": "CAIXA WEALTH ARROJADO PPR/OICVM - Categoria B",
       "manager": "CAIXA WEALTH ARROJADO",
       "isin": null,
       "tec": 1.9,
@@ -4330,7 +4330,7 @@
     },
     {
       "id": "caixa-wealth-arrojado-ppr-oicvm-fundo-de-investimento-mobili-344",
-      "name": "CAIXA WEALTH ARROJADO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria C",
+      "name": "CAIXA WEALTH ARROJADO PPR/OICVM - Categoria C",
       "manager": "CAIXA WEALTH ARROJADO",
       "isin": null,
       "tec": 1.52,
@@ -4354,7 +4354,7 @@
     },
     {
       "id": "caixa-wealth-arrojado-ppr-oicvm-fundo-de-investimento-mobili-345",
-      "name": "CAIXA WEALTH ARROJADO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria D",
+      "name": "CAIXA WEALTH ARROJADO PPR/OICVM - Categoria D",
       "manager": "CAIXA WEALTH ARROJADO",
       "isin": null,
       "tec": 1.34,
@@ -4378,7 +4378,7 @@
     },
     {
       "id": "caixa-wealth-defensivo-ppr-oicvm-fundo-de-investimento-mobil-346",
-      "name": "CAIXA WEALTH DEFENSIVO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria A",
+      "name": "CAIXA WEALTH DEFENSIVO PPR/OICVM - Categoria A",
       "manager": "CAIXA WEALTH DEFENSIVO",
       "isin": null,
       "tec": 1.13,
@@ -4402,7 +4402,7 @@
     },
     {
       "id": "caixa-wealth-defensivo-ppr-oicvm-fundo-de-investimento-mobil-347",
-      "name": "CAIXA WEALTH DEFENSIVO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria B",
+      "name": "CAIXA WEALTH DEFENSIVO PPR/OICVM - Categoria B",
       "manager": "CAIXA WEALTH DEFENSIVO",
       "isin": null,
       "tec": 1.02,
@@ -4426,7 +4426,7 @@
     },
     {
       "id": "caixa-wealth-defensivo-ppr-oicvm-fundo-de-investimento-mobil-348",
-      "name": "CAIXA WEALTH DEFENSIVO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria C",
+      "name": "CAIXA WEALTH DEFENSIVO PPR/OICVM - Categoria C",
       "manager": "CAIXA WEALTH DEFENSIVO",
       "isin": null,
       "tec": 0.82,
@@ -4450,7 +4450,7 @@
     },
     {
       "id": "caixa-wealth-defensivo-ppr-oicvm-fundo-de-investimento-mobil-349",
-      "name": "CAIXA WEALTH DEFENSIVO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria D",
+      "name": "CAIXA WEALTH DEFENSIVO PPR/OICVM - Categoria D",
       "manager": "CAIXA WEALTH DEFENSIVO",
       "isin": null,
       "tec": 0.64,
@@ -4474,7 +4474,7 @@
     },
     {
       "id": "caixa-wealth-moderado-ppr-oicvm-fundo-de-investimento-mobili-350",
-      "name": "CAIXA WEALTH MODERADO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria A",
+      "name": "CAIXA WEALTH MODERADO PPR/OICVM - Categoria A",
       "manager": "CAIXA WEALTH MODERADO",
       "isin": null,
       "tec": 1.52,
@@ -4498,7 +4498,7 @@
     },
     {
       "id": "caixa-wealth-moderado-ppr-oicvm-fundo-de-investimento-mobili-351",
-      "name": "CAIXA WEALTH MODERADO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria B",
+      "name": "CAIXA WEALTH MODERADO PPR/OICVM - Categoria B",
       "manager": "CAIXA WEALTH MODERADO",
       "isin": null,
       "tec": 1.4,
@@ -4522,7 +4522,7 @@
     },
     {
       "id": "caixa-wealth-moderado-ppr-oicvm-fundo-de-investimento-mobili-352",
-      "name": "CAIXA WEALTH MODERADO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria C",
+      "name": "CAIXA WEALTH MODERADO PPR/OICVM - Categoria C",
       "manager": "CAIXA WEALTH MODERADO",
       "isin": null,
       "tec": 1.13,
@@ -4546,7 +4546,7 @@
     },
     {
       "id": "caixa-wealth-moderado-ppr-oicvm-fundo-de-investimento-mobili-353",
-      "name": "CAIXA WEALTH MODERADO PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança Reforma - Categoria D",
+      "name": "CAIXA WEALTH MODERADO PPR/OICVM - Categoria D",
       "manager": "CAIXA WEALTH MODERADO",
       "isin": null,
       "tec": 1.01,
@@ -4570,8 +4570,8 @@
     },
     {
       "id": "fundo-de-investimento-alternativo-aberto-de-poupanca-reforma-354",
-      "name": "Fundo de Investimento Alternativo Aberto de Poupança Reforma Santander Poupança Prudente FPR",
-      "manager": "Fundo",
+      "name": "Santander Poupança Prudente FPR",
+      "manager": "Santander Poupança Prudente",
       "isin": null,
       "tec": 1.34,
       "min_subs": null,
@@ -4594,8 +4594,8 @@
     },
     {
       "id": "fundo-de-investimento-alternativo-aberto-de-poupanca-reforma-355",
-      "name": "Fundo de Investimento Alternativo Aberto de Poupança Reforma Santander Poupança Valorização FPR",
-      "manager": "Fundo",
+      "name": "Santander Poupança Valorização FPR",
+      "manager": "Santander Poupança Valorização",
       "isin": null,
       "tec": 1.93,
       "min_subs": null,
@@ -4618,8 +4618,8 @@
     },
     {
       "id": "fundo-de-investimento-mobiliario-aberto-de-obrigacoes-de-pou-356",
-      "name": "Fundo de Investimento Mobiliário Aberto de Obrigações de Poupança Reforma Santander Aforro PPR/OICVM",
-      "manager": "Fundo",
+      "name": "Santander Aforro PPR/OICVM",
+      "manager": "Santander Aforro PPR",
       "isin": null,
       "tec": 0.88,
       "min_subs": null,
@@ -4642,7 +4642,7 @@
     },
     {
       "id": "gnb-ppr-oicvm-fundo-de-investimento-mobiliario-aberto-de-pou-357",
-      "name": "GNB PPR/OICVM - Fundo de Investimento Mobiliário Aberto de Poupança-Reforma",
+      "name": "GNB PPR/OICVM",
       "manager": "GNB PPR",
       "isin": null,
       "tec": 1.25,
@@ -4666,7 +4666,7 @@
     },
     {
       "id": "gnb-ppr-oicvm-global-equities-opportunities-fundo-de-investi-358",
-      "name": "GNB PPR/OICVM Global Equities Opportunities - Fundo de Investimento Aberto de Poupança Reforma de Ações",
+      "name": "GNB PPR/OICVM Global Equities Opportunities de Ações",
       "manager": "GNB PPR",
       "isin": null,
       "tec": null,
@@ -4690,7 +4690,7 @@
     },
     {
       "id": "imga-crescimento-ppr-oicvm-fundo-de-investimento-aberto-de-a-359",
-      "name": "IMGA Crescimento PPR/OICVM - Fundo de Investimento Aberto de Ações de Poupança Reforma - Categoria FA",
+      "name": "IMGA Crescimento PPR/OICVM - Categoria FA",
       "manager": "IMGA Crescimento PPR",
       "isin": null,
       "tec": 1.75,
@@ -4714,7 +4714,7 @@
     },
     {
       "id": "imga-crescimento-ppr-oicvm-fundo-de-investimento-aberto-de-a-360",
-      "name": "IMGA Crescimento PPR/OICVM - Fundo de Investimento Aberto de Ações de Poupança Reforma - Categoria FR",
+      "name": "IMGA Crescimento PPR/OICVM - Categoria FR",
       "manager": "IMGA Crescimento PPR",
       "isin": null,
       "tec": 1.75,
@@ -4738,7 +4738,7 @@
     },
     {
       "id": "imga-investimento-ppr-oicvm-fundo-de-investimento-aberto-de--361",
-      "name": "IMGA Investimento PPR/OICVM - Fundo de Investimento Aberto de Poupança Reforma - Categoria A",
+      "name": "IMGA Investimento PPR/OICVM - Categoria A",
       "manager": "IMGA Investimento PPR",
       "isin": null,
       "tec": 2.09,
@@ -4762,7 +4762,7 @@
     },
     {
       "id": "imga-investimento-ppr-oicvm-fundo-de-investimento-aberto-de--362",
-      "name": "IMGA Investimento PPR/OICVM - Fundo de Investimento Aberto de Poupança Reforma - Categoria R",
+      "name": "IMGA Investimento PPR/OICVM - Categoria R",
       "manager": "IMGA Investimento PPR",
       "isin": null,
       "tec": 2.08,
@@ -4786,7 +4786,7 @@
     },
     {
       "id": "imga-poupanca-ppr-oicvm-fundo-de-investimento-aberto-de-poup-363",
-      "name": "IMGA Poupança PPR / OICVM - Fundo de Investimento Aberto de Poupança Reforma - Categoria A",
+      "name": "IMGA Poupança PPR / OICVM - Categoria A",
       "manager": "IMGA Poupança PPR",
       "isin": null,
       "tec": 1.6,
@@ -4810,7 +4810,7 @@
     },
     {
       "id": "imga-poupanca-ppr-oicvm-fundo-de-investimento-aberto-de-poup-364",
-      "name": "IMGA Poupança PPR / OICVM - Fundo de Investimento Aberto de Poupança Reforma - Categoria R",
+      "name": "IMGA Poupança PPR / OICVM - Categoria R",
       "manager": "IMGA Poupança PPR",
       "isin": null,
       "tec": 1.6,
@@ -4834,7 +4834,7 @@
     },
     {
       "id": "invest-tendencias-globais-ppr-oicvm-fundo-de-investimento-mo-365",
-      "name": "INVEST TENDÊNCIAS GLOBAIS PPR/OICVM - FUNDO DE INVESTIMENTO MOBILIÁRIO ABERTO DE AÇÕES DE POUPANÇA REFORMA",
+      "name": "INVEST TENDÊNCIAS GLOBAIS PPR/OICVM",
       "manager": "INVEST TENDÊNCIAS GLOBAIS",
       "isin": null,
       "tec": 1.6,
@@ -4858,7 +4858,7 @@
     },
     {
       "id": "optimize-lfo-ppr-oicvm-leopardo-fundo-de-investimento-aberto-366",
-      "name": "Optimize LFO PPR/OICVM Leopardo - Fundo de Investimento Aberto de Poupança Reforma - Categoria D",
+      "name": "Optimize LFO PPR/OICVM Leopardo - Categoria D",
       "manager": "Optimize LFO PPR",
       "isin": null,
       "tec": 2.19,
@@ -4882,7 +4882,7 @@
     },
     {
       "id": "optimize-lfo-ppr-oicvm-leopardo-fundo-de-investimento-aberto-367",
-      "name": "Optimize LFO PPR/OICVM Leopardo - Fundo de Investimento Aberto de Poupança Reforma - Categoria P",
+      "name": "Optimize LFO PPR/OICVM Leopardo - Categoria P",
       "manager": "Optimize LFO PPR",
       "isin": null,
       "tec": 1.11,
@@ -4906,7 +4906,7 @@
     },
     {
       "id": "optimize-lfo-ppr-oicvm-leopardo-fundo-de-investimento-aberto-368",
-      "name": "Optimize LFO PPR/OICVM Leopardo - Fundo de Investimento Aberto de Poupança Reforma - Categoria S",
+      "name": "Optimize LFO PPR/OICVM Leopardo - Categoria S",
       "manager": "Optimize LFO PPR",
       "isin": null,
       "tec": 2.47,
@@ -4930,7 +4930,7 @@
     },
     {
       "id": "optimize-ppr-oicvm-agressivo-fundo-de-investimento-aberto-de-369",
-      "name": "OPTIMIZE PPR/OICVM AGRESSIVO - FUNDO DE INVESTIMENTO ABERTO DE POUPANÇA REFORMA",
+      "name": "OPTIMIZE PPR/OICVM AGRESSIVO",
       "manager": "OPTIMIZE PPR",
       "isin": null,
       "tec": 2.04,
@@ -4954,7 +4954,7 @@
     },
     {
       "id": "optimize-ppr-oicvm-ativo-fundo-de-investimento-aberto-de-pou-370",
-      "name": "OPTIMIZE PPR/OICVM ATIVO - FUNDO DE INVESTIMENTO ABERTO DE POUPANÇA REFORMA",
+      "name": "OPTIMIZE PPR/OICVM ATIVO",
       "manager": "OPTIMIZE PPR",
       "isin": null,
       "tec": 2.57,
@@ -4978,7 +4978,7 @@
     },
     {
       "id": "optimize-ppr-oicvm-equilibrado-fundo-de-investimento-aberto--371",
-      "name": "OPTIMIZE PPR/OICVM EQUILIBRADO - FUNDO DE INVESTIMENTO ABERTO DE POUPANÇA REFORMA",
+      "name": "OPTIMIZE PPR/OICVM EQUILIBRADO",
       "manager": "OPTIMIZE PPR",
       "isin": null,
       "tec": 2.36,
@@ -5002,7 +5002,7 @@
     },
     {
       "id": "optimize-ppr-oicvm-moderado-fundo-de-investimento-aberto-de--372",
-      "name": "OPTIMIZE PPR/OICVM MODERADO - FUNDO DE INVESTIMENTO ABERTO DE POUPANÇA REFORMA",
+      "name": "OPTIMIZE PPR/OICVM MODERADO",
       "manager": "OPTIMIZE PPR",
       "isin": null,
       "tec": 1.81,
@@ -5026,7 +5026,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-373",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria AA",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria AA",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.26,
@@ -5050,7 +5050,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-374",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria BA",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria BA",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.86,
@@ -5074,7 +5074,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-375",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria BB",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria BB",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.86,
@@ -5098,7 +5098,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-376",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria BC",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria BC",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.86,
@@ -5122,7 +5122,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-377",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria BD",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria BD",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.86,
@@ -5146,7 +5146,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-378",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria BE",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria BE",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.86,
@@ -5170,7 +5170,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-379",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria BF",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria BF",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.86,
@@ -5194,7 +5194,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-380",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria BG",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria BG",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5218,7 +5218,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-381",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria CA",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria CA",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.26,
@@ -5242,7 +5242,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-382",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria DA",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria DA",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.86,
@@ -5266,7 +5266,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-383",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria DB",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria DB",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5290,7 +5290,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-384",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria DC",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria DC",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5314,7 +5314,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-385",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria DD",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria DD",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5338,7 +5338,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-501",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria DE",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria DE",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5362,7 +5362,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-502",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria DF",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria DF",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5386,7 +5386,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-386",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EA",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EA",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.66,
@@ -5410,7 +5410,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-387",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EB",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EB",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.66,
@@ -5434,7 +5434,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-388",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EC",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EC",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.66,
@@ -5458,7 +5458,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-389",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria ED",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria ED",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.66,
@@ -5482,7 +5482,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-390",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EE",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EE",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 0.66,
@@ -5506,7 +5506,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-391",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EF",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EF",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5530,7 +5530,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-392",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EG",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EG",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5554,7 +5554,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-393",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EH",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EH",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5578,7 +5578,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-394",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EI",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EI",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5602,7 +5602,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-395",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EJ",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EJ",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5626,7 +5626,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-396",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EK",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EK",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5650,7 +5650,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-503",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EL",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EL",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5674,7 +5674,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-504",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria EM",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria EM",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5698,7 +5698,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-397",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FA",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FA",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 1.46,
@@ -5722,7 +5722,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-398",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FB",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FB",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 1.46,
@@ -5746,7 +5746,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-399",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FC",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FC",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 1.46,
@@ -5770,7 +5770,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-400",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FD",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FD",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 1.46,
@@ -5794,7 +5794,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-401",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FE",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FE",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 1.46,
@@ -5818,7 +5818,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-402",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FF",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FF",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 1.46,
@@ -5842,7 +5842,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-403",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FG",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FG",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 1.46,
@@ -5866,7 +5866,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-404",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FH",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FH",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": 1.46,
@@ -5890,7 +5890,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-405",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FI",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FI",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5914,7 +5914,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-406",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FJ",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FJ",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5938,7 +5938,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-407",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FK",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FK",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5962,7 +5962,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-408",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FL",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FL",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -5986,7 +5986,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-409",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FM",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FM",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -6010,7 +6010,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-410",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FN",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FN",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -6034,7 +6034,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-411",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FO",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FO",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -6058,7 +6058,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-505",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FP",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FP",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -6082,7 +6082,7 @@
     },
     {
       "id": "oxy-capital-liquid-opportunities-a-ppr-fundo-de-investimento-506",
-      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - FUNDO DE INVESTIMENTO ALTERNATIVO MOBILIÁRIO ABERTO FLEXÍVEL DE POUPANÇA REFORMA - Categoria FQ",
+      "name": "OXY CAPITAL LIQUID OPPORTUNITIES A, PPR - Categoria FQ",
       "manager": "OXY CAPITAL LIQUID",
       "isin": null,
       "tec": null,
@@ -11982,7 +11982,7 @@
     },
     {
       "id": "sixty-degrees-medina-ppr-oiavm-flexivel-fundo-de-investiment-414",
-      "name": "SIXTY DEGREES MEDINA PPR OIAVM FLEXÍVEL, Fundo de Investimento Alternativo Aberto de Poupança Reforma Flexível - Categoria I",
+      "name": "SIXTY DEGREES MEDINA PPR OIAVM FLEXÍVEL Flexível - Categoria I",
       "manager": "SIXTY DEGREES MEDINA",
       "isin": null,
       "tec": 1.03,
@@ -12006,7 +12006,7 @@
     },
     {
       "id": "sixty-degrees-ppr-oicvm-flexivel-fundo-de-investimento-mobil-415",
-      "name": "SIXTY DEGREES PPR/OICVM Flexível, Fundo de Investimento Mobiliário Aberto Flexível de Poupança Reforma - Categoria C",
+      "name": "SIXTY DEGREES PPR/OICVM Flexível - Categoria C",
       "manager": "SIXTY DEGREES PPR",
       "isin": null,
       "tec": 1.89,
@@ -12030,7 +12030,7 @@
     },
     {
       "id": "sixty-degrees-ppr-oicvm-flexivel-fundo-de-investimento-mobil-416",
-      "name": "SIXTY DEGREES PPR/OICVM Flexível, Fundo de Investimento Mobiliário Aberto Flexível de Poupança Reforma - Categoria I",
+      "name": "SIXTY DEGREES PPR/OICVM Flexível - Categoria I",
       "manager": "SIXTY DEGREES PPR",
       "isin": null,
       "tec": 1.39,
@@ -12054,7 +12054,7 @@
     },
     {
       "id": "sixty-degrees-ppr-oicvm-flexivel-fundo-de-investimento-mobil-417",
-      "name": "SIXTY DEGREES PPR/OICVM Flexível, Fundo de Investimento Mobiliário Aberto Flexível de Poupança Reforma - Categoria R",
+      "name": "SIXTY DEGREES PPR/OICVM Flexível - Categoria R",
       "manager": "SIXTY DEGREES PPR",
       "isin": null,
       "tec": 1.89,

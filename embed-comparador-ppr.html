@@ -722,11 +722,11 @@
   function filterFunds(query) {
     const q = query.trim().toLowerCase();
     const pool = FUNDS.filter(f => !state.selected.includes(f.id));
-    if (!q) return pool.slice(0, 50);
+    if (!q) return pool.slice(0, 300);
     return pool.filter(f =>
       (f.name || '').toLowerCase().includes(q) ||
       (f.manager || '').toLowerCase().includes(q)
-    ).slice(0, 50);
+    ).slice(0, 300);
   }
 
   function renderDropdown() {
