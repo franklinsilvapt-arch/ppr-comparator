@@ -42,8 +42,12 @@ MANUAL_OVERRIDES = [
     {"match": "imga poupança ppr",     "site_url": "https://www.imga.pt/fim/ppr/imga-poupança-pproicvm/"},
     # --- BIZ Capital ---
     {"match": "biz europa valoriza",   "site_url": "https://bizcapital.eu/biz-europa-ppr/"},
-    # --- Bankinter (precisa curl_cffi) — só Mega TT tem URL confirmado ---
+    # --- Bankinter (precisa curl_cffi) ---
     {"match": "bankinter mega tt",     "site_url": "https://www.bankinter.pt/fundos/fundo-mega-tt"},
+    {"match": "bankinter 25 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-25"},
+    {"match": "bankinter 50 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-50"},
+    {"match": "bankinter 75 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-75"},
+    {"match": "bankinter 100 ppr",     "site_url": "https://www.bankinter.pt/fundos/investir-em-fundos"},
     # --- BlueCrow ---
     {"match": "bluecrow global opportunities", "site_url": "https://www.bluecrowcapital.com/pt/fundos-em-subscricao/global-opportunities-ppr/211/"},
     # --- GNB (ordem: genérico primeiro, específico depois sobrescreve) ---
@@ -54,6 +58,14 @@ MANUAL_OVERRIDES = [
     {"match": "optimize ppr/oicvm ativo",      "site_url": "https://optimize.pt/ppr/ativo/"},
     {"match": "optimize ppr/oicvm equilibrado","site_url": "https://optimize.pt/ppr/equilibrado/"},
     {"match": "optimize ppr/oicvm moderado",   "site_url": "https://optimize.pt/ppr/moderado/"},
+    # Optimize LFO Leopardo: dados vindos do IFI PDF (hardcoded).
+    # Premium=P, Discount=D, Standard=S
+    {"match": "optimize lfo ppr/oicvm leopardo - categoria p",
+     "isin": "PTOPZQHM0005", "min_subs": 500000, "tec": 1.11},
+    {"match": "optimize lfo ppr/oicvm leopardo - categoria d",
+     "isin": "PTOPZUHM0009", "min_subs": 10000, "tec": 2.19},
+    {"match": "optimize lfo ppr/oicvm leopardo - categoria s",
+     "isin": "PTOPZVHM0008", "min_subs": 1000, "tec": 2.47},
     # --- Sixty Degrees ---
     {"match": "sixty degrees ppr/oicvm flexível",     "site_url": "https://sixty-degrees.com/fund/sixty-degrees-ppr-oicvm-flexivel/"},
     {"match": "sixty degrees ações globais ppr",      "site_url": "https://sixty-degrees.com/fund/sixty-degrees-acoes-globais-ppr-oicvm/"},
@@ -62,6 +74,17 @@ MANUAL_OVERRIDES = [
     {"match": "bpi reforma global equities",   "site_url": "https://www.bancobpi.pt/particulares/poupar-investir/ppr/bpi-reforma-global-equities-ppr/oicvm"},
     # --- Caixa / CGD ---
     {"match": "caixa ações líderes globais",   "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Pages/CaixaALG_PPR_OICVM.aspx"},
+    # Caixa Wealth IFI PDFs (um ISIN por PDF; aplica-se a todas as categorias
+    # do mesmo sub-fundo - A/B/C/D - com o mesmo ISIN como aproximação, até
+    # existir ISIN diferenciado por categoria).
+    {"match": "caixa wealth ações",            "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Documents/IFI/FII0003641551.PDF"},
+    {"match": "caixa wealth arrojado",         "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Documents/IFI/FII0003641552.pdf"},
+    {"match": "caixa wealth defensivo",        "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Documents/IFI/FII0003642188.pdf"},
+    {"match": "caixa wealth moderado",         "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Documents/IFI/FII0003641550.pdf"},
+    # --- Santander ---
+    {"match": "santander aforro",              "site_url": "https://www.santander.pt/poupanca-reforma/fundo-aforro-fpr"},
+    {"match": "santander poupança prudente",   "site_url": "https://www.santander.pt/poupanca-reforma/poupanca-prudente-fpr"},
+    {"match": "santander poupança valorização","site_url": "https://www.santander.pt/poupanca-reforma/poupanca-valorizacao-fpr"},
     # --- Smart Invest (Banco Invest, 1 URL cobre os 3) ---
     {"match": "smart invest ppr",              "site_url": "https://www.bancoinvest.pt/poupanca-e-investimento/pprs/smart-invest"},
     # --- Oxy Capital (1 URL cobre todas as ~52 categorias) ---
@@ -94,24 +117,27 @@ MANUAL_OVERRIDES = [
 # Fundos não listados na CMVM (vêm só do Excel da Golden SGF). O scraper
 # SGF mapeia o nome no Excel → este id via NAME_TO_FUND_ID em
 # scrapers/golden_sgf.py — manter os ids alinhados.
+# ISINs confirmados nos PDFs Doc-Informativo da Golden SGF + cruzamento
+# por data de autorização/início com histórico no Excel da SGF.
+# min_subs das classes Plus/Start do ETF PDF; demais fundos TBC.
 EXTRA_FUNDS = [
     {"id": "sgf-dr-financas",                "name": "SGF DR FINANÇAS",                 "manager": "SGF"},
     {"id": "golden-sgf-top-gestores",        "name": "Golden SGF TOP GESTORES",         "manager": "Golden SGF"},
-    {"id": "golden-sgf-reforma-conservadora","name": "Golden SGF Reforma Conservadora", "manager": "Golden SGF"},
-    {"id": "golden-sgf-reforma-equilibrada", "name": "Golden SGF Reforma Equilibrada",  "manager": "Golden SGF"},
-    {"id": "golden-sgf-reforma-dinamica",    "name": "Golden SGF Reforma Dinâmica",     "manager": "Golden SGF"},
-    {"id": "golden-sgf-reforma-garantida",   "name": "Golden SGF Reforma Garantida",    "manager": "Golden SGF"},
-    {"id": "golden-sgf-poupanca-ativa",      "name": "Golden SGF Poupança Ativa",       "manager": "Golden SGF"},
-    {"id": "golden-sgf-poupanca-conservadora","name": "Golden SGF Poupança Conservadora","manager": "Golden SGF"},
-    {"id": "golden-sgf-poupanca-equilibrada","name": "Golden SGF Poupança Equilibrada", "manager": "Golden SGF"},
-    {"id": "golden-sgf-poupanca-dinamica",   "name": "Golden SGF Poupança Dinâmica",    "manager": "Golden SGF"},
+    {"id": "golden-sgf-reforma-conservadora","name": "Golden SGF Reforma Conservadora", "manager": "Golden SGF", "isin": "PTFP00000515"},
+    {"id": "golden-sgf-reforma-equilibrada", "name": "Golden SGF Reforma Equilibrada",  "manager": "Golden SGF", "isin": "PTFP00000507"},
+    {"id": "golden-sgf-reforma-dinamica",    "name": "Golden SGF Reforma Dinâmica",     "manager": "Golden SGF", "isin": "PTFP00000879"},
+    {"id": "golden-sgf-reforma-garantida",   "name": "Golden SGF Reforma Garantida",    "manager": "Golden SGF", "isin": "PTFP00000473"},
+    {"id": "golden-sgf-poupanca-ativa",      "name": "Golden SGF Poupança Ativa",       "manager": "Golden SGF", "isin": "PTFP00000416"},
+    {"id": "golden-sgf-poupanca-conservadora","name": "Golden SGF Poupança Conservadora","manager": "Golden SGF", "isin": "PTFP00000424"},
+    {"id": "golden-sgf-poupanca-equilibrada","name": "Golden SGF Poupança Equilibrada", "manager": "Golden SGF", "isin": "PTFP00000432"},
+    {"id": "golden-sgf-poupanca-dinamica",   "name": "Golden SGF Poupança Dinâmica",    "manager": "Golden SGF", "isin": "PTFP00000382"},
     {"id": "golden-sgf-poupanca-garantida",  "name": "Golden SGF Poupança Garantida",   "manager": "Golden SGF"},
-    {"id": "golden-sgf-etf-plus",            "name": "Golden SGF ETF Plus",             "manager": "Golden SGF"},
-    {"id": "golden-sgf-etf-start",           "name": "Golden SGF ETF Start",            "manager": "Golden SGF"},
-    {"id": "sgf-stoik",                      "name": "PPR SGF Stoik",                   "manager": "SGF"},
+    {"id": "golden-sgf-etf-plus",            "name": "Golden SGF ETF Plus",             "manager": "Golden SGF", "isin": "PTFP00000762", "min_subs": 10000, "tec": 0.75},
+    {"id": "golden-sgf-etf-start",           "name": "Golden SGF ETF Start",            "manager": "Golden SGF", "isin": "PTFP00000861", "min_subs": 1500,  "tec": 1.00},
+    {"id": "sgf-stoik",                      "name": "PPR SGF Stoik",                   "manager": "SGF",        "isin": "PTFP00000390"},
     {"id": "sgf-reforma-stoik",              "name": "SGF Reforma Stoik",               "manager": "SGF"},
     {"id": "sgf-square-acoes",               "name": "SGF Square Ações",                "manager": "SGF"},
-    {"id": "sgf-deco-proteste",              "name": "SGF PPR DECO PROTESTE",           "manager": "SGF"},
+    {"id": "sgf-deco-proteste",              "name": "SGF PPR DECO PROTESTE",           "manager": "SGF",        "isin": "PTFP00000770"},
 ]
 
 
@@ -231,12 +257,12 @@ def get_funds() -> list[dict]:
             "id": ex["id"],
             "name": ex["name"],
             "manager": ex["manager"],
-            "isin": None,
+            "isin": ex.get("isin"),
             "yahoo_ticker": None,
             "investing_url": None,
             "source": "golden_sgf",
-            "tec": None,
-            "min_subs": None,
+            "tec": ex.get("tec"),
+            "min_subs": ex.get("min_subs"),
             "risk_class": None,
             "cmvm_id": None,
             "cmvm_des_tip": None,

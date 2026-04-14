@@ -48,6 +48,24 @@ def _num(s: str) -> float | None:
         return None
 
 
+def _get_pdf_text(url: str) -> str | None:
+    """Faz download de um PDF e devolve o texto extraído (pypdf)."""
+    try:
+        import io
+        from pypdf import PdfReader
+        r = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=30)
+        if r.status_code != 200:
+            return None
+        reader = PdfReader(io.BytesIO(r.content))
+        parts = []
+        for page in reader.pages:
+            parts.append(page.extract_text() or "")
+        return unicodedata.normalize("NFC", "\n".join(parts))
+    except Exception as e:
+        print(f"[sites] PDF error {url}: {e}")
+        return None
+
+
 def _get(url: str, use_cffi: bool = False) -> str | None:
     try:
         if use_cffi:
@@ -204,13 +222,89 @@ def extract_sixty(html: str) -> dict:
     return out
 
 
-# --------------------- CGD / Caixa ---------------------
+# --------------------- CGD / Caixa (HTML + IFI PDF) ---------------------
 
-def extract_cgd(html: str) -> dict:
+def extract_cgd(html_text: str) -> dict:
     out: dict = {}
-    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html)
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html_text)
     if m:
         out["isin"] = m.group(1)
+    return out
+
+
+def extract_cgd_pdf(text: str) -> dict:
+    """Parse de IFI PDFs da Caixa Gestão de Activos."""
+    out: dict = {}
+    # ISIN pode aparecer em várias variantes; pega o primeiro PT...
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", text)
+    if m:
+        out["isin"] = m.group(1)
+    # "Subscrição inicial mínima: 1.000 €" ou variantes
+    m = re.search(
+        r"(?i)(?:subscri[çc]ão\s+(?:inicial\s+)?m[ií]nima|m[ií]nimo\s+(?:de\s+)?subscri[çc]ão\s+inicial)"
+        r"[^.\d]{0,80}?([\d.,]+)\s*€",
+        text,
+    )
+    if m:
+        out["min_subs"] = _num(m.group(1))
+    # Taxa de Encargos Correntes
+    m = re.search(
+        r"(?i)(?:Taxa\s+de\s+Encargos\s+Correntes|TEC)[^%]{0,60}?([\d.,]+)\s*%",
+        text,
+    )
+    if m:
+        out["tec"] = _num(m.group(1))
+    return out
+
+
+# --------------------- Santander ---------------------
+
+def extract_santander(html_text: str) -> dict:
+    out: dict = {}
+    m = re.search(r"\b(PT[A-Z0-9]{10})\b", html_text)
+    if m:
+        out["isin"] = m.group(1)
+    m = re.search(
+        r"(?i)(?:subscri[çc]ão\s+(?:inicial\s+)?m[ií]nima|valor\s+m[ií]nimo)"
+        r"[^.\d<]{0,80}?([\d.,]+)\s*€",
+        html_text,
+    )
+    if m:
+        out["min_subs"] = _num(m.group(1))
+    return out
+
+
+# --------------------- Golden SGF (HTML index + IFI PDFs) ---------------------
+
+def extract_sgf_pdf(text: str) -> dict:
+    """Parse de documentos informativos da Golden SGF.
+
+    Um único PDF pode ter 2 ISINs (ex: Classe Plus e Classe Start).
+    Devolvemos em out['isins'] quando detectamos múltiplos, para que o
+    caller saiba fazer split por classe.
+    """
+    out: dict = {}
+    # Captura todos os ISINs no formato PTFP + 8 dígitos/letras
+    isins = list(set(re.findall(r"\b(PT(?:FP|[A-Z]{2})[A-Z0-9]{8})\b", text)))
+    if isins:
+        out["isins"] = isins
+        if len(isins) == 1:
+            out["isin"] = isins[0]
+    # Subscrição mínima mais baixa encontrada (normalmente a de "subscrições
+    # posteriores" ou a Classe Start é menor)
+    vals = []
+    for m in re.finditer(
+        r"(?i)m[ií]nimo\s+de\s+([\d.,]+)\s*€|([\d.,]+)\s*€\s*\(cinco euros\)"
+        r"|valor\s+m[ií]nimo\s+(?:ser[áa]|de)\s+([\d.,]+)\s*€",
+        text,
+    ):
+        for g in m.groups():
+            if g:
+                v = _num(g)
+                if v:
+                    vals.append(v)
+    if vals:
+        out["min_subs"] = min(vals)
     return out
 
 
@@ -247,11 +341,33 @@ EXTRACTORS = {
     "cgd.pt":                (extract_cgd, False),
     "bancobpi.pt":           (extract_bpi, False),
     "bancoinvest.pt":        (extract_banco_invest, False),
+    "santander.pt":          (extract_santander, False),
+    "goldensgf.pt":          (extract_sgf_pdf, False),    # URL pode ser .pdf ou página
+}
+
+# Extractors dedicados a PDFs (quando url termina em .pdf explicitamente).
+PDF_EXTRACTORS = {
+    "cgd.pt":          extract_cgd_pdf,
+    "goldensgf.pt":    extract_sgf_pdf,
 }
 
 
 def extract_from_url(url: str) -> dict:
     host = urlparse(url).netloc.lower().lstrip("www.")
+    is_pdf = url.lower().endswith(".pdf")
+    # Escolher extractor: PDF tem prioridade se aplicável
+    if is_pdf:
+        for domain, fn in PDF_EXTRACTORS.items():
+            if domain in host:
+                text = _get_pdf_text(url)
+                if not text:
+                    return {"_error": "pdf fetch failed"}
+                try:
+                    return fn(text)
+                except Exception as e:
+                    return {"_error": str(e)}
+        return {"_error": f"no PDF extractor for {host}"}
+
     for domain, (fn, cffi) in EXTRACTORS.items():
         if domain in host:
             html = _get(url, use_cffi=cffi)
