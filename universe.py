@@ -32,12 +32,13 @@ MANUAL_OVERRIDES = [
         "isin": "PTYINVIM0007",
         "source": "yahoo",
     },
-    # Save & Grow tem 2 classes na CMVM (Categoria 01 e 02). Mantemos as
-    # duas separadas; ids estáveis usam o CMVM Id no sufixo.
-    # TODO: confirmar mapping Categoria 01/02 ↔ Founders/Prime e renomear.
+    # Save & Grow PPR (Casa de Investimentos) tem 2 classes:
+    #   Categoria 01 = Founders (ISIN PTCUUBHM0004, pair 1169681)
+    #   Categoria 02 = Prime    (ISIN PTCUUAHM0005, pair 1169680)
     {
         "match": "save & grow ppr/oicvm - fundo de investimento mobiliário aberto de ações de poupança reforma - categoria 01",
-        "id": "casa-inv-sg-cat01",
+        "id": "casa-inv-sg-founders",
+        "name": "Casa de Investimentos Save & Grow PPR — Founders",
         "manager": "Casa de Investimentos",
         "isin": "PTCUUBHM0004",
         "investing_url": "https://www.investing.com/funds/ptcuubhm0004",
@@ -46,9 +47,13 @@ MANUAL_OVERRIDES = [
     },
     {
         "match": "save & grow ppr/oicvm - fundo de investimento mobiliário aberto de ações de poupança reforma - categoria 02",
-        "id": "casa-inv-sg-cat02",
+        "id": "casa-inv-sg-prime",
+        "name": "Casa de Investimentos Save & Grow PPR — Prime",
         "manager": "Casa de Investimentos",
-        # TODO: descobrir investing_pair_id da Categoria 02 e setar source="investing"
+        "isin": "PTCUUAHM0005",
+        "investing_url": "https://www.investing.com/funds/ptcuuahm0005",
+        "investing_pair_id": 1169680,
+        "source": "investing",
     },
 ]
 

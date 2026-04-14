@@ -1055,7 +1055,9 @@
   // -----------------------------------------------------------
   async function loadData() {
     try {
-      const res = await fetch(DATA_URL, { cache: 'no-cache' });
+      const bust = Math.floor(Date.now() / (5 * 60 * 1000));  // 5min bucket
+      const url = DATA_URL + (DATA_URL.includes('?') ? '&' : '?') + 'v=' + bust;
+      const res = await fetch(url, { cache: 'no-store' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const json = await res.json();
       if (!json.funds || !Array.isArray(json.funds) || json.funds.length === 0) {
