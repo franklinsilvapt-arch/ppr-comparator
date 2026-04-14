@@ -6,9 +6,13 @@ Orchestrator principal. Corre:
 4. Escreve data/latest.json para consumo do embed Webflow
 """
 import json
+import sys
 import pandas as pd
 from datetime import datetime, timezone
 from pathlib import Path
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
 
 from universe import get_funds
 from scrapers import yahoo, investing, golden_sgf
@@ -57,26 +61,7 @@ def main():
 
     for f in funds:
         fid = f["id"]
-        if fid not in all_prices:
-            print(f"  skip {fid} (sem dados)")
-            continue
-
-        prices = all_prices[fid]["Close"] if "Close" in all_prices[fid].columns else all_prices[fid].iloc[:, 0]
-        prices = prices.dropna().sort_index()
-        if prices.empty:
-            continue
-
-        latest_dates.append(prices.index[-1])
-
-        returns = calc_metrics.calc_returns(prices)
-        risk = calc_metrics.calc_risk(prices, benchmark)
-
-        series = {
-            p: calc_metrics.build_chart_series(prices, p)
-            for p in ["ytd", "1y", "3y", "5y"]
-        }
-
-        output_funds.append({
+        entry = {
             "id": fid,
             "name": f["name"],
             "manager": f["manager"],
@@ -84,11 +69,43 @@ def main():
             "tec": f.get("tec"),
             "min_subs": f.get("min_subs"),
             "risk_class": f.get("risk_class"),
-            "returns": returns,
-            "risk": risk,
-            "series": series,
-            "last_price_date": prices.index[-1].strftime("%Y-%m-%d"),
-        })
+            "source": f.get("source"),
+            "cmvm_des_tip": f.get("cmvm_des_tip"),
+        }
+
+        if fid in all_prices:
+            prices = all_prices[fid]["Close"] if "Close" in all_prices[fid].columns else all_prices[fid].iloc[:, 0]
+            prices = prices.dropna().sort_index()
+            if not prices.empty:
+                latest_dates.append(prices.index[-1])
+                entry["returns"] = calc_metrics.calc_returns(prices)
+                entry["risk"] = calc_metrics.calc_risk(prices, benchmark)
+                entry["series"] = {
+                    p: calc_metrics.build_chart_series(prices, p)
+                    for p in ["ytd", "1y", "3y", "5y"]
+                }
+                entry["last_price_date"] = prices.index[-1].strftime("%Y-%m-%d")
+                entry["data_origin"] = "historical"
+                output_funds.append(entry)
+                continue
+
+        # Fallback: usar métricas pré-calculadas pela CMVM
+        m = f.get("cmvm_metrics")
+        if m and any(v is not None for v in m.values()):
+            entry["returns"] = {
+                "ytd": m.get("ytd"),
+                "1y": m.get("1y"),
+                "3y": m.get("3y"),
+                "5y": m.get("5y"),
+                "ann": None,
+            }
+            entry["risk"] = {}
+            entry["series"] = {}
+            entry["last_price_date"] = None
+            entry["data_origin"] = "cmvm"
+            output_funds.append(entry)
+        else:
+            print(f"  skip {fid} (sem dados)")
 
     # 4. Escrever JSON
     output = {
@@ -99,7 +116,7 @@ def main():
     }
 
     DATA_DIR.mkdir(exist_ok=True)
-    OUTPUT.write_text(json.dumps(output, ensure_ascii=False, indent=2))
+    OUTPUT.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n✓ {OUTPUT} escrito ({len(output_funds)} fundos)")
     print(f"  Data dos dados: {output['data_as_of']} (mais antigo) → {output['latest_data_date']} (mais recente)")
 

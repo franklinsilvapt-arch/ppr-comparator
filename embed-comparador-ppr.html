@@ -407,6 +407,7 @@
     <div class="lf-chart-wrap">
       <canvas id="lf-chart"></canvas>
     </div>
+    <div id="lf-chart-note" style="font-size:12px;color:#8a93a6;margin-top:8px;text-align:center;"></div>
     <div class="lf-returns-strip" id="lf-returns-strip"></div>
   </div>
 </div>
@@ -535,11 +536,16 @@
       riskClass: f.risk_class,
       returns: f.returns || {},
       risk: f.risk || {},
+      dataOrigin: f.data_origin || 'historical',
       // series é opcional; se vier do backend usamos, senão geramos mock
       _backendSeries: f.series || null,
       _lastDate: f.last_price_date || null
     };
   }
+
+  const NA = '<span style="color:#8a93a6">—</span>';
+  const fmt = (v, suf = '', dp = 2) =>
+    v == null || Number.isNaN(v) ? NA : v.toFixed(dp) + suf;
 
   function updateBadge() {
     const badge = document.getElementById('lf-updated');
@@ -657,25 +663,18 @@
         maxBarThickness: 60
       }];
     } else {
-      // line chart
-      const seriesList = selectedFunds.map(f => {
-        if (f._backendSeries && f._backendSeries[state.period] && f._backendSeries[state.period].data && f._backendSeries[state.period].data.length) {
-          return {
-            labels: f._backendSeries[state.period].labels,
-            data: f._backendSeries[state.period].data,
-            _alreadyNormalized: true  // backend já devolve em % desde base
-          };
-        }
-        const s = generateSeries(f, state.period);
-        s._alreadyNormalized = false;
-        return s;
-      });
-      labels = seriesList[0] ? seriesList[0].labels : [];
-      datasets = selectedFunds.map((f, i) => ({
+      // line chart - apenas fundos com série histórica (do backend)
+      const charted = selectedFunds
+        .map((f, i) => ({ f, i }))
+        .filter(({ f }) => {
+          const s = f._backendSeries && f._backendSeries[state.period];
+          return s && s.data && s.data.length;
+        });
+
+      labels = charted.length ? charted[0].f._backendSeries[state.period].labels : [];
+      datasets = charted.map(({ f, i }) => ({
         label: f.name,
-        data: seriesList[i]._alreadyNormalized
-          ? seriesList[i].data.map(v => +v.toFixed(2))
-          : seriesList[i].data.map(v => +(v - 100).toFixed(2)),
+        data: f._backendSeries[state.period].data.map(v => +v.toFixed(2)),
         borderColor: SERIES_COLORS[i],
         backgroundColor: SERIES_COLORS[i] + '15',
         borderWidth: 2,
@@ -684,6 +683,14 @@
         tension: 0.1,
         fill: false
       }));
+
+      const missing = selectedFunds.filter(f => !charted.find(c => c.f.id === f.id));
+      const noteEl = document.getElementById('lf-chart-note');
+      if (noteEl) {
+        noteEl.textContent = missing.length
+          ? `Sem histórico para: ${missing.map(f => f.name).join(', ')} (apenas métricas CMVM disponíveis)`
+          : '';
+      }
     }
 
     if (chart) chart.destroy();
@@ -765,9 +772,12 @@
       const val = f.returns[state.period];
       const cell = document.createElement('div');
       cell.className = 'lf-return-cell';
+      const valHtml = (val == null || Number.isNaN(val))
+        ? '<span style="color:#8a93a6">—</span>'
+        : `<span class="${val >= 0 ? 'pos' : 'neg'}">${val >= 0 ? '+' : ''}${val.toFixed(1)}%</span>`;
       cell.innerHTML = `
         <div class="lf-fund-name"><span class="lf-swatch" style="background:${SERIES_COLORS[i]}"></span>${f.name}</div>
-        <div class="lf-return-value ${val >= 0 ? 'pos' : 'neg'}">${val >= 0 ? '+' : ''}${val.toFixed(1)}%</div>
+        <div class="lf-return-value">${valHtml}</div>
       `;
       strip.appendChild(cell);
     });
@@ -788,10 +798,11 @@
     `).join('');
 
     const rows = [
-      { label: 'ISIN', render: f => f.isin },
-      { label: 'TEC (custo anual)', render: f => f.tec.toFixed(2) + '%' },
-      { label: 'Subscrição mínima', render: f => '€' + f.minSubs },
+      { label: 'ISIN', render: f => f.isin || NA },
+      { label: 'TEC (custo anual)', render: f => fmt(f.tec, '%') },
+      { label: 'Subscrição mínima', render: f => f.minSubs == null ? NA : '€' + f.minSubs },
       { label: 'Classe de risco', render: f => {
+        if (f.riskClass == null) return NA;
         const cls = f.riskClass >= 5 ? 'r-high' : f.riskClass >= 3 ? 'r-mid' : '';
         return `<span class="lf-risk-pill ${cls}">${f.riskClass} / 7</span>`;
       }},
@@ -810,7 +821,7 @@
   }
 
   function formatPct(v) {
-    const cls = v >= 0 ? 'pos' : 'neg';
+    if (v == null || Number.isNaN(v)) return NA;
     const color = v >= 0 ? '#2f7d4f' : '#c24a4a';
     return `<span style="color:${color};font-weight:500">${v >= 0 ? '+' : ''}${v.toFixed(1)}%</span>`;
   }
@@ -835,11 +846,11 @@
     const tipBeta = 'Sensibilidade aos movimentos do mercado. 1 = move com o mercado.';
 
     const rows = [
-      { label: `Volatilidade anual`, tip: tipVol, render: f => f.risk.vol.toFixed(1) + '%' },
-      { label: `Sharpe Ratio`, tip: tipSharpe, render: f => f.risk.sharpe.toFixed(2) },
-      { label: `Drawdown máximo`, tip: tipDD, render: f => `<span style="color:#c24a4a">${f.risk.maxDD.toFixed(1)}%</span>` },
-      { label: `VaR diário (95%)`, tip: tipVar, render: f => f.risk.var95.toFixed(1) + '%' },
-      { label: `Beta`, tip: tipBeta, render: f => f.risk.beta.toFixed(2) }
+      { label: `Volatilidade anual`, tip: tipVol, render: f => fmt(f.risk.vol, '%', 1) },
+      { label: `Sharpe Ratio`, tip: tipSharpe, render: f => fmt(f.risk.sharpe, '', 2) },
+      { label: `Drawdown máximo`, tip: tipDD, render: f => f.risk.maxDD == null ? NA : `<span style="color:#c24a4a">${f.risk.maxDD.toFixed(1)}%</span>` },
+      { label: `VaR diário (95%)`, tip: tipVar, render: f => fmt(f.risk.var95, '%', 1) },
+      { label: `Beta`, tip: tipBeta, render: f => fmt(f.risk.beta, '', 2) }
     ];
 
     body.innerHTML = rows.map(r => `
