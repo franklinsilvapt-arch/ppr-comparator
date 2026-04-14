@@ -141,6 +141,7 @@ def _from_cmvm_entry(item: dict) -> dict:
         "risk_class": item.get("PPRRiskClassId") or None,
         "cmvm_id": item.get("Id"),
         "cmvm_des_tip": item.get("DES_TIP"),
+        "fund_type": "FI-PPR",  # Fundo de Investimento PPR, regulado pela CMVM
         "cmvm_metrics": {
             "ytd": _f(item.get("REND_YTD")) if item.get("HAS_REND_YTD") else None,
             "1y": _f(item.get("REND_1Y")) if item.get("HAS_REND_1Y") else None,
@@ -197,12 +198,56 @@ def get_funds() -> list[dict]:
             "risk_class": None,
             "cmvm_id": None,
             "cmvm_des_tip": None,
+            # SGF são Fundos de Pensões PPR (regulados pela ASF), não
+            # Fundos de Investimento PPR. Incluídos pela procura elevada.
+            "fund_type": "FP-PPR",
             "cmvm_metrics": None,
         })
 
     funds = _apply_overrides(funds)
+    _apply_xlsx_overrides(funds)
     _cache = funds
     return funds
+
+
+def _apply_xlsx_overrides(funds: list[dict]) -> None:
+    """Lê data/overrides.xlsx (se existir) e aplica override_* aos fundos."""
+    xlsx = Path(__file__).parent / "data" / "overrides.xlsx"
+    if not xlsx.exists():
+        return
+    try:
+        import pandas as pd
+    except ImportError:
+        print("[universe] pandas não disponível — overrides.xlsx ignorado")
+        return
+    try:
+        df = pd.read_excel(xlsx, sheet_name="Overrides")
+    except Exception as e:
+        print(f"[universe] overrides.xlsx não pôde ser lido: {e}")
+        return
+
+    by_id = {f["id"]: f for f in funds}
+    applied = 0
+    for _, row in df.iterrows():
+        fid = row.get("id")
+        f = by_id.get(fid)
+        if not f:
+            continue
+        mapping = {
+            "override_isin": "isin",
+            "override_min_subs": "min_subs",
+            "override_tec": "tec",
+            "override_manager": "manager",
+            "prospectus_url": "prospectus_url",
+            "notes": "notes",
+        }
+        for src, dst in mapping.items():
+            v = row.get(src)
+            if pd.notna(v) and v not in ("", None):
+                f[dst] = float(v) if dst in ("tec", "min_subs") else v
+                applied += 1
+    if applied:
+        print(f"[universe] overrides.xlsx: {applied} campos aplicados")
 
 
 def get_fund(fund_id: str) -> dict | None:

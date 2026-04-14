@@ -71,6 +71,9 @@ def main():
             "risk_class": f.get("risk_class"),
             "source": f.get("source"),
             "cmvm_des_tip": f.get("cmvm_des_tip"),
+            "fund_type": f.get("fund_type"),
+            "prospectus_url": f.get("prospectus_url"),
+            "notes": f.get("notes"),
         }
 
         if fid in all_prices:
