@@ -1,0 +1,908 @@
+<!-- =========================================================
+     COMPARADOR DE PPR - Embed para LiteraciaFinanceira.pt
+     Single-file: colar num bloco Embed ou HTML Custom Code
+     Dependencia: Chart.js via CDN (carregado inline)
+     ========================================================= -->
+<div id="lf-ppr-comparator">
+
+<style>
+  /* ---------- Reset/scope ---------- */
+  #lf-ppr-comparator, #lf-ppr-comparator *, #lf-ppr-comparator *::before, #lf-ppr-comparator *::after {
+    box-sizing: border-box;
+  }
+  #lf-ppr-comparator {
+    --lf-bg: #ffffff;
+    --lf-surface: #f7f8fa;
+    --lf-border: #e6e8ec;
+    --lf-text: #0f1729;
+    --lf-text-muted: #5b6478;
+    --lf-text-soft: #8a93a6;
+    --lf-primary: #0f1729;
+    --lf-accent: #2f7d4f;      /* verde literaciafinanceira */
+    --lf-accent-soft: #e8f3ec;
+    --lf-danger: #c24a4a;
+    --lf-radius: 14px;
+    --lf-radius-sm: 8px;
+    --lf-shadow: 0 1px 2px rgba(15,23,41,.04), 0 8px 24px rgba(15,23,41,.06);
+    --lf-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    /* paleta para series do grafico */
+    --s1: #2f7d4f;
+    --s2: #3b6bd9;
+    --s3: #c4891f;
+    --s4: #8e44ad;
+    --s5: #c24a4a;
+    --s6: #0d9488;
+
+    font-family: var(--lf-font-sans);
+    color: var(--lf-text);
+    background: var(--lf-bg);
+    line-height: 1.5;
+    font-size: 15px;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 8px 0 40px;
+  }
+
+  #lf-ppr-comparator h1, #lf-ppr-comparator h2, #lf-ppr-comparator h3, #lf-ppr-comparator h4 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--lf-text);
+    letter-spacing: -0.01em;
+  }
+  #lf-ppr-comparator p { margin: 0; }
+
+  /* ---------- Header ---------- */
+  .lf-header {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--lf-border);
+    margin-bottom: 24px;
+  }
+  .lf-header h2 {
+    font-size: 24px;
+    line-height: 1.25;
+  }
+  .lf-header .lf-sub {
+    color: var(--lf-text-muted);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .lf-updated {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--lf-accent-soft);
+    color: var(--lf-accent);
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+  }
+  .lf-updated-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--lf-accent);
+    box-shadow: 0 0 0 3px rgba(47,125,79,0.18);
+  }
+  .lf-updated.stale { background: #fff4e0; color: #b57807; }
+  .lf-updated.stale .lf-updated-dot { background: #b57807; box-shadow: 0 0 0 3px rgba(181,120,7,0.18); }
+
+  /* ---------- Selector ---------- */
+  .lf-selector {
+    background: var(--lf-surface);
+    border: 1px solid var(--lf-border);
+    border-radius: var(--lf-radius);
+    padding: 18px;
+    margin: 0 20px 24px;
+  }
+  .lf-selector-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .lf-selector-head h3 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--lf-text-muted);
+  }
+  .lf-counter {
+    font-size: 13px;
+    color: var(--lf-text-muted);
+  }
+  .lf-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .lf-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #fff;
+    border: 1px solid var(--lf-border);
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--lf-text);
+    cursor: pointer;
+    transition: all .15s ease;
+    user-select: none;
+  }
+  .lf-chip:hover { border-color: #c9cedb; }
+  .lf-chip.active {
+    background: var(--lf-primary);
+    color: #fff;
+    border-color: var(--lf-primary);
+  }
+  .lf-chip .lf-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lf-text-soft);
+  }
+  .lf-chip.active .lf-dot { background: #fff; }
+  .lf-chip.disabled {
+    opacity: .45;
+    cursor: not-allowed;
+  }
+
+  /* ---------- Chart section ---------- */
+  .lf-chart-section {
+    padding: 0 20px;
+    margin-bottom: 28px;
+  }
+  .lf-chart-card {
+    background: #fff;
+    border: 1px solid var(--lf-border);
+    border-radius: var(--lf-radius);
+    padding: 20px;
+    box-shadow: var(--lf-shadow);
+  }
+  .lf-chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .lf-chart-head h3 { font-size: 17px; }
+  .lf-period-tabs {
+    display: inline-flex;
+    background: var(--lf-surface);
+    border: 1px solid var(--lf-border);
+    border-radius: 10px;
+    padding: 3px;
+    gap: 2px;
+  }
+  .lf-period-tab {
+    border: none;
+    background: transparent;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+    color: var(--lf-text-muted);
+    cursor: pointer;
+    border-radius: 7px;
+    transition: all .15s ease;
+  }
+  .lf-period-tab:hover { color: var(--lf-text); }
+  .lf-period-tab.active {
+    background: #fff;
+    color: var(--lf-text);
+    box-shadow: 0 1px 2px rgba(15,23,41,.08);
+  }
+  .lf-chart-wrap {
+    position: relative;
+    height: 360px;
+  }
+
+  /* Quick returns strip */
+  .lf-returns-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1px;
+    background: var(--lf-border);
+    border: 1px solid var(--lf-border);
+    border-radius: var(--lf-radius);
+    overflow: hidden;
+    margin-top: 14px;
+  }
+  .lf-return-cell {
+    background: #fff;
+    padding: 14px 16px;
+  }
+  .lf-return-cell .lf-fund-name {
+    font-size: 12.5px;
+    color: var(--lf-text-muted);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .lf-return-cell .lf-swatch {
+    width: 8px; height: 8px; border-radius: 2px; flex: 0 0 auto;
+  }
+  .lf-return-cell .lf-return-value {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .lf-return-cell .lf-return-value.pos { color: var(--lf-accent); }
+  .lf-return-cell .lf-return-value.neg { color: var(--lf-danger); }
+
+  /* ---------- Comparison table ---------- */
+  .lf-compare-section {
+    padding: 0 20px;
+    margin-bottom: 28px;
+  }
+  .lf-compare-section > h3 {
+    font-size: 17px;
+    margin-bottom: 12px;
+  }
+  .lf-table-wrap {
+    border: 1px solid var(--lf-border);
+    border-radius: var(--lf-radius);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: var(--lf-shadow);
+  }
+  .lf-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .lf-table th, .lf-table td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--lf-border);
+  }
+  .lf-table thead th {
+    background: var(--lf-surface);
+    font-size: 12.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--lf-text-muted);
+  }
+  .lf-table tbody tr:last-child td { border-bottom: none; }
+  .lf-table tbody th {
+    font-weight: 500;
+    color: var(--lf-text-muted);
+    background: var(--lf-surface);
+    width: 200px;
+    border-right: 1px solid var(--lf-border);
+  }
+  .lf-fund-col {
+    font-weight: 600;
+    color: var(--lf-text);
+  }
+  .lf-fund-col .lf-meta {
+    display: block;
+    font-weight: 400;
+    font-size: 12.5px;
+    color: var(--lf-text-muted);
+    margin-top: 2px;
+  }
+  .lf-swatch-inline {
+    display: inline-block;
+    width: 8px; height: 8px; border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .lf-risk-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--lf-accent-soft);
+    color: var(--lf-accent);
+  }
+  .lf-risk-pill.r-mid { background: #fff4e0; color: #b57807; }
+  .lf-risk-pill.r-high { background: #fde7e7; color: var(--lf-danger); }
+
+  /* ---------- Risk section ---------- */
+  .lf-risk-section {
+    padding: 0 20px;
+    margin-bottom: 28px;
+  }
+  .lf-risk-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .lf-risk-header h3 { font-size: 17px; }
+  .lf-risk-hint {
+    font-size: 13px;
+    color: var(--lf-text-muted);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .lf-tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: var(--lf-surface);
+    border: 1px solid var(--lf-border);
+    color: var(--lf-text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: help;
+  }
+
+  /* ---------- Footnote ---------- */
+  .lf-footnote {
+    padding: 16px 20px;
+    color: var(--lf-text-soft);
+    font-size: 12.5px;
+    line-height: 1.55;
+    border-top: 1px solid var(--lf-border);
+    margin-top: 20px;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 720px) {
+    .lf-header { padding: 20px 16px 16px; }
+    .lf-selector, .lf-chart-section, .lf-compare-section, .lf-risk-section { padding-left: 16px; padding-right: 16px; }
+    .lf-selector { margin-left: 16px; margin-right: 16px; }
+    .lf-chart-wrap { height: 300px; }
+    .lf-table th, .lf-table td { padding: 10px 12px; font-size: 13.5px; }
+    .lf-table tbody th { width: 140px; }
+  }
+</style>
+
+<div class="lf-header">
+  <div>
+    <h2>Comparador de PPR</h2>
+    <p class="lf-sub">Compara fundos PPR disponíveis em Portugal por rentabilidade, custos e risco.</p>
+  </div>
+  <div class="lf-updated" id="lf-updated">
+    <span class="lf-updated-dot"></span>
+    <span id="lf-updated-text">A carregar dados...</span>
+  </div>
+</div>
+
+<!-- SELECTOR -->
+<div class="lf-selector">
+  <div class="lf-selector-head">
+    <h3>Escolhe até 3 PPR para comparar</h3>
+    <span class="lf-counter" id="lf-counter">0 / 3 selecionados</span>
+  </div>
+  <div class="lf-chip-row" id="lf-chip-row"></div>
+</div>
+
+<!-- CHART -->
+<div class="lf-chart-section">
+  <div class="lf-chart-card">
+    <div class="lf-chart-head">
+      <h3>Rentabilidade acumulada</h3>
+      <div class="lf-period-tabs" id="lf-period-tabs">
+        <button class="lf-period-tab" data-period="ytd">YTD</button>
+        <button class="lf-period-tab" data-period="1y">1 ano</button>
+        <button class="lf-period-tab active" data-period="3y">3 anos</button>
+        <button class="lf-period-tab" data-period="5y">5 anos</button>
+        <button class="lf-period-tab" data-period="ann">Anualizado</button>
+      </div>
+    </div>
+    <div class="lf-chart-wrap">
+      <canvas id="lf-chart"></canvas>
+    </div>
+    <div class="lf-returns-strip" id="lf-returns-strip"></div>
+  </div>
+</div>
+
+<!-- COMPARE TABLE -->
+<div class="lf-compare-section">
+  <h3>Comparação detalhada</h3>
+  <div class="lf-table-wrap">
+    <table class="lf-table" id="lf-compare-table">
+      <thead>
+        <tr id="lf-compare-head"></tr>
+      </thead>
+      <tbody id="lf-compare-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RISK -->
+<div class="lf-risk-section">
+  <div class="lf-risk-header">
+    <h3>Métricas de risco</h3>
+    <span class="lf-risk-hint">
+      <span class="lf-tooltip-icon">i</span>
+      Para investidores que queiram aprofundar. Rentabilidade passada não garante rentabilidade futura.
+    </span>
+  </div>
+  <div class="lf-table-wrap">
+    <table class="lf-table" id="lf-risk-table">
+      <thead>
+        <tr id="lf-risk-head"></tr>
+      </thead>
+      <tbody id="lf-risk-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="lf-footnote">
+  Dados de cotações fornecidos pelas sociedades gestoras e compilados via CMVM. As rentabilidades apresentadas são líquidas de comissões de gestão e depósito. Rentabilidades passadas não são garantia de rentabilidades futuras. Este comparador tem fins meramente informativos e não constitui aconselhamento financeiro.
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  // =========================================================
+  // CONFIG: substituir pelo URL do JSON publicado
+  //  - GitHub Pages: https://{user}.github.io/{repo}/latest.json
+  //  - Vercel:       https://teu-projeto.vercel.app/data/latest.json
+  // Se o fetch falhar (ex: preview no Webflow Designer antes de
+  // o pipeline estar em produção), cai automaticamente para MOCK.
+  // =========================================================
+  const DATA_URL = 'https://SEU-DOMINIO.github.io/ppr-comparator/latest.json';
+
+  // -----------------------------------------------------------
+  // MOCK DATA (fallback + primeira visualizacao em Designer)
+  // -----------------------------------------------------------
+  const MOCK_FUNDS = [
+    {
+      id: 'sgf-dr-financas', name: 'SGF Doutor Finanças PPR',
+      manager: 'SGF', isin: 'PTYGFFIM0008',
+      tec: 1.85, minSubs: 250, riskClass: 5,
+      returns: { ytd: 8.2, '1y': 14.0, '3y': 32.5, '5y': 48.1, ann: 7.6 },
+      risk: { vol: 9.8, sharpe: 0.92, maxDD: -14.2, var95: -2.4, beta: 0.82 }
+    },
+    {
+      id: 'invest-ar', name: 'Invest Alves Ribeiro PPR',
+      manager: 'Invest Gestão de Ativos', isin: 'PTYINVIM0007',
+      tec: 1.25, minSubs: 100, riskClass: 4,
+      returns: { ytd: 6.5, '1y': 13.1, '3y': 28.4, '5y': 44.2, ann: 7.1 },
+      risk: { vol: 8.1, sharpe: 1.05, maxDD: -11.8, var95: -1.9, beta: 0.74 }
+    },
+    {
+      id: 'golden-sgf', name: 'Golden SGF PPR',
+      manager: 'Golden SGF', isin: 'PTYGOSIM0002',
+      tec: 1.95, minSubs: 250, riskClass: 5,
+      returns: { ytd: 7.1, '1y': 12.6, '3y': 26.9, '5y': 41.5, ann: 6.8 },
+      risk: { vol: 10.2, sharpe: 0.78, maxDD: -15.6, var95: -2.6, beta: 0.85 }
+    },
+    {
+      id: 'bpi-accoes', name: 'BPI Ações PPR',
+      manager: 'BPI Gestão de Ativos', isin: 'PTYBPIIM0005',
+      tec: 1.50, minSubs: 50, riskClass: 5,
+      returns: { ytd: 5.8, '1y': 11.2, '3y': 24.1, '5y': 56.8, ann: 9.1 },
+      risk: { vol: 11.4, sharpe: 0.71, maxDD: -18.3, var95: -2.9, beta: 0.94 }
+    },
+    {
+      id: 'casa-inv-sg', name: 'Casa de Investimentos Save & Grow PPR',
+      manager: 'Casa de Investimentos', isin: 'PTYCII0M0004',
+      tec: 1.70, minSubs: 500, riskClass: 5,
+      returns: { ytd: 9.4, '1y': 15.8, '3y': 35.1, '5y': 52.4, ann: 8.2 },
+      risk: { vol: 11.9, sharpe: 0.86, maxDD: -17.1, var95: -3.0, beta: 0.97 }
+    },
+    {
+      id: 'bbva-estrategia', name: 'BBVA Estratégia Investimentos PPR',
+      manager: 'BBVA Asset Management', isin: 'PTYBBVIM0003',
+      tec: 1.40, minSubs: 250, riskClass: 4,
+      returns: { ytd: 4.3, '1y': 9.8, '3y': 21.6, '5y': 44.9, ann: 7.7 },
+      risk: { vol: 8.6, sharpe: 0.95, maxDD: -12.4, var95: -2.1, beta: 0.79 }
+    },
+    {
+      id: 'caixa-arrojado', name: 'Caixa Arrojado PPR/OICVM',
+      manager: 'Caixa Gestão de Ativos', isin: 'PTYCXAIM0006',
+      tec: 1.60, minSubs: 100, riskClass: 4,
+      returns: { ytd: 6.1, '1y': 10.9, '3y': 22.8, '5y': 38.7, ann: 6.5 },
+      risk: { vol: 8.9, sharpe: 0.82, maxDD: -13.1, var95: -2.2, beta: 0.81 }
+    }
+  ];
+
+  // FUNDS é preenchido via fetch; começa como mock para fallback
+  let FUNDS = MOCK_FUNDS.slice();
+  let DATA_AS_OF = null;     // YYYY-MM-DD (min entre fundos)
+  let USING_MOCK = true;
+
+  // Normaliza dados do JSON do backend para o formato usado pelo UI
+  function normalizeBackendFund(f) {
+    return {
+      id: f.id,
+      name: f.name,
+      manager: f.manager,
+      isin: f.isin,
+      tec: f.tec,
+      minSubs: f.min_subs,
+      riskClass: f.risk_class,
+      returns: f.returns || {},
+      risk: f.risk || {},
+      // series é opcional; se vier do backend usamos, senão geramos mock
+      _backendSeries: f.series || null,
+      _lastDate: f.last_price_date || null
+    };
+  }
+
+  function updateBadge() {
+    const badge = document.getElementById('lf-updated');
+    const text = document.getElementById('lf-updated-text');
+    if (USING_MOCK || !DATA_AS_OF) {
+      badge.classList.add('stale');
+      text.textContent = 'Dados de demonstração';
+      return;
+    }
+    const d = new Date(DATA_AS_OF);
+    const formatted = d.toLocaleDateString('pt-PT', { day: 'numeric', month: 'long', year: 'numeric' });
+    const daysOld = Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
+    text.textContent = `Atualizado a ${formatted}`;
+    if (daysOld > 14) badge.classList.add('stale');
+    else badge.classList.remove('stale');
+  }
+
+
+  // Gera cotacoes mock diarias para o periodo pedido, com seed por fundo
+  function generateSeries(fund, period) {
+    const points = { ytd: 90, '1y': 252, '3y': 756, '5y': 1260, ann: 1260 };
+    const n = points[period] || 252;
+    const target = fund.returns[period] / 100;
+
+    // seed determinista a partir do id para cotacoes estaveis entre re-renders
+    let seed = 0;
+    for (let i = 0; i < fund.id.length; i++) seed = (seed * 31 + fund.id.charCodeAt(i)) >>> 0;
+    const rand = () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 0xFFFFFFFF;
+    };
+
+    const vol = fund.risk.vol / 100 / Math.sqrt(252);
+    const drift = Math.pow(1 + target, 1/n) - 1;
+    const data = [];
+    let value = 100;
+    const labels = [];
+    const today = new Date();
+
+    for (let i = 0; i < n; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - (n - 1 - i));
+      labels.push(date.toISOString().slice(0, 10));
+      const shock = (rand() * 2 - 1) * vol * 1.7;
+      value = value * (1 + drift + shock);
+      data.push(value);
+    }
+    // normaliza para terminar no retorno alvo
+    const finalReturn = (data[data.length - 1] - 100) / 100;
+    const adjustFactor = (1 + target) / (1 + finalReturn);
+    for (let i = 1; i < data.length; i++) {
+      const w = i / (data.length - 1);
+      data[i] = 100 + (data[i] - 100) * (1 + (adjustFactor - 1) * w);
+    }
+    return { labels, data };
+  }
+
+  // -----------------------------------------------------------
+  // STATE
+  // -----------------------------------------------------------
+  const state = {
+    selected: ['sgf-dr-financas', 'invest-ar', 'casa-inv-sg'],
+    period: '3y'
+  };
+  const SERIES_COLORS = ['#2f7d4f', '#3b6bd9', '#c4891f', '#8e44ad', '#c24a4a', '#0d9488'];
+  const MAX_SELECT = 3;
+
+  // -----------------------------------------------------------
+  // RENDER - selector chips
+  // -----------------------------------------------------------
+  function renderChips() {
+    const row = document.getElementById('lf-chip-row');
+    row.innerHTML = '';
+    FUNDS.forEach((f, idx) => {
+      const active = state.selected.includes(f.id);
+      const disabled = !active && state.selected.length >= MAX_SELECT;
+      const chip = document.createElement('span');
+      chip.className = 'lf-chip' + (active ? ' active' : '') + (disabled ? ' disabled' : '');
+      const colorIdx = state.selected.indexOf(f.id);
+      const dotColor = active ? SERIES_COLORS[colorIdx] : '#8a93a6';
+      chip.innerHTML = `<span class="lf-dot" style="background:${active ? '#fff' : dotColor}"></span>${f.name}`;
+      chip.addEventListener('click', () => {
+        if (disabled) return;
+        if (active) state.selected = state.selected.filter(id => id !== f.id);
+        else state.selected.push(f.id);
+        renderAll();
+      });
+      row.appendChild(chip);
+    });
+    document.getElementById('lf-counter').textContent = `${state.selected.length} / ${MAX_SELECT} selecionados`;
+  }
+
+  // -----------------------------------------------------------
+  // RENDER - chart
+  // -----------------------------------------------------------
+  let chart = null;
+  function renderChart() {
+    const canvas = document.getElementById('lf-chart');
+    const ctx = canvas.getContext('2d');
+    const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id));
+
+    const isAnnualized = state.period === 'ann';
+
+    let datasets;
+    let labels;
+
+    if (isAnnualized) {
+      // bar chart mode para retorno anualizado (5y)
+      labels = selectedFunds.map(f => f.name);
+      datasets = [{
+        label: 'Retorno anualizado (5a)',
+        data: selectedFunds.map(f => f.returns.ann),
+        backgroundColor: selectedFunds.map((_, i) => SERIES_COLORS[i]),
+        borderRadius: 6,
+        maxBarThickness: 60
+      }];
+    } else {
+      // line chart
+      const seriesList = selectedFunds.map(f => {
+        if (f._backendSeries && f._backendSeries[state.period] && f._backendSeries[state.period].data && f._backendSeries[state.period].data.length) {
+          return {
+            labels: f._backendSeries[state.period].labels,
+            data: f._backendSeries[state.period].data,
+            _alreadyNormalized: true  // backend já devolve em % desde base
+          };
+        }
+        const s = generateSeries(f, state.period);
+        s._alreadyNormalized = false;
+        return s;
+      });
+      labels = seriesList[0] ? seriesList[0].labels : [];
+      datasets = selectedFunds.map((f, i) => ({
+        label: f.name,
+        data: seriesList[i]._alreadyNormalized
+          ? seriesList[i].data.map(v => +v.toFixed(2))
+          : seriesList[i].data.map(v => +(v - 100).toFixed(2)),
+        borderColor: SERIES_COLORS[i],
+        backgroundColor: SERIES_COLORS[i] + '15',
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        tension: 0.1,
+        fill: false
+      }));
+    }
+
+    if (chart) chart.destroy();
+
+    chart = new Chart(ctx, {
+      type: isAnnualized ? 'bar' : 'line',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            display: !isAnnualized,
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              pointStyle: 'circle',
+              padding: 14,
+              font: { size: 12.5, family: '-apple-system, BlinkMacSystemFont, sans-serif' }
+            }
+          },
+          tooltip: {
+            backgroundColor: '#0f1729',
+            padding: 10,
+            titleFont: { size: 12 },
+            bodyFont: { size: 13 },
+            callbacks: {
+              title: (items) => {
+                if (isAnnualized) return items[0].label;
+                const d = items[0].parsed.x !== undefined ? new Date(items[0].label) : new Date(labels[items[0].dataIndex]);
+                return d.toLocaleDateString('pt-PT', { day: '2-digit', month: 'short', year: 'numeric' });
+              },
+              label: (item) => {
+                const val = item.parsed.y;
+                return ` ${item.dataset.label}: ${val >= 0 ? '+' : ''}${val.toFixed(2)}%`;
+              }
+            }
+          }
+        },
+        scales: isAnnualized ? {
+          y: {
+            beginAtZero: true,
+            ticks: { callback: v => v + '%', font: { size: 11.5 } },
+            grid: { color: '#eef0f4' }
+          },
+          x: { grid: { display: false } }
+        } : {
+          x: {
+            type: 'category',
+            grid: { display: false },
+            ticks: {
+              font: { size: 11 },
+              color: '#8a93a6',
+              maxTicksLimit: 6,
+              autoSkip: true,
+              callback: function(val) {
+                const label = this.getLabelForValue(val);
+                const d = new Date(label);
+                if (state.period === 'ytd' || state.period === '1y') {
+                  return d.toLocaleDateString('pt-PT', { month: 'short' });
+                }
+                return d.getFullYear();
+              }
+            }
+          },
+          y: {
+            ticks: { callback: v => (v >= 0 ? '+' : '') + v + '%', font: { size: 11.5 }, color: '#5b6478' },
+            grid: { color: '#eef0f4' }
+          }
+        }
+      }
+    });
+
+    // returns strip
+    const strip = document.getElementById('lf-returns-strip');
+    strip.innerHTML = '';
+    selectedFunds.forEach((f, i) => {
+      const val = f.returns[state.period];
+      const cell = document.createElement('div');
+      cell.className = 'lf-return-cell';
+      cell.innerHTML = `
+        <div class="lf-fund-name"><span class="lf-swatch" style="background:${SERIES_COLORS[i]}"></span>${f.name}</div>
+        <div class="lf-return-value ${val >= 0 ? 'pos' : 'neg'}">${val >= 0 ? '+' : ''}${val.toFixed(1)}%</div>
+      `;
+      strip.appendChild(cell);
+    });
+  }
+
+  // -----------------------------------------------------------
+  // RENDER - compare table
+  // -----------------------------------------------------------
+  function renderCompareTable() {
+    const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id));
+    const head = document.getElementById('lf-compare-head');
+    const body = document.getElementById('lf-compare-body');
+    head.innerHTML = '<th></th>' + selectedFunds.map((f, i) => `
+      <th class="lf-fund-col">
+        <span class="lf-swatch-inline" style="background:${SERIES_COLORS[i]}"></span>${f.name}
+        <span class="lf-meta">${f.manager}</span>
+      </th>
+    `).join('');
+
+    const rows = [
+      { label: 'ISIN', render: f => f.isin },
+      { label: 'TEC (custo anual)', render: f => f.tec.toFixed(2) + '%' },
+      { label: 'Subscrição mínima', render: f => '€' + f.minSubs },
+      { label: 'Classe de risco', render: f => {
+        const cls = f.riskClass >= 5 ? 'r-high' : f.riskClass >= 3 ? 'r-mid' : '';
+        return `<span class="lf-risk-pill ${cls}">${f.riskClass} / 7</span>`;
+      }},
+      { label: 'Rentabilidade 1 ano', render: f => formatPct(f.returns['1y']) },
+      { label: 'Rentabilidade 3 anos', render: f => formatPct(f.returns['3y']) },
+      { label: 'Rentabilidade 5 anos', render: f => formatPct(f.returns['5y']) },
+      { label: 'Retorno anualizado (5a)', render: f => formatPct(f.returns.ann) }
+    ];
+
+    body.innerHTML = rows.map(r => `
+      <tr>
+        <th scope="row">${r.label}</th>
+        ${selectedFunds.map(f => `<td>${r.render(f)}</td>`).join('')}
+      </tr>
+    `).join('');
+  }
+
+  function formatPct(v) {
+    const cls = v >= 0 ? 'pos' : 'neg';
+    const color = v >= 0 ? '#2f7d4f' : '#c24a4a';
+    return `<span style="color:${color};font-weight:500">${v >= 0 ? '+' : ''}${v.toFixed(1)}%</span>`;
+  }
+
+  // -----------------------------------------------------------
+  // RENDER - risk table
+  // -----------------------------------------------------------
+  function renderRiskTable() {
+    const selectedFunds = state.selected.map(id => FUNDS.find(f => f.id === id));
+    const head = document.getElementById('lf-risk-head');
+    const body = document.getElementById('lf-risk-body');
+    head.innerHTML = '<th></th>' + selectedFunds.map((f, i) => `
+      <th class="lf-fund-col">
+        <span class="lf-swatch-inline" style="background:${SERIES_COLORS[i]}"></span>${f.name}
+      </th>
+    `).join('');
+
+    const tipVol = 'Desvio-padrão anualizado dos retornos. Mede quanto o fundo oscila.';
+    const tipSharpe = 'Retorno em excesso por unidade de risco. Acima de 1 é considerado bom.';
+    const tipDD = 'Maior queda do valor do fundo desde um pico, no período analisado.';
+    const tipVar = 'Perda máxima esperada num dia, com 95% de confiança.';
+    const tipBeta = 'Sensibilidade aos movimentos do mercado. 1 = move com o mercado.';
+
+    const rows = [
+      { label: `Volatilidade anual`, tip: tipVol, render: f => f.risk.vol.toFixed(1) + '%' },
+      { label: `Sharpe Ratio`, tip: tipSharpe, render: f => f.risk.sharpe.toFixed(2) },
+      { label: `Drawdown máximo`, tip: tipDD, render: f => `<span style="color:#c24a4a">${f.risk.maxDD.toFixed(1)}%</span>` },
+      { label: `VaR diário (95%)`, tip: tipVar, render: f => f.risk.var95.toFixed(1) + '%' },
+      { label: `Beta`, tip: tipBeta, render: f => f.risk.beta.toFixed(2) }
+    ];
+
+    body.innerHTML = rows.map(r => `
+      <tr>
+        <th scope="row">
+          ${r.label}
+          <span class="lf-tooltip-icon" title="${r.tip}">i</span>
+        </th>
+        ${selectedFunds.map(f => `<td>${r.render(f)}</td>`).join('')}
+      </tr>
+    `).join('');
+  }
+
+  // -----------------------------------------------------------
+  // WIRING
+  // -----------------------------------------------------------
+  document.querySelectorAll('#lf-period-tabs .lf-period-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#lf-period-tabs .lf-period-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.period = btn.dataset.period;
+      renderChart();
+    });
+  });
+
+  function renderAll() {
+    renderChips();
+    renderChart();
+    renderCompareTable();
+    renderRiskTable();
+  }
+
+  // -----------------------------------------------------------
+  // DATA LOADING
+  // -----------------------------------------------------------
+  async function loadData() {
+    try {
+      const res = await fetch(DATA_URL, { cache: 'no-cache' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+      if (!json.funds || !Array.isArray(json.funds) || json.funds.length === 0) {
+        throw new Error('JSON sem fundos');
+      }
+      FUNDS = json.funds.map(normalizeBackendFund);
+      DATA_AS_OF = json.data_as_of || json.latest_data_date || null;
+      USING_MOCK = false;
+
+      // Ajusta selecao default: primeiros 3 do feed real
+      state.selected = FUNDS.slice(0, 3).map(f => f.id);
+    } catch (e) {
+      console.warn('[comparador-ppr] fetch falhou, usando dados mock:', e.message);
+      USING_MOCK = true;
+    }
+    updateBadge();
+  }
+
+  // init: esperar Chart.js + carregar dados
+  async function init() {
+    if (typeof Chart === 'undefined') { setTimeout(init, 50); return; }
+    await loadData();
+    renderAll();
+  }
+
+  init();
+})();
+</script>

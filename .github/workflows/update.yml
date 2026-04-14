@@ -1,0 +1,38 @@
+name: Update PPR data
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"   # segundas às 08:00 UTC
+  workflow_dispatch:        # permite correr manualmente
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run pipeline
+        run: python main.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/latest.json data/raw/*.csv || true
+          git diff --staged --quiet || git commit -m "chore: weekly PPR data update [skip ci]"
+          git push
+
+      # Opcional: deploy para Vercel em vez de GitHub Pages
+      # - name: Deploy to Vercel
+      #   run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
