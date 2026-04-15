@@ -91,6 +91,12 @@ def main():
         if fid in all_prices:
             prices = all_prices[fid]["Close"] if "Close" in all_prices[fid].columns else all_prices[fid].iloc[:, 0]
             prices = prices.dropna().sort_index()
+            # Clip à data de constituição real se fornecida (útil quando o
+            # scraper devolve a série NAV da família em vez da data de
+            # criação da categoria específica).
+            inc = f.get("inception")
+            if inc:
+                prices = prices[prices.index >= pd.Timestamp(inc)]
             if not prices.empty:
                 latest_dates.append(prices.index[-1])
                 entry["returns"] = calc_metrics.calc_returns(prices)

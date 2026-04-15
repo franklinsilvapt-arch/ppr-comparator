@@ -68,6 +68,11 @@ def main():
         }
         prices = load_prices(fid)
         if prices is not None and not prices.empty:
+            # Clip à data de constituição real se fornecida.
+            inc = f.get("inception")
+            if inc:
+                prices = prices[prices.index >= pd.Timestamp(inc)]
+        if prices is not None and not prices.empty:
             latest_dates.append(prices.index[-1])
             entry["returns"] = calc_metrics.calc_returns(prices)
             entry["risk"] = calc_metrics.calc_risk(prices, bench)

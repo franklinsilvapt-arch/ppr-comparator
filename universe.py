@@ -257,6 +257,14 @@ for _fam, _tecs, _isins in _BANKINTER_FAMILIES:
             ov["isin"] = _isins[_cat]
         MANUAL_OVERRIDES.append(ov)
 
+# Datas de constituição reais por categoria. O FT devolve a série NAV da
+# família completa (desde ~2016), mas algumas categorias só foram criadas
+# mais tarde. Clip das cotações à data da categoria para evitar mostrar
+# histórico que não pertence à UP específica.
+MANUAL_OVERRIDES.extend([
+    {"match": "bankinter 25 ppr / oicvm - categoria a", "inception": "2019-11-15"},
+])
+
 # --- Caixa Wealth per-categoria min_subs ---
 # A: 125.000€, B: 500.000€, C: 1.000.000€, D: 5.000.000€
 _CAIXA_WEALTH_FAMILIES = [
