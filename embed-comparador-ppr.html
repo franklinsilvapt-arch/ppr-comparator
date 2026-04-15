@@ -770,7 +770,7 @@
   <!-- DISCLAIMER -->
   <div class="lpc-disclaimer">
     <strong>Âmbito.</strong> A lista principal inclui PPR sob a forma de <em>Fundos de Investimento</em> (FI-PPR), regulados pela CMVM. Foram também incluídos os PPR da Golden SGF, que são <em>Fundos de Pensões Abertos</em> (FP-PPR, regulados pela ASF) e não constam da lista CMVM, por terem procura relevante.<br><br>
-    <strong>Dados.</strong> Cotações e métricas fornecidas pelas sociedades gestoras, CMVM (<em>DataActionGetPPRs</em>), Excel público da Golden SGF, Yahoo Finance, Investing.com e Financial Times. O comparador inclui apenas fundos com histórico diário público disponível. Rentabilidades líquidas de comissões de gestão e depósito. Rentabilidades passadas não são garantia de rentabilidades futuras. Este comparador tem fins meramente informativos e não constitui aconselhamento financeiro.
+    <strong>Dados.</strong> Cotações e métricas fornecidas pelas sociedades gestoras, CMVM, Excel público da Golden SGF, Yahoo Finance, Investing.com e Financial Times. O comparador inclui apenas fundos com histórico diário público disponível. Rentabilidades líquidas de comissões de gestão e depósito. Rentabilidades passadas não são garantia de rentabilidades futuras. Este comparador tem fins meramente informativos e não constitui aconselhamento financeiro.
   </div>
 
 </div>
@@ -1286,8 +1286,15 @@
           return '<span class="lpc-risk-pill ' + cls + '">' + f.riskClass + '</span>';
         } },
       { label: 'Rentabilidade 1 ano',     render: function (f) { return formatPct(f.returns['1y']); } },
-      { label: 'Rentabilidade 3 anos',    render: function (f) { return formatPct(f.returns['3y']); } },
-      { label: 'Rentabilidade 5 anos',    render: function (f) { return formatPct(f.returns['5y']); } },
+      { label: 'Rentabilidade 3 anos (anualizada)',
+        tip: 'Retorno médio anual nos últimos 3 anos. Equivale à taxa anual constante que, capitalizada durante 3 anos, produziria o retorno total acumulado no período. Mostrado apenas para fundos com pelo menos 3 anos de histórico.',
+        render: function (f) { return formatPct(f.returns['3y']); } },
+      { label: 'Rentabilidade 5 anos (anualizada)',
+        tip: 'Retorno médio anual nos últimos 5 anos. Mostrado apenas para fundos com pelo menos 5 anos de histórico.',
+        render: function (f) { return formatPct(f.returns['5y']); } },
+      { label: 'Rentabilidade 10 anos (anualizada)',
+        tip: 'Retorno médio anual nos últimos 10 anos. Mostrado apenas para fundos com pelo menos 10 anos de histórico.',
+        render: function (f) { return formatPct(f.returns['10y']); } },
       { label: 'Retorno anualizado',
         tip: 'CAGR (Compound Annual Growth Rate) calculado sobre todo o histórico disponível. Equivale à taxa anual constante que, aplicada ao capital inicial, produziria o retorno total acumulado desde a primeira cotação até hoje.',
         render: function (f) {

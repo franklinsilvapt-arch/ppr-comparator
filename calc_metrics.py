@@ -34,8 +34,29 @@ def cumulative_return(prices: pd.Series, start_date: pd.Timestamp) -> float | No
     return (end_price / start_price - 1) * 100
 
 
+def annualized_window_return(prices: pd.Series, years: int) -> float | None:
+    """Retorno anualizado para a janela dos últimos N anos.
+    Devolve None se o fundo não tem histórico suficiente (cobertura
+    parcial inflaciona artificialmente o valor anualizado)."""
+    prices = prices.dropna()
+    if prices.empty:
+        return None
+    last_date = prices.index[-1]
+    start_date = last_date - pd.DateOffset(years=years)
+    # Exigir cobertura total da janela (com folga de 30 dias para
+    # acomodar fundos que arrancaram a meio do mês).
+    if prices.index[0] > start_date + pd.Timedelta(days=30):
+        return None
+    window = prices[prices.index >= start_date]
+    if window.empty:
+        return None
+    cum = window.iloc[-1] / window.iloc[0] - 1
+    return ((1 + cum) ** (1 / years) - 1) * 100
+
+
 def calc_returns(prices: pd.Series) -> dict:
-    """Calcula retornos para YTD, 1a, 3a, 5a, 10a, anualizado, desde início."""
+    """Calcula retornos para YTD, 1a, 3a, 5a, 10a, anualizado, desde início.
+    YTD e 1a são cumulativos; 3a/5a/10a são anualizados."""
     prices = prices.dropna().sort_index()
     if prices.empty:
         return {}
@@ -45,9 +66,9 @@ def calc_returns(prices: pd.Series) -> dict:
 
     ytd = cumulative_return(prices, year_start)
     r_1y = cumulative_return(prices, last_date - pd.DateOffset(years=1))
-    r_3y = cumulative_return(prices, last_date - pd.DateOffset(years=3))
-    r_5y = cumulative_return(prices, last_date - pd.DateOffset(years=5))
-    r_10y = cumulative_return(prices, last_date - pd.DateOffset(years=10))
+    r_3y = annualized_window_return(prices, 3)
+    r_5y = annualized_window_return(prices, 5)
+    r_10y = annualized_window_return(prices, 10)
 
     first = prices.iloc[0]
     r_since = (prices.iloc[-1] / first - 1) * 100 if first not in (0, None) and np.isfinite(first) else None
