@@ -13,8 +13,19 @@
 /* iframe sem margins nativas do body. O iframe auto-redimensiona via
    postMessage para a altura exacta do conteúdo, por isso nunca precisa
    de scrollbars internas - escondê-las evita tanto a barra vertical
-   residual como a horizontal induzida por tooltips que passam do edge. */
-html, body { margin: 0; overflow: hidden; }
+   residual como a horizontal induzida por tooltips que passam do edge.
+   scrollbar-width: none + ::-webkit-scrollbar garante que NENHUMA
+   scrollbar interna aparece em nenhum browser (Gecko, WebKit, Blink). */
+html, body, #lf-pc-calc {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+#lf-pc-calc::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
 #lf-pc-calc {
   --text-primary: #202432;
@@ -609,7 +620,12 @@ html, body { margin: 0; overflow: hidden; }
   border-radius: 12px;
   overflow-x: auto;
   background: var(--bg-white);
+  /* scrollbar escondida em todos os browsers — o scroll horizontal
+     continua a funcionar por swipe/drag, só não mostra barra. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+#lf-pc-calc .lpc-table-wrap::-webkit-scrollbar { display: none; }
 #lf-pc-calc .lpc-table {
   width: 100%;
   border-collapse: collapse;
