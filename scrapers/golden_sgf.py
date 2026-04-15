@@ -72,7 +72,10 @@ NAME_TO_FUND_ID = {
 def _name_to_fund_id(name: str) -> str | None:
     if not isinstance(name, str):
         return None
-    return NAME_TO_FUND_ID.get(name.strip().lower())
+    # Colapsar whitespace: o Excel SGF tem entradas com double-space
+    # (ex: "Golden SGF  ETF Start") que de outra forma falhariam o match.
+    key = " ".join(name.strip().lower().split())
+    return NAME_TO_FUND_ID.get(key)
 
 
 def parse_excel(path: Path) -> dict[str, pd.DataFrame]:
@@ -87,18 +90,27 @@ def parse_excel(path: Path) -> dict[str, pd.DataFrame]:
     df[date_col] = pd.to_datetime(df[date_col], errors="coerce")
     df = df.dropna(subset=[date_col, name_col, price_col])
 
-    results: dict[str, pd.DataFrame] = {}
+    # O Excel SGF tem múltiplas variantes do mesmo nome (double-space,
+    # trailing-space, etc.) que mapeiam para o mesmo fund_id. Agregamos
+    # TODAS as linhas por fund_id — a versão antiga sobrescrevia, ficando
+    # só com a última variante processada (frequentemente com 1 obs).
+    by_fund: dict[str, list[pd.DataFrame]] = {}
     for name, group in df.groupby(name_col):
         fund_id = _name_to_fund_id(name)
         if not fund_id:
             continue
+        by_fund.setdefault(fund_id, []).append(group)
+        print(f"[sgf]   {name!r} -> {fund_id}: {len(group)} obs")
+
+    results: dict[str, pd.DataFrame] = {}
+    for fund_id, groups in by_fund.items():
+        combined = pd.concat(groups)
         s = (
-            group.set_index(date_col)[price_col]
+            combined.set_index(date_col)[price_col]
             .sort_index()
             .groupby(level=0).last()
         )
         results[fund_id] = pd.DataFrame({"Close": s})
-        print(f"[sgf]   {name!r} -> {fund_id}: {len(s)} obs")
     return results
 
 
