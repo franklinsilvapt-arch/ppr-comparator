@@ -1316,6 +1316,51 @@
   // -----------------------------------------------------------
   // RISK TABLE
   // -----------------------------------------------------------
+  // Recalcula vol/sharpe/maxDD/VaR a partir de uma série dataPct (% desde
+  // a base) — usado quando comparamos múltiplos fundos e queremos métricas
+  // sobre a janela comum (não desde a inception de cada um). A série é
+  // downsampled (~250 pts), por isso anualizamos pela frequência efectiva.
+  function riskFromRebasedSeries(labels, dataPct) {
+    if (!labels || labels.length < 10) return {};
+    // converte % em "preço" relativo
+    var px = dataPct.map(function (v) { return 1 + v / 100; });
+    var rets = [];
+    for (var i = 1; i < px.length; i++) {
+      if (px[i - 1] > 0) rets.push(px[i] / px[i - 1] - 1);
+    }
+    if (rets.length < 5) return {};
+    // anualização: nº médio de samples por ano
+    var firstD = new Date(labels[0]);
+    var lastD = new Date(labels[labels.length - 1]);
+    var years = (lastD - firstD) / (365.25 * 86400000);
+    if (years <= 0) return {};
+    var samplesPerYear = rets.length / years;
+    var mean = rets.reduce(function (a, b) { return a + b; }, 0) / rets.length;
+    var variance = rets.reduce(function (a, b) { return a + (b - mean) * (b - mean); }, 0) / rets.length;
+    var std = Math.sqrt(variance);
+    var vol = std * Math.sqrt(samplesPerYear) * 100;
+    var rf = 0.025;
+    var sharpe = std > 0 ? (mean * samplesPerYear - rf) / (std * Math.sqrt(samplesPerYear)) : null;
+    // max drawdown sobre a série de preços relativos
+    var peak = px[0], maxDD = 0;
+    for (var j = 0; j < px.length; j++) {
+      if (px[j] > peak) peak = px[j];
+      var dd = (px[j] - peak) / peak;
+      if (dd < maxDD) maxDD = dd;
+    }
+    // VaR 95% sobre os retornos por sample (não anualizado)
+    var sorted = rets.slice().sort(function (a, b) { return a - b; });
+    var idx = Math.floor(sorted.length * 0.05);
+    var var95 = sorted[idx] * 100;
+    return {
+      vol: vol,
+      sharpe: sharpe,
+      maxDD: maxDD * 100,
+      var95: var95,
+      samplesPerYear: samplesPerYear
+    };
+  }
+
   function renderRiskTable() {
     var pairs = pairedSelected();
     var head = document.getElementById('lpc-risk-head');
@@ -1326,30 +1371,83 @@
         + p.fund.name + '</th>';
     }).join('');
 
+    // Constrói as séries 'since' rebased à data comum (mesma lógica do chart).
+    // Quando há 2+ fundos seleccionados, métricas são recalculadas sobre essa
+    // janela. Com 1 fundo, mostra os valores pré-calculados (toda a história).
+    var rebasedRisk = pairs.map(function () { return null; });
+    var rebaseInfo = null;
+    if (pairs.length >= 2) {
+      var rebased = pairs.map(function (p) {
+        var s = p.fund._backendSeries && p.fund._backendSeries.since;
+        if (!s || !s.labels || !s.labels.length) return null;
+        return { labels: s.labels.slice(), dataPct: s.data.slice() };
+      });
+      var withData = rebased.filter(Boolean);
+      if (withData.length >= 2) {
+        var cutoff = withData.map(function (s) { return s.labels[0]; })
+          .reduce(function (a, b) { return a > b ? a : b; });
+        rebased.forEach(function (s) {
+          if (!s) return;
+          if (s.labels[0] >= cutoff) return;
+          var idx = s.labels.findIndex(function (l) { return l >= cutoff; });
+          if (idx > 0) {
+            var base = s.dataPct[idx];
+            s.labels = s.labels.slice(idx);
+            s.dataPct = s.dataPct.slice(idx).map(function (v) { return +(v - base).toFixed(4); });
+          }
+        });
+        rebasedRisk = rebased.map(function (s) {
+          return s ? riskFromRebasedSeries(s.labels, s.dataPct) : null;
+        });
+        var lastDate = withData[0].labels[withData[0].labels.length - 1];
+        rebaseInfo = { from: cutoff, to: lastDate };
+      }
+    }
+
+    function pickRisk(p, key) {
+      var idx = pairs.indexOf(p);
+      var rb = rebasedRisk[idx];
+      if (rb && rb[key] != null && isFinite(rb[key])) return rb[key];
+      return p.fund.risk ? p.fund.risk[key] : null;
+    }
+
     var rows = [
       { label: 'Volatilidade anual',
         tip: 'Desvio-padrão anualizado dos retornos. Mede quanto o fundo oscila.',
-        render: function (f) { return fmt(f.risk.vol, '%', 2); } },
+        render: function (p) { return fmt(pickRisk(p, 'vol'), '%', 2); } },
       { label: 'Sharpe Ratio',
-        tip: 'Retorno em excesso por unidade de risco. Acima de 1 é considerado bom.',
-        render: function (f) { return fmt(f.risk.sharpe, '', 2); } },
+        tip: 'Retorno em excesso por unidade de risco (usa taxa sem risco de 2,5%). Acima de 1 é considerado bom.',
+        render: function (p) { return fmt(pickRisk(p, 'sharpe'), '', 2); } },
       { label: 'Drawdown máximo',
         tip: 'Maior queda do valor do fundo desde um pico, no período analisado.',
-        render: function (f) { return f.risk.maxDD == null ? NA
-          : '<span style="color:#B42318;font-weight:600">' + f.risk.maxDD.toFixed(2).replace('.', ',') + '%</span>'; } },
-      { label: 'VaR diário (95%)',
-        tip: 'Perda máxima esperada num dia, com 95% de confiança.',
-        render: function (f) { return fmt(f.risk.var95, '%', 2); } },
+        render: function (p) {
+          var v = pickRisk(p, 'maxDD');
+          return v == null ? NA
+            : '<span style="color:#B42318;font-weight:600">' + v.toFixed(2).replace('.', ',') + '%</span>';
+        } },
+      { label: 'VaR (95%)',
+        tip: 'Perda máxima esperada num período típico, com 95% de confiança. Quando há comparação multi-fundo, é calculado sobre amostragem semanal/mensal da janela comum.',
+        render: function (p) { return fmt(pickRisk(p, 'var95'), '%', 2); } },
       { label: 'Beta',
-        tip: 'Sensibilidade do fundo aos movimentos do mercado global de acções, medida contra o MSCI World (ETF URTH em EUR). Beta = 1 significa que o fundo oscila ao mesmo ritmo do mercado; Beta < 1 é menos volátil; Beta > 1 amplifica os movimentos.',
-        render: function (f) { return fmt(f.risk.beta, '', 2); } }
+        tip: 'Sensibilidade do fundo aos movimentos do mercado global de acções, medida contra o MSCI World (ETF URTH em EUR). Beta = 1 significa que o fundo oscila ao mesmo ritmo do mercado; Beta < 1 é menos volátil; Beta > 1 amplifica os movimentos. Calculado sobre toda a história disponível de cada fundo (não rebased).',
+        render: function (p) { return fmt(p.fund.risk ? p.fund.risk.beta : null, '', 2); } }
     ];
 
-    body.innerHTML = rows.map(function (r) {
+    var bodyHtml = rows.map(function (r) {
       return '<tr><th scope="row">' + labelWithTip(r.label, r.tip) + '</th>'
-        + pairs.map(function (p) { return '<td>' + r.render(p.fund) + '</td>'; }).join('')
+        + pairs.map(function (p) { return '<td>' + r.render(p) + '</td>'; }).join('')
         + '</tr>';
     }).join('');
+
+    if (rebaseInfo) {
+      bodyHtml += '<tr><td colspan="' + (pairs.length + 1) + '" '
+        + 'style="padding-top:14px;font-size:12px;color:#5C6878;text-align:center;border:none">'
+        + 'Métricas calculadas sobre a janela comum dos fundos seleccionados ('
+        + rebaseInfo.from + ' → ' + rebaseInfo.to + '). '
+        + 'Beta mantém-se sobre toda a história individual de cada fundo.'
+        + '</td></tr>';
+    }
+    body.innerHTML = bodyHtml;
   }
 
   // -----------------------------------------------------------
