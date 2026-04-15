@@ -12,7 +12,7 @@
 
 /* iframe sem margins nativas do body. O iframe auto-redimensiona via
    postMessage para a altura exacta do conteúdo, por isso nunca precisa
-   de scrollbars internas — escondê-las evita tanto a barra vertical
+   de scrollbars internas - escondê-las evita tanto a barra vertical
    residual como a horizontal induzida por tooltips que passam do edge. */
 html, body { margin: 0; overflow: hidden; }
 
@@ -128,7 +128,7 @@ html, body { margin: 0; overflow: hidden; }
   background: var(--warning);
   box-shadow: 0 0 0 3px rgba(247, 144, 9, 0.22);
 }
-/* Footer discreto com a data de actualização — no fim do comparador.
+/* Footer discreto com a data de actualização - no fim do comparador.
    Estilo subtil, sem pill de fundo, para não competir com o disclaimer. */
 #lf-pc-calc .lpc-footer-updated {
   display: flex;
@@ -762,7 +762,7 @@ html, body { margin: 0; overflow: hidden; }
   left: 14px;
   transform: none;
 }
-/* toggle do benchmark está alinhado à direita do card — a bolha tem
+/* toggle do benchmark está alinhado à direita do card - a bolha tem
    de abrir PARA A ESQUERDA para não sair do viewport. */
 #lf-pc-calc .lpc-benchmark-toggle .lpc-tip-bubble {
   left: auto;
@@ -1009,7 +1009,7 @@ html, body { margin: 0; overflow: hidden; }
 
   // Garante viewport meta: quando o HTML é servido standalone (ex: raw
   // GitHub Pages), sem isto o mobile renderiza a ~980px e as media
-  // queries não disparam — tudo fica minúsculo. Webflow já inclui o
+  // queries não disparam - tudo fica minúsculo. Webflow já inclui o
   // viewport na página, por isso aqui só adicionamos se não existir.
   if (!document.querySelector('meta[name="viewport"]')) {
     var _vp = document.createElement('meta');
@@ -1340,7 +1340,7 @@ html, body { margin: 0; overflow: hidden; }
 
     var validSeries = seriesList.filter(Boolean);
 
-    // Preparar benchmarks necessários — um por ticker distinto entre os
+    // Preparar benchmarks necessários - um por ticker distinto entre os
     // PPRs seleccionados (V20A/V40A/V60A/V80A/IWDA). Mesmo quando a
     // regra 'máx 2 risk_classes' esconde as linhas do chart, o objecto
     // fica disponível para calcular o delta per-cartão na strip.
@@ -1362,7 +1362,7 @@ html, body { margin: 0; overflow: hidden; }
 
     // Rebase à data comum. Quando há múltiplos fundos, corta ao fundo
     // com menos histórico. Quando o toggle do benchmark está activo,
-    // inclui também o início do(s) ETF(s) no cutoff — mesmo quando as
+    // inclui também o início do(s) ETF(s) no cutoff - mesmo quando as
     // linhas do benchmark vão ficar escondidas (>2 tickers): assim a
     // delta per-cartão é calculada sobre a MESMA janela que o chart
     // mostra e é honestamente comparável.
@@ -1385,7 +1385,7 @@ html, body { margin: 0; overflow: hidden; }
 
     // Rebasear cada benchmark ao cutoff visível (preços → % a partir do
     // primeiro valor no cutoff). Feito SEMPRE que o ticker está em uso,
-    // independentemente do chart estar a desenhá-los — serve também a
+    // independentemente do chart estar a desenhá-los - serve também a
     // delta per-cartão.
     var chartCutoff = validSeries.length ? validSeries.map(function (s) { return s.labels[0]; })
       .reduce(function (a, b) { return a > b ? a : b; }) : null;
@@ -1531,7 +1531,7 @@ html, body { margin: 0; overflow: hidden; }
       }
     });
 
-    // returns strip — usa o valor final da série rebased (coerente com
+    // returns strip - usa o valor final da série rebased (coerente com
     // o que o gráfico mostra). Em modo €, o valor final fica como
     // destaque principal e a % como secundário.
     var strip = document.getElementById('lpc-returns-strip');
@@ -1560,7 +1560,7 @@ html, body { margin: 0; overflow: hidden; }
           valueHtml = '<div class="lpc-return-value ' + pctCls + '">' + pctStr + '</div>';
         }
       }
-      // Delta vs ETF de referência — só aparece se o toggle está ligado
+      // Delta vs ETF de referência - só aparece se o toggle está ligado
       // e se o fundo tem benchmark_ticker mapeado.
       var vsHtml = '';
       if (state.showBenchmark && f.benchmarkTicker && benchByTicker[f.benchmarkTicker]) {
@@ -1590,21 +1590,21 @@ html, body { margin: 0; overflow: hidden; }
       strip.appendChild(cell);
     });
 
-    // Nota do benchmark — mostra quando o toggle está on: explica o(s)
+    // Nota do benchmark - mostra quando o toggle está on: explica o(s)
     // ETF(s) ou avisa que foram escondidos do chart por excesso de riscos.
     var benchNoteEl = document.getElementById('lpc-benchmark-note');
     if (benchNoteEl) {
       if (benchmarksHiddenMixed) {
         benchNoteEl.style.display = '';
         benchNoteEl.textContent =
-          'Seleccionaste PPR de ' + distinctTickers.length + ' níveis de risco diferentes — '
+          'Seleccionaste PPR de ' + distinctTickers.length + ' níveis de risco diferentes - '
           + 'ETFs de referência escondidos no gráfico para não saturar. '
-          + 'A delta vs cada ETF continua visível em cada cartão abaixo.';
+          + 'A diferença de rentabilidade vs cada ETF continua visível em cada cartão abaixo.';
       } else if (benchmarksVisible && distinctTickers.length) {
         benchNoteEl.style.display = '';
         var names = distinctTickers.map(function (t) { return t; }).join(' + ');
         benchNoteEl.textContent = 'Referência (linha cinza): ' + names
-          + '. ETFs não são PPR — sem benefício fiscal, mas com liquidez imediata.';
+          + '. ETFs não são PPR - sem benefício fiscal, mas com liquidez imediata.';
       } else {
         benchNoteEl.style.display = 'none';
         benchNoteEl.textContent = '';
@@ -1739,7 +1739,7 @@ html, body { margin: 0; overflow: hidden; }
   }
 
   // Recalcula vol/sharpe/maxDD/VaR a partir de uma série dataPct (% desde
-  // a base) — usado quando comparamos múltiplos fundos e queremos métricas
+  // a base) - usado quando comparamos múltiplos fundos e queremos métricas
   // sobre a janela comum (não desde a inception de cada um). A série é
   // downsampled (~250 pts), por isso anualizamos pela frequência efectiva.
   function riskFromRebasedSeries(labels, dataPct) {
@@ -1920,7 +1920,7 @@ html, body { margin: 0; overflow: hidden; }
 
       input.addEventListener('focus', function () {
         // Slot preenchido: não abrir dropdown. Utilizador só pode limpar
-        // via botão × — evita perder a seleção por engano ao clicar.
+        // via botão × - evita perder a seleção por engano ao clicar.
         if (state.selected[idx]) return;
         selectorState.activeSlot = idx;
         selectorState.query = '';
@@ -1984,7 +1984,7 @@ html, body { margin: 0; overflow: hidden; }
       }
       // Mostrar apenas fundos com histórico diário real. Os CMVM-only
       // (que apareciam com curva tracejada estimada) são ocultados do
-      // selector — evita sugerir comparações pouco fidedignas.
+      // selector - evita sugerir comparações pouco fidedignas.
       FUNDS = json.funds
         .filter(function (f) { return !f.hidden && f.data_origin === 'historical'; })
         .map(normalizeBackendFund);
@@ -2004,7 +2004,7 @@ html, body { margin: 0; overflow: hidden; }
     updateBadge();
   }
 
-  // Tooltip tap-to-toggle (mobile) — o title nativo não dispara em touch.
+  // Tooltip tap-to-toggle (mobile) - o title nativo não dispara em touch.
   // Mantemos o title (acessibilidade / copy-paste / hover em nested elements)
   // e adicionamos um handler explícito que abre/fecha a bolha.
   root.addEventListener('click', function (e) {
@@ -2043,7 +2043,7 @@ html, body { margin: 0; overflow: hidden; }
     function send() {
       var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
       // Threshold de 4px evita flickering com hovers/tooltips que causam
-      // reflows de 1-2px — isso fazia a página mãe saltar no scroll.
+      // reflows de 1-2px - isso fazia a página mãe saltar no scroll.
       if (h && Math.abs(h - last) > 4) {
         last = h;
         window.parent.postMessage({ type: 'ppr-height', height: h }, '*');
