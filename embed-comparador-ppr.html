@@ -477,6 +477,14 @@
 #lf-pc-calc .lpc-return-value .neg {
   color: #B42318;
 }
+#lf-pc-calc .lpc-return-eur {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+  letter-spacing: -0.1px;
+}
 
 /* ---------- Tables (compare + risk) ---------- */
 #lf-pc-calc .lpc-section-title {
@@ -1213,16 +1221,27 @@
       }
     });
 
-    // returns strip
+    // returns strip — usa o valor final da série rebased (coerente com
+    // o que o gráfico mostra). Em modo €, adiciona o valor final em €.
     var strip = document.getElementById('lpc-returns-strip');
     strip.innerHTML = '';
-    pairs.forEach(function (p) {
+    pairs.forEach(function (p, i) {
       var f = p.fund;
-      var val = f.returns[state.period];
-      var valHtml = (val == null || Number.isNaN(val))
+      var s = seriesList[i];
+      var finalPct = (s && s.dataPct && s.dataPct.length)
+        ? s.dataPct[s.dataPct.length - 1]
+        : null;
+      var pctHtml = (finalPct == null || Number.isNaN(finalPct))
         ? '<span style="color:#96A0B0">-</span>'
-        : '<span class="' + (val >= 0 ? 'pos' : 'neg') + '">'
-          + (val >= 0 ? '+' : '') + val.toFixed(2).replace('.', ',') + '%</span>';
+        : '<span class="' + (finalPct >= 0 ? 'pos' : 'neg') + '">'
+          + (finalPct >= 0 ? '+' : '') + finalPct.toFixed(2).replace('.', ',') + '%</span>';
+      var eurHtml = '';
+      if (isEur && finalPct != null && !Number.isNaN(finalPct)) {
+        var finalEur = BASE_EUR * (1 + finalPct / 100);
+        var intPart = Math.floor(finalEur);
+        var dec = Math.round((finalEur - intPart) * 100).toString().padStart(2, '0');
+        eurHtml = '<div class="lpc-return-eur">' + fmtNumPT(intPart) + ',' + dec + '\u00A0€</div>';
+      }
       var cell = document.createElement('div');
       cell.className = 'lpc-return-cell';
       cell.innerHTML =
@@ -1230,7 +1249,7 @@
         + '<span class="lpc-swatch" style="background:' + SERIES_COLORS[p.slot] + '"></span>'
         + '<span class="lpc-return-name-text">' + f.name + '</span>'
         + '</div>'
-        + '<div class="lpc-return-value">' + valHtml + '</div>';
+        + '<div class="lpc-return-value">' + pctHtml + eurHtml + '</div>';
       strip.appendChild(cell);
     });
 

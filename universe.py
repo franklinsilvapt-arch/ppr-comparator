@@ -74,8 +74,9 @@ MANUAL_OVERRIDES = [
     {"match": "bluecrow global opportunities", "site_url": "https://www.bluecrowcapital.com/pt/fundos-em-subscricao/global-opportunities-ppr/211/"},
     # --- GNB (ordem: genérico primeiro, específico depois sobrescreve) ---
     {"match": "gnb ppr/oicvm",                 "site_url": "https://www.gnbga.pt/SF_FichaFundo_FO/codfun/14165990076",
-     "risk_class": 3},
-    {"match": "gnb ppr/oicvm global equities", "site_url": "https://www.gnbga.pt/SF_FichaFundo_FO/codfun/14165992247"},
+     "isin": "PTYESALM0007", "min_subs": 25, "risk_class": 3},
+    {"match": "gnb ppr/oicvm global equities", "site_url": "https://www.gnbga.pt/SF_FichaFundo_FO/codfun/14165992247",
+     "isin": "PTGNFHHM0002", "min_subs": 5},
     # --- Optimize ---
     # min_subs = 1 UP ≈ 15€ (valor típico da UP; actualizar quando cotação mudar)
     {"match": "optimize ppr/oicvm agressivo",  "site_url": "https://optimize.pt/ppr/agressivo/", "min_subs": 15},
@@ -106,7 +107,7 @@ MANUAL_OVERRIDES = [
     # ISIN correcto do Caixa ALG é PTCXGUHM0006 (o extractor CGD apanha
     # PTIXAEHM0006 que é outro fundo referenciado na página).
     {"match": "caixa ações líderes globais",   "site_url": "https://www.cgd.pt/Particulares/Poupanca-Investimento/Fundos-de-Investimento/Pages/CaixaALG_PPR_OICVM.aspx",
-     "isin": "PTCXGUHM0006", "min_subs": 100},
+     "isin": "PTCXGUHM0006", "min_subs": 100, "risk_class": 5},
     # Caixa Wealth: um ISIN por família (aplica-se a A/B/C/D). ISINs
     # confirmados pelo utilizador via FT tearsheet.
     {"match": "caixa wealth ações",            "isin": "PTCXGWHM0020", "risk_class": 6},
