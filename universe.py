@@ -218,27 +218,37 @@ for _cat in ("categoria em", "categoria en", "categoria eo"):
         "hidden": True,
     })
 
-# --- Bankinter per-categoria min_subs + TEC ---
+# --- Bankinter per-categoria min_subs + TEC + ISIN ---
 # min_subs: Classe A 500€, B 100.000€, C 250.000€
-# TEC extraído dos IFIs 2024 (bankinter.pt). Mega TT / Obrigações /
-# Rendimento sem IFI partilhado, deixamos sem TEC específico (ficam
-# com o valor CMVM).
+# TEC e ISIN extraídos dos IFIs 2024/2026 (bankinter.pt). Mega TT /
+# Obrigações / Rendimento sem IFI partilhado por categoria; ficam com
+# TEC/ISIN únicos (aplicados via overrides separados acima).
 _BANKINTER_CAT_MIN = {"a": 500, "b": 100000, "c": 250000}
-# (fam_match, TECs_por_cat ou None)
+# (fam_match, TECs_por_cat ou None, ISINs_por_cat ou None)
 _BANKINTER_FAMILIES = [
-    ("bankinter mega tt ppr / oicvm",   None),
-    ("bankinter 100 ppr / oicvm",       {"a": 2.39, "b": 1.68, "c": 1.56}),
-    ("bankinter 25 ppr / oicvm",        {"a": 1.68, "b": 1.26, "c": 1.10}),
-    ("bankinter 50 ppr / oicvm",        {"a": 2.03, "b": 1.43, "c": 1.30}),
-    ("bankinter 75 ppr / oicvm",        {"a": 2.39, "b": 1.66, "c": 1.56}),
-    ("bankinter obrigações ppr / oicvm", None),
-    ("bankinter rendimento ppr / oicvm", None),
+    ("bankinter mega tt ppr / oicvm",    None, None),
+    ("bankinter 100 ppr / oicvm",
+        {"a": 2.39, "b": 1.68, "c": 1.56},
+        {"a": "PTBKCLHM0007", "b": "PTBKCMHM0006", "c": "PTBKCNHM0005"}),
+    ("bankinter 25 ppr / oicvm",
+        {"a": 1.68, "b": 1.26, "c": 1.10},
+        {"a": "PTYBCPLM0001", "b": "PTBKCGHM0004", "c": "PTYBCWHM0008"}),
+    ("bankinter 50 ppr / oicvm",
+        {"a": 2.03, "b": 1.43, "c": 1.30},
+        {"a": "PTYBCFHM0017", "b": "PTBKCIHM0002", "c": "PTYBCHHM0015"}),
+    ("bankinter 75 ppr / oicvm",
+        {"a": 2.39, "b": 1.66, "c": 1.56},
+        {"a": "PTYBCQLM0000", "b": "PTBKCHHM0003", "c": "PTYBCIHM0014"}),
+    ("bankinter obrigações ppr / oicvm", None, None),
+    ("bankinter rendimento ppr / oicvm", None, None),
 ]
-for _fam, _tecs in _BANKINTER_FAMILIES:
+for _fam, _tecs, _isins in _BANKINTER_FAMILIES:
     for _cat, _min in _BANKINTER_CAT_MIN.items():
         ov = {"match": f"{_fam} - categoria {_cat}", "min_subs": _min}
         if _tecs and _cat in _tecs:
             ov["tec"] = _tecs[_cat]
+        if _isins and _cat in _isins:
+            ov["isin"] = _isins[_cat]
         MANUAL_OVERRIDES.append(ov)
 
 # --- Caixa Wealth per-categoria min_subs ---
