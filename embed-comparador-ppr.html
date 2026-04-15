@@ -175,7 +175,7 @@ html, body { margin: 0; }
 /* ---------- Slots (3 search inputs, um por PPR selecionado) ---------- */
 #lf-pc-calc .lpc-slots {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
 }
 #lf-pc-calc .lpc-slot {
@@ -457,7 +457,9 @@ html, body { margin: 0; }
 /* ---------- Returns strip ---------- */
 #lf-pc-calc .lpc-returns-strip {
   display: grid;
-  grid-template-columns: 1fr;
+  /* min(180px, 100%) evita que items forcem overflow horizontal
+     quando o container é mais estreito que 180px */
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
   gap: 12px;
   margin-top: 20px;
 }
