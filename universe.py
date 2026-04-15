@@ -62,8 +62,13 @@ MANUAL_OVERRIDES = [
     {"match": "bankinter 25 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-25"},
     {"match": "bankinter 50 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-50"},
     {"match": "bankinter 75 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-75"},
+    # Bankinter 100: constituído 30/05/2025. Sem histórico público diário
+    # (IFI: "sem informação por não existirem dados suficientes relativos
+    # a um ano civil completo"). FT não tem símbolo para os ISINs novos.
+    # Escondido até haver fonte fiável — antes mostrava CSVs stale com
+    # ~10 anos de dados que não pertencem a este fundo.
     {"match": "bankinter 100 ppr",     "site_url": "https://www.bankinter.pt/fundos/investir-em-fundos",
-     "risk_class": 6},
+     "risk_class": 6, "hidden": True},
     # Bankinter Obrigações — várias famílias partilham ISIN por família
     {"match": "obrigações eur 2027",   "isin": "PTBKCCHM0008"},
     {"match": "obrigações eur 2030",   "isin": "PTBKCKHM0008"},
