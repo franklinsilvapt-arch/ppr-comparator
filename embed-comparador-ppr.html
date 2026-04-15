@@ -10,9 +10,11 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
-/* iframe sem margins nativas do body — evita barras de scroll residuais
-   que apareciam quando o iframe tinha 8px de margem invisível. */
-html, body { margin: 0; }
+/* iframe sem margins nativas do body. O iframe auto-redimensiona via
+   postMessage para a altura exacta do conteúdo, por isso nunca precisa
+   de scrollbars internas — escondê-las evita tanto a barra vertical
+   residual como a horizontal induzida por tooltips que passam do edge. */
+html, body { margin: 0; overflow: hidden; }
 
 #lf-pc-calc {
   --text-primary: #202432;
@@ -758,6 +760,18 @@ html, body { margin: 0; }
 }
 #lf-pc-calc .lpc-table .lpc-tip-bubble::after {
   left: 14px;
+  transform: none;
+}
+/* toggle do benchmark está alinhado à direita do card — a bolha tem
+   de abrir PARA A ESQUERDA para não sair do viewport. */
+#lf-pc-calc .lpc-benchmark-toggle .lpc-tip-bubble {
+  left: auto;
+  right: -8px;
+  transform: none;
+}
+#lf-pc-calc .lpc-benchmark-toggle .lpc-tip-bubble::after {
+  left: auto;
+  right: 14px;
   transform: none;
 }
 #lf-pc-calc .lpc-label-tip {
