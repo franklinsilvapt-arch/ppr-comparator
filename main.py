@@ -16,6 +16,7 @@ if hasattr(sys.stdout, "reconfigure"):
 
 from universe import get_funds
 from scrapers import yahoo, investing, golden_sgf, sites, ft, oxy
+from scrapers import benchmarks as bench_module
 import calc_metrics
 
 DATA_DIR = Path(__file__).parent / "data"
@@ -86,6 +87,7 @@ def main():
             "prospectus_url": f.get("prospectus_url"),
             "notes": f.get("notes"),
             "hidden": bool(f.get("hidden")),
+            "benchmark_ticker": bench_module.risk_to_ticker(f.get("risk_class")),
         }
 
         if fid in all_prices:
@@ -130,8 +132,7 @@ def main():
         else:
             print(f"  skip {fid} (sem dados)")
 
-    # Benchmark (MSCI World via URTH) exportado para o embed poder
-    # recalcular beta sobre a janela comum dos fundos seleccionados.
+    # Benchmark URTH (MSCI World) — referência para cálculo de Beta.
     bench_payload = None
     if benchmark is not None and not benchmark.empty:
         b = benchmark.dropna().sort_index()
@@ -144,12 +145,34 @@ def main():
             "name": "MSCI World (iShares URTH, EUR)",
         }
 
+    # ETFs de referência visual por nível de risco (LifeStrategy + IWDA).
+    print("\n== BENCHMARK ETFs ==")
+    try:
+        bench_module.run()
+    except Exception as e:
+        print(f"[bench] fetch falhou: {e}; usar cache se disponível")
+    cached_etfs = bench_module.load_cached()
+    etf_payloads = {}
+    for ticker, info in bench_module.BENCHMARKS.items():
+        s = cached_etfs.get(ticker)
+        if s is None or s.empty:
+            continue
+        s = s.sort_index()
+        etf_payloads[ticker] = {
+            "labels": [d.strftime("%Y-%m-%d") for d in s.index],
+            "data": [round(float(v), 4) for v in s.values],
+            "ticker": ticker,
+            "name": info["name"],
+            "risk": info["risk"],
+        }
+
     # 4. Escrever JSON
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "data_as_of": min(latest_dates).strftime("%Y-%m-%d") if latest_dates else None,
         "latest_data_date": max(latest_dates).strftime("%Y-%m-%d") if latest_dates else None,
         "benchmark": bench_payload,
+        "benchmarks": etf_payloads,
         "funds": output_funds,
     }
 

@@ -454,6 +454,66 @@ html, body { margin: 0; }
   margin-top: 16px;
 }
 
+/* ---------- Benchmark toggle ---------- */
+#lf-pc-calc .lpc-benchmark-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+#lf-pc-calc .lpc-benchmark-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  user-select: none;
+  padding: 4px 0;
+}
+#lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 32px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--border-primary);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+#lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  transition: transform 0.15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+#lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"]:checked {
+  background: var(--brand);
+}
+#lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"]:checked::after {
+  transform: translateX(14px);
+}
+#lf-pc-calc .lpc-benchmark-text {
+  white-space: nowrap;
+}
+#lf-pc-calc .lpc-return-vs-bench {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  font-weight: 500;
+}
+#lf-pc-calc .lpc-return-vs-bench .pos { color: var(--green-text); }
+#lf-pc-calc .lpc-return-vs-bench .neg { color: var(--error); }
+
 /* ---------- Returns strip ---------- */
 #lf-pc-calc .lpc-returns-strip {
   display: grid;
@@ -870,10 +930,21 @@ html, body { margin: 0; }
         </div>
       </div>
     </div>
+    <div class="lpc-benchmark-row">
+      <label class="lpc-benchmark-toggle" for="lpc-benchmark-checkbox">
+        <input type="checkbox" id="lpc-benchmark-checkbox">
+        <span class="lpc-benchmark-text">ETF de referência</span>
+        <span class="lpc-info-icon" tabindex="0" aria-label="Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <span class="lpc-tip-bubble">Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.</span>
+        </span>
+      </label>
+    </div>
     <div class="lpc-chart-canvas-wrap">
       <canvas id="lpc-chart"></canvas>
     </div>
     <div id="lpc-chart-note" class="lpc-chart-note"></div>
+    <div id="lpc-benchmark-note" class="lpc-chart-note" style="display:none"></div>
     <div id="lpc-risk-warning"></div>
     <div class="lpc-returns-strip" id="lpc-returns-strip"></div>
   </div>
@@ -960,6 +1031,7 @@ html, body { margin: 0; }
   var USING_MOCK = true;
   var LOAD_ERROR = null;
   var BENCHMARK = null;  // {labels, data, ticker, name} do JSON backend
+  var BENCHMARKS_BY_TICKER = {};  // {V20A: {labels, data, ticker, name, risk}, ...}
 
   // Paleta (design system): azul primário, laranja acento, verde acento.
   var SERIES_COLORS = ['#155EEF', '#FD8D2B', '#12B76A', '#8E44AD', '#B42318', '#0D9488'];
@@ -967,7 +1039,7 @@ html, body { margin: 0; }
   var MAX_SELECT = 3;
   var PREFERRED_DEFAULTS = ['invest-ar', 'casa-inv-sg-founders', 'sgf-dr-financas'];
 
-  var state = { selected: [null, null, null], period: 'since', mode: 'eur' };
+  var state = { selected: [null, null, null], period: 'since', mode: 'eur', showBenchmark: false };
   var selectorState = { query: '', activeSlot: -1, highlightIdx: 0 };
   var chart = null;
 
@@ -977,6 +1049,7 @@ html, body { margin: 0; }
       isin: f.isin, tec: f.tec,
       minSubs: f.min_subs,
       riskClass: f.risk_class,
+      benchmarkTicker: f.benchmark_ticker || null,
       returns: f.returns || {},
       risk: f.risk || {},
       dataOrigin: f.data_origin || 'historical',
@@ -1251,15 +1324,40 @@ html, body { margin: 0; }
       };
     });
 
-    // Rebase a data comum: quando há múltiplos fundos seleccionados,
-    // a comparação só é fair se começar na data em que TODOS têm dados.
-    // Usamos a data de arranque do fundo com menos histórico como ponto
-    // zero e recalculamos as variações a partir daí. Aplicável a todos
-    // os períodos (YTD, 1y, ... Desde início).
     var validSeries = seriesList.filter(Boolean);
-    if (validSeries.length >= 2) {
-      var cutoff = validSeries.map(function (s) { return s.labels[0]; })
-        .reduce(function (a, b) { return a > b ? a : b; });
+
+    // Preparar benchmarks necessários — um por ticker distinto entre os
+    // PPRs seleccionados (V20A/V40A/V60A/V80A/IWDA). Mesmo quando a
+    // regra 'máx 2 risk_classes' esconde as linhas do chart, o objecto
+    // fica disponível para calcular o delta per-cartão na strip.
+    var benchByTicker = {};
+    pairs.forEach(function (p) {
+      var t = p.fund.benchmarkTicker;
+      if (!t || benchByTicker[t]) return;
+      var b = BENCHMARKS_BY_TICKER[t];
+      if (!b || !b.labels || !b.labels.length) return;
+      benchByTicker[t] = {
+        ticker: t, name: b.name,
+        labels: b.labels.slice(), rawData: b.data.slice(),
+        dataPct: null
+      };
+    });
+    var distinctTickers = Object.keys(benchByTicker);
+    var benchmarksVisible = state.showBenchmark && distinctTickers.length > 0 && distinctTickers.length <= 2;
+    var benchmarksHiddenMixed = state.showBenchmark && distinctTickers.length > 2;
+
+    // Rebase à data comum. Quando há múltiplos fundos, corta ao fundo
+    // com menos histórico. Quando o toggle do benchmark está activo,
+    // inclui também o início do(s) ETF(s) no cutoff — mesmo quando as
+    // linhas do benchmark vão ficar escondidas (>2 tickers): assim a
+    // delta per-cartão é calculada sobre a MESMA janela que o chart
+    // mostra e é honestamente comparável.
+    var cutoffSources = validSeries.map(function (s) { return s.labels[0]; });
+    if (state.showBenchmark && distinctTickers.length > 0) {
+      distinctTickers.forEach(function (t) { cutoffSources.push(benchByTicker[t].labels[0]); });
+    }
+    if (cutoffSources.length >= 2) {
+      var cutoff = cutoffSources.reduce(function (a, b) { return a > b ? a : b; });
       validSeries.forEach(function (s) {
         if (s.labels[0] >= cutoff) return;
         var idx = s.labels.findIndex(function (l) { return l >= cutoff; });
@@ -1271,9 +1369,31 @@ html, body { margin: 0; }
       });
     }
 
-    // União de labels
+    // Rebasear cada benchmark ao cutoff visível (preços → % a partir do
+    // primeiro valor no cutoff). Feito SEMPRE que o ticker está em uso,
+    // independentemente do chart estar a desenhá-los — serve também a
+    // delta per-cartão.
+    var chartCutoff = validSeries.length ? validSeries.map(function (s) { return s.labels[0]; })
+      .reduce(function (a, b) { return a > b ? a : b; }) : null;
+    distinctTickers.forEach(function (t) {
+      var b = benchByTicker[t];
+      var anchor = chartCutoff || b.labels[0];
+      var idx = b.labels.findIndex(function (l) { return l >= anchor; });
+      if (idx < 0) { b.labels = []; b.dataPct = []; return; }
+      var base = b.rawData[idx];
+      if (!base || !isFinite(base)) { b.labels = []; b.dataPct = []; return; }
+      b.labels = b.labels.slice(idx);
+      b.dataPct = b.rawData.slice(idx).map(function (v) { return +((v / base - 1) * 100).toFixed(2); });
+    });
+
+    // União de labels (funds + benchmarks que vão ser desenhados)
     var allLabelsSet = new Set();
     validSeries.forEach(function (s) { s.labels.forEach(function (l) { allLabelsSet.add(l); }); });
+    if (benchmarksVisible) {
+      distinctTickers.forEach(function (t) {
+        benchByTicker[t].labels.forEach(function (l) { allLabelsSet.add(l); });
+      });
+    }
     var labels = Array.from(allLabelsSet).sort();
     var isEur = state.mode === 'eur';
 
@@ -1296,6 +1416,31 @@ html, body { margin: 0; }
         tension: 0.1, fill: false
       };
     }).filter(Boolean);
+
+    // Datasets dos benchmarks (cinza tracejado). Só desenhar quando há
+    // 1-2 tickers distintos (regra multi-risco). Segundo ticker usa dash
+    // pattern diferente para o distinguir.
+    if (benchmarksVisible) {
+      distinctTickers.forEach(function (t, bi) {
+        var b = benchByTicker[t];
+        if (!b.labels.length) return;
+        var m = new Map(b.labels.map(function (l, j) { return [l, b.dataPct[j]]; }));
+        var alignedPct = labels.map(function (l) { return m.has(l) ? m.get(l) : null; });
+        var data = alignedPct.map(function (v) {
+          if (v == null) return null;
+          return isEur ? +(BASE_EUR * (1 + v / 100)).toFixed(2) : +v.toFixed(2);
+        });
+        datasets.push({
+          label: t + ' · ' + b.name, data: data, spanGaps: true,
+          borderColor: '#6B7280',
+          backgroundColor: 'transparent',
+          borderWidth: 1.5,
+          borderDash: bi === 0 ? [6, 4] : [2, 3],
+          pointRadius: 0, pointHoverRadius: 3,
+          tension: 0.1, fill: false
+        });
+      });
+    }
 
     var noteEl = document.getElementById('lpc-chart-note');
     if (noteEl) {
@@ -1401,6 +1546,24 @@ html, body { margin: 0; }
           valueHtml = '<div class="lpc-return-value ' + pctCls + '">' + pctStr + '</div>';
         }
       }
+      // Delta vs ETF de referência — só aparece se o toggle está ligado
+      // e se o fundo tem benchmark_ticker mapeado.
+      var vsHtml = '';
+      if (state.showBenchmark && f.benchmarkTicker && benchByTicker[f.benchmarkTicker]) {
+        var bench = benchByTicker[f.benchmarkTicker];
+        var benchFinalPct = (bench.dataPct && bench.dataPct.length)
+          ? bench.dataPct[bench.dataPct.length - 1] : null;
+        if (benchFinalPct != null && finalPct != null) {
+          var delta = +(finalPct - benchFinalPct).toFixed(2);
+          var deltaStr = (delta >= 0 ? '+' : '') + delta.toFixed(2).replace('.', ',') + ' p.p.';
+          var deltaCls = delta >= 0 ? 'pos' : 'neg';
+          vsHtml = '<div class="lpc-return-vs-bench">'
+            + 'vs ' + f.benchmarkTicker + ' ('
+            + (benchFinalPct >= 0 ? '+' : '') + benchFinalPct.toFixed(2).replace('.', ',') + '%'
+            + '): <span class="' + deltaCls + '">' + deltaStr + '</span>'
+            + '</div>';
+        }
+      }
       var cell = document.createElement('div');
       cell.className = 'lpc-return-cell';
       cell.innerHTML =
@@ -1408,9 +1571,31 @@ html, body { margin: 0; }
         + '<span class="lpc-swatch" style="background:' + SERIES_COLORS[p.slot] + '"></span>'
         + '<span class="lpc-return-name-text">' + f.name + '</span>'
         + '</div>'
-        + valueHtml;
+        + valueHtml
+        + vsHtml;
       strip.appendChild(cell);
     });
+
+    // Nota do benchmark — mostra quando o toggle está on: explica o(s)
+    // ETF(s) ou avisa que foram escondidos do chart por excesso de riscos.
+    var benchNoteEl = document.getElementById('lpc-benchmark-note');
+    if (benchNoteEl) {
+      if (benchmarksHiddenMixed) {
+        benchNoteEl.style.display = '';
+        benchNoteEl.textContent =
+          'Seleccionaste PPR de ' + distinctTickers.length + ' níveis de risco diferentes — '
+          + 'ETFs de referência escondidos no gráfico para não saturar. '
+          + 'A delta vs cada ETF continua visível em cada cartão abaixo.';
+      } else if (benchmarksVisible && distinctTickers.length) {
+        benchNoteEl.style.display = '';
+        var names = distinctTickers.map(function (t) { return t; }).join(' + ');
+        benchNoteEl.textContent = 'Referência (linha cinza): ' + names
+          + '. ETFs não são PPR — sem benefício fiscal, mas com liquidez imediata.';
+      } else {
+        benchNoteEl.style.display = 'none';
+        benchNoteEl.textContent = '';
+      }
+    }
 
     // Warning - perfil de risco divergente
     renderRiskWarning(pairs);
@@ -1697,6 +1882,13 @@ html, body { margin: 0; }
       renderAll();
     });
   });
+  var benchCheckbox = document.getElementById('lpc-benchmark-checkbox');
+  if (benchCheckbox) {
+    benchCheckbox.addEventListener('change', function () {
+      state.showBenchmark = benchCheckbox.checked;
+      renderAll();
+    });
+  }
 
   function renderAll() {
     renderSelector();
@@ -1784,6 +1976,7 @@ html, body { margin: 0; }
         .map(normalizeBackendFund);
       DATA_AS_OF = json.latest_data_date || json.data_as_of || null;
       BENCHMARK = json.benchmark || null;
+      BENCHMARKS_BY_TICKER = json.benchmarks || {};
       USING_MOCK = false;
     } catch (e) {
       LOAD_ERROR = e.message || String(e);

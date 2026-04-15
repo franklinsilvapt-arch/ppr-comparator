@@ -14,6 +14,7 @@ ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(ROOT))
 
 from universe import get_funds
+from scrapers import benchmarks as bench_module
 import calc_metrics
 
 RAW = ROOT / "data" / "raw"
@@ -65,6 +66,7 @@ def main():
             "prospectus_url": f.get("prospectus_url"),
             "notes": f.get("notes"),
             "hidden": bool(f.get("hidden")),
+            "benchmark_ticker": bench_module.risk_to_ticker(f.get("risk_class")),
         }
         prices = load_prices(fid)
         if prices is not None and not prices.empty:
@@ -100,14 +102,12 @@ def main():
             entry["data_origin"] = "cmvm"
             out_funds.append(entry)
 
-    # Benchmark (URTH) exportado como série diária ao longo do período
-    # relevante. Serve para o embed recalcular beta na janela comum dos
-    # fundos seleccionados (o beta no campo fund.risk.beta é sobre toda
-    # a história individual, não comparable entre fundos).
+    # Benchmark URTH (MSCI World) — usado para cálculo do Beta na janela
+    # comum dos fundos seleccionados. Mantido à parte dos ETFs LifeStrategy
+    # que são referência visual por nível de risco.
     bench_payload = None
     if bench is not None and not bench.empty:
         b = bench.dropna().sort_index()
-        # limita ao período relevante (a partir de 2015) para poupar bytes
         b = b[b.index >= pd.Timestamp("2015-01-01")]
         bench_payload = {
             "labels": [d.strftime("%Y-%m-%d") for d in b.index],
@@ -116,11 +116,30 @@ def main():
             "name": "MSCI World (iShares URTH, EUR)",
         }
 
+    # ETFs de referência por nível de risco (LifeStrategy 20/40/60/80 + IWDA).
+    # Exportados como séries diárias completas para o embed sobrepor no
+    # gráfico quando o toggle 'ETF de referência' está activo.
+    etf_payloads = {}
+    cached_etfs = bench_module.load_cached()
+    for ticker, info in bench_module.BENCHMARKS.items():
+        s = cached_etfs.get(ticker)
+        if s is None or s.empty:
+            continue
+        s = s.sort_index()
+        etf_payloads[ticker] = {
+            "labels": [d.strftime("%Y-%m-%d") for d in s.index],
+            "data": [round(float(v), 4) for v in s.values],
+            "ticker": ticker,
+            "name": info["name"],
+            "risk": info["risk"],
+        }
+
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "data_as_of": min(latest_dates).strftime("%Y-%m-%d") if latest_dates else None,
         "latest_data_date": max(latest_dates).strftime("%Y-%m-%d") if latest_dates else None,
         "benchmark": bench_payload,
+        "benchmarks": etf_payloads,
         "funds": out_funds,
     }
     OUT.write_text(
