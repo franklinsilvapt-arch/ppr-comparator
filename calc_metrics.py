@@ -181,7 +181,7 @@ def build_chart_series(prices: pd.Series, period: str) -> dict:
     normalized = (window / base - 1) * 100
     normalized = normalized.replace([np.inf, -np.inf], np.nan).dropna()
 
-    step = max(1, len(normalized) // 250)
+    step = max(1, len(normalized) // 1000)
     sampled = normalized.iloc[::step]
 
     return {
