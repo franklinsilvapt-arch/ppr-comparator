@@ -10,6 +10,10 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
+/* iframe sem margins nativas do body — evita barras de scroll residuais
+   que apareciam quando o iframe tinha 8px de margem invisível. */
+html, body { margin: 0; }
+
 #lf-pc-calc {
   --text-primary: #202432;
   --text-secondary: #3A4454;
@@ -76,7 +80,7 @@
   flex-wrap: wrap;
   gap: 16px;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: flex-end;
 }
 #lf-pc-calc .lpc-title {
   font-size: 20px;
@@ -183,7 +187,9 @@
   width: 100%;
   padding: 10px 36px 10px 12px;
   font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  /* 16px no mínimo para evitar auto-zoom do iOS Safari no focus.
+     Em desktop reduzimos via media query para manter o aspecto actual. */
+  font-size: 16px;
   font-weight: 500;
   line-height: 20px;
   letter-spacing: -0.1px;
@@ -431,9 +437,7 @@
 /* ---------- Returns strip ---------- */
 #lf-pc-calc .lpc-returns-strip {
   display: grid;
-  /* min(180px, 100%) evita que items forcem overflow horizontal
-     quando o container é mais estreito que 180px */
-  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  grid-template-columns: 1fr;
   gap: 12px;
   margin-top: 20px;
 }
@@ -697,6 +701,10 @@
 }
 
 /* ---------- Responsive ---------- */
+@media (min-width: 641px) {
+  /* Em desktop não há risco de auto-zoom: voltamos aos 14px. */
+  #lf-pc-calc .lpc-slot-input { font-size: 14px; }
+}
 @media (max-width: 640px) {
   #lf-pc-calc .lpc-card,
   #lf-pc-calc .lpc-chart-card {
@@ -1802,16 +1810,23 @@
 
   function reportHeight() {
     if (window.parent === window) return;
-    let last = 0;
-    const send = () => {
-      const h = Math.ceil(document.documentElement.getBoundingClientRect().height);
-      if (h && h !== last) {
+    var last = 0;
+    var t = null;
+    function send() {
+      var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+      // Threshold de 4px evita flickering com hovers/tooltips que causam
+      // reflows de 1-2px — isso fazia a página mãe saltar no scroll.
+      if (h && Math.abs(h - last) > 4) {
         last = h;
         window.parent.postMessage({ type: 'ppr-height', height: h }, '*');
       }
-    };
+    }
+    function schedule() {
+      if (t) return;
+      t = setTimeout(function () { t = null; send(); }, 120);
+    }
     send();
-    new ResizeObserver(send).observe(document.documentElement);
+    new ResizeObserver(schedule).observe(document.documentElement);
     window.addEventListener('load', send);
   }
 
