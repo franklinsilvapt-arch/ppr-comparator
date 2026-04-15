@@ -95,10 +95,27 @@ def main():
             entry["data_origin"] = "cmvm"
             out_funds.append(entry)
 
+    # Benchmark (URTH) exportado como série diária ao longo do período
+    # relevante. Serve para o embed recalcular beta na janela comum dos
+    # fundos seleccionados (o beta no campo fund.risk.beta é sobre toda
+    # a história individual, não comparable entre fundos).
+    bench_payload = None
+    if bench is not None and not bench.empty:
+        b = bench.dropna().sort_index()
+        # limita ao período relevante (a partir de 2015) para poupar bytes
+        b = b[b.index >= pd.Timestamp("2015-01-01")]
+        bench_payload = {
+            "labels": [d.strftime("%Y-%m-%d") for d in b.index],
+            "data": [round(float(v), 4) for v in b.values],
+            "ticker": "URTH",
+            "name": "MSCI World (iShares URTH, EUR)",
+        }
+
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "data_as_of": min(latest_dates).strftime("%Y-%m-%d") if latest_dates else None,
         "latest_data_date": max(latest_dates).strftime("%Y-%m-%d") if latest_dates else None,
+        "benchmark": bench_payload,
         "funds": out_funds,
     }
     OUT.write_text(

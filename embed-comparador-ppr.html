@@ -825,6 +825,7 @@
   var DATA_AS_OF = null;
   var USING_MOCK = true;
   var LOAD_ERROR = null;
+  var BENCHMARK = null;  // {labels, data, ticker, name} do JSON backend
 
   // Paleta (design system): azul primário, laranja acento, verde acento.
   var SERIES_COLORS = ['#155EEF', '#FD8D2B', '#12B76A', '#8E44AD', '#B42318', '#0D9488'];
@@ -1351,6 +1352,51 @@
   // -----------------------------------------------------------
   // RISK TABLE
   // -----------------------------------------------------------
+  // Para cada data em fundLabels, devolve o último close do benchmark
+  // em ou antes dessa data. O benchmark vem diário e é maior do que a
+  // série downsampled do fundo; isto dá-nos preços alinhados.
+  function alignBenchmarkToLabels(fundLabels, bench) {
+    if (!bench || !bench.labels || !bench.labels.length) return null;
+    var out = new Array(fundLabels.length);
+    var bi = 0;
+    for (var i = 0; i < fundLabels.length; i++) {
+      var target = fundLabels[i];
+      while (bi + 1 < bench.labels.length && bench.labels[bi + 1] <= target) bi++;
+      // se o primeiro benchmark label é posterior ao fund label, pula
+      if (bench.labels[bi] > target) {
+        out[i] = null;
+      } else {
+        out[i] = bench.data[bi];
+      }
+    }
+    return out;
+  }
+
+  // Calcula beta entre a série rebased do fundo (dataPct) e a do benchmark
+  // alinhada. Retornos sample-a-sample; beta = cov(fund, bench) / var(bench).
+  function betaFromRebasedSeries(labels, dataPct, bench) {
+    var benchAligned = alignBenchmarkToLabels(labels, bench);
+    if (!benchAligned) return null;
+    var fundPx = dataPct.map(function (v) { return 1 + v / 100; });
+    var fundR = [], benchR = [];
+    for (var i = 1; i < labels.length; i++) {
+      if (benchAligned[i] == null || benchAligned[i - 1] == null) continue;
+      if (fundPx[i - 1] <= 0 || benchAligned[i - 1] <= 0) continue;
+      fundR.push(fundPx[i] / fundPx[i - 1] - 1);
+      benchR.push(benchAligned[i] / benchAligned[i - 1] - 1);
+    }
+    if (fundR.length < 10) return null;
+    var meanF = fundR.reduce(function (a, b) { return a + b; }, 0) / fundR.length;
+    var meanB = benchR.reduce(function (a, b) { return a + b; }, 0) / benchR.length;
+    var cov = 0, varB = 0;
+    for (var j = 0; j < fundR.length; j++) {
+      cov += (fundR[j] - meanF) * (benchR[j] - meanB);
+      varB += (benchR[j] - meanB) * (benchR[j] - meanB);
+    }
+    if (varB <= 0) return null;
+    return cov / varB;
+  }
+
   // Recalcula vol/sharpe/maxDD/VaR a partir de uma série dataPct (% desde
   // a base) — usado quando comparamos múltiplos fundos e queremos métricas
   // sobre a janela comum (não desde a inception de cada um). A série é
@@ -1432,7 +1478,12 @@
           }
         });
         rebasedRisk = rebased.map(function (s) {
-          return s ? riskFromRebasedSeries(s.labels, s.dataPct) : null;
+          if (!s) return null;
+          var r = riskFromRebasedSeries(s.labels, s.dataPct);
+          if (BENCHMARK) {
+            r.beta = betaFromRebasedSeries(s.labels, s.dataPct, BENCHMARK);
+          }
+          return r;
         });
         var lastDate = withData[0].labels[withData[0].labels.length - 1];
         rebaseInfo = { from: cutoff, to: lastDate };
@@ -1464,8 +1515,8 @@
         tip: 'Perda máxima esperada num período típico, com 95% de confiança. Quando há comparação multi-fundo, é calculado sobre amostragem semanal/mensal da janela comum.',
         render: function (p) { return fmt(pickRisk(p, 'var95'), '%', 2); } },
       { label: 'Beta',
-        tip: 'Sensibilidade do fundo aos movimentos do mercado global de acções, medida contra o MSCI World (ETF URTH em EUR). Beta = 1 significa que o fundo oscila ao mesmo ritmo do mercado; Beta < 1 é menos volátil; Beta > 1 amplifica os movimentos. Calculado sobre toda a história disponível de cada fundo (não rebased).',
-        render: function (p) { return fmt(p.fund.risk ? p.fund.risk.beta : null, '', 2); } }
+        tip: 'Sensibilidade do fundo aos movimentos do mercado global de acções, medida contra o MSCI World (ETF URTH em EUR). Beta = 1 significa que o fundo oscila ao mesmo ritmo do mercado; Beta < 1 é menos volátil; Beta > 1 amplifica os movimentos. Quando há comparação multi-fundo, é recalculado sobre a janela comum.',
+        render: function (p) { return fmt(pickRisk(p, 'beta'), '', 2); } }
     ];
 
     var bodyHtml = rows.map(function (r) {
@@ -1477,9 +1528,9 @@
     if (rebaseInfo) {
       bodyHtml += '<tr><td colspan="' + (pairs.length + 1) + '" '
         + 'style="padding-top:14px;font-size:12px;color:#5C6878;text-align:center;border:none">'
-        + 'Métricas calculadas sobre a janela comum dos fundos seleccionados ('
-        + rebaseInfo.from + ' → ' + rebaseInfo.to + '). '
-        + 'Beta mantém-se sobre toda a história individual de cada fundo.'
+        + 'Todas as métricas (incluindo Beta) calculadas sobre a janela '
+        + 'comum dos fundos seleccionados ('
+        + rebaseInfo.from + ' → ' + rebaseInfo.to + ').'
         + '</td></tr>';
     }
     body.innerHTML = bodyHtml;
@@ -1590,6 +1641,7 @@
         .filter(function (f) { return !f.hidden && f.data_origin === 'historical'; })
         .map(normalizeBackendFund);
       DATA_AS_OF = json.latest_data_date || json.data_as_of || null;
+      BENCHMARK = json.benchmark || null;
       USING_MOCK = false;
     } catch (e) {
       LOAD_ERROR = e.message || String(e);

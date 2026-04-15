@@ -124,11 +124,26 @@ def main():
         else:
             print(f"  skip {fid} (sem dados)")
 
+    # Benchmark (MSCI World via URTH) exportado para o embed poder
+    # recalcular beta sobre a janela comum dos fundos seleccionados.
+    bench_payload = None
+    if benchmark is not None and not benchmark.empty:
+        b = benchmark.dropna().sort_index()
+        b = b[b.index >= pd.Timestamp("2015-01-01")]
+        b.to_csv(DATA_DIR / "raw" / "URTH.csv")
+        bench_payload = {
+            "labels": [d.strftime("%Y-%m-%d") for d in b.index],
+            "data": [round(float(v), 4) for v in b.values],
+            "ticker": "URTH",
+            "name": "MSCI World (iShares URTH, EUR)",
+        }
+
     # 4. Escrever JSON
     output = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "data_as_of": min(latest_dates).strftime("%Y-%m-%d") if latest_dates else None,
         "latest_data_date": max(latest_dates).strftime("%Y-%m-%d") if latest_dates else None,
+        "benchmark": bench_payload,
         "funds": output_funds,
     }
 
