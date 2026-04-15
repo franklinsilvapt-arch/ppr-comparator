@@ -127,7 +127,8 @@ MANUAL_OVERRIDES = [
     # Invest Tendências Globais
     {"match": "invest tendências globais",     "isin": "PTARMJHM0003"},
     # --- Santander ---
-    {"match": "santander aforro",              "site_url": "https://www.santander.pt/poupanca-reforma/fundo-aforro-fpr"},
+    {"match": "santander aforro",              "site_url": "https://www.santander.pt/poupanca-reforma/fundo-aforro-fpr",
+     "isin": "PTSFFAHM0013", "min_subs": 25},
     {"match": "santander poupança prudente",   "site_url": "https://www.santander.pt/poupanca-reforma/poupanca-prudente-fpr"},
     {"match": "santander poupança valorização","site_url": "https://www.santander.pt/poupanca-reforma/poupanca-valorizacao-fpr",
      "investing_pair_id": 1185153, "source": "investing"},
