@@ -431,7 +431,9 @@
 /* ---------- Returns strip ---------- */
 #lf-pc-calc .lpc-returns-strip {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  /* min(180px, 100%) evita que items forcem overflow horizontal
+     quando o container é mais estreito que 180px */
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
   gap: 12px;
   margin-top: 20px;
 }
@@ -608,7 +610,7 @@
   color: #B42318;
 }
 
-/* ---------- Info icon (tooltip trigger simple) ---------- */
+/* ---------- Info icon (tooltip trigger click+hover) ---------- */
 #lf-pc-calc .lpc-info-icon {
   display: inline-flex;
   align-items: center;
@@ -618,9 +620,59 @@
   cursor: help;
   line-height: 0;
   transition: color 0.15s ease;
+  position: relative;
+  /* aumenta a tap target sem mexer no layout visual */
+  padding: 4px;
+  margin: -4px;
 }
-#lf-pc-calc .lpc-info-icon:hover {
+#lf-pc-calc .lpc-info-icon:hover,
+#lf-pc-calc .lpc-info-icon.is-open {
   color: var(--text-tertiary);
+}
+#lf-pc-calc .lpc-tip-bubble {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 200px;
+  max-width: 280px;
+  padding: 10px 12px;
+  background: var(--dark);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 17px;
+  letter-spacing: -0.1px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  white-space: normal;
+  text-align: left;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+#lf-pc-calc .lpc-tip-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--dark);
+}
+#lf-pc-calc .lpc-info-icon.is-open .lpc-tip-bubble,
+#lf-pc-calc .lpc-info-icon:hover .lpc-tip-bubble {
+  opacity: 1;
+}
+/* em tabelas, posiciona a bolha à direita para não ser cortada pelo scroll */
+#lf-pc-calc .lpc-table .lpc-tip-bubble {
+  left: 0;
+  transform: none;
+}
+#lf-pc-calc .lpc-table .lpc-tip-bubble::after {
+  left: 14px;
+  transform: none;
 }
 #lf-pc-calc .lpc-label-tip {
   display: inline-flex;
@@ -654,22 +706,34 @@
     font-size: 18px;
     line-height: 26px;
   }
+  #lf-pc-calc .lpc-sub {
+    font-size: 13px;
+    line-height: 18px;
+  }
   #lf-pc-calc .lpc-chart-canvas-wrap {
     height: 280px;
   }
   #lf-pc-calc .lpc-slots {
     grid-template-columns: 1fr;
   }
+  #lf-pc-calc .lpc-section-title {
+    font-size: 17px;
+    line-height: 24px;
+  }
   #lf-pc-calc .lpc-tabs-header {
     align-items: flex-start;
     flex-direction: column;
     gap: 12px;
   }
+  /* scroll horizontal em tab bars sem scrollbar visível (poupa altura) */
   #lf-pc-calc .lpc-tabs-controls {
     width: 100%;
     overflow-x: auto;
     flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  #lf-pc-calc .lpc-tabs-controls::-webkit-scrollbar { display: none; }
   #lf-pc-calc .lpc-tabs {
     flex-wrap: nowrap;
   }
@@ -685,6 +749,40 @@
   }
   #lf-pc-calc .lpc-table tbody th {
     width: 140px;
+  }
+  /* nos cartões de rentabilidade, número principal ligeiramente menor */
+  #lf-pc-calc .lpc-return-value {
+    font-size: 18px;
+    line-height: 24px;
+  }
+  /* disclaimer + warning mais legíveis */
+  #lf-pc-calc .lpc-disclaimer {
+    font-size: 12px;
+    line-height: 18px;
+  }
+  #lf-pc-calc .lpc-warning {
+    font-size: 12.5px;
+    line-height: 18px;
+  }
+  /* dropdown do selector: limitar altura para não empurrar layout */
+  #lf-pc-calc .lpc-dropdown {
+    max-height: 260px;
+  }
+}
+
+/* ecrãs muito estreitos (≤380px) */
+@media (max-width: 380px) {
+  #lf-pc-calc .lpc-card,
+  #lf-pc-calc .lpc-chart-card {
+    padding: 20px 14px;
+  }
+  #lf-pc-calc .lpc-table th,
+  #lf-pc-calc .lpc-table td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  #lf-pc-calc .lpc-table tbody th {
+    width: 120px;
   }
 }
 </style>
@@ -857,11 +955,19 @@
     + '<path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>'
     + '</svg>';
 
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
   function labelWithTip(label, tip) {
     if (!tip) return label;
+    var safe = escapeHtml(tip);
+    // sem title= para não duplicar com a bolha custom (que trata hover + tap)
     return '<span class="lpc-label-tip">' + label
-      + '<span class="lpc-info-icon" title="' + tip.replace(/"/g, '&quot;') + '">'
+      + '<span class="lpc-info-icon" tabindex="0" aria-label="' + safe + '">'
       + INFO_SVG
+      + '<span class="lpc-tip-bubble">' + safe + '</span>'
       + '</span></span>';
   }
 
@@ -1654,6 +1760,30 @@
     state.selected = [null, null, null];
     updateBadge();
   }
+
+  // Tooltip tap-to-toggle (mobile) — o title nativo não dispara em touch.
+  // Mantemos o title (acessibilidade / copy-paste / hover em nested elements)
+  // e adicionamos um handler explícito que abre/fecha a bolha.
+  root.addEventListener('click', function (e) {
+    var icon = e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    // fecha qualquer bolha aberta
+    root.querySelectorAll('.lpc-info-icon.is-open').forEach(function (el) {
+      if (el !== icon) el.classList.remove('is-open');
+    });
+    if (icon) {
+      e.preventDefault();
+      e.stopPropagation();
+      icon.classList.toggle('is-open');
+    }
+  });
+  // Esc fecha tooltips abertas
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      root.querySelectorAll('.lpc-info-icon.is-open').forEach(function (el) {
+        el.classList.remove('is-open');
+      });
+    }
+  });
 
   async function init() {
     if (typeof Chart === 'undefined') { setTimeout(init, 50); return; }
