@@ -897,6 +897,17 @@
   var root = document.getElementById('lf-pc-calc');
   if (!root) return;
 
+  // Garante viewport meta: quando o HTML é servido standalone (ex: raw
+  // GitHub Pages), sem isto o mobile renderiza a ~980px e as media
+  // queries não disparam — tudo fica minúsculo. Webflow já inclui o
+  // viewport na página, por isso aqui só adicionamos se não existir.
+  if (!document.querySelector('meta[name="viewport"]')) {
+    var _vp = document.createElement('meta');
+    _vp.name = 'viewport';
+    _vp.content = 'width=device-width, initial-scale=1';
+    document.head.appendChild(_vp);
+  }
+
   // =========================================================
   // CONFIG: URL do JSON publicado. Override via window.LF_PPR_DATA_URL.
   // =========================================================
