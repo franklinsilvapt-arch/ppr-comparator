@@ -90,10 +90,10 @@ MANUAL_OVERRIDES = [
      "isin": "PTGNFHHM0002", "min_subs": 5},
     # --- Optimize ---
     # min_subs = 1 UP ≈ 15€ (valor típico da UP; actualizar quando cotação mudar)
-    {"match": "optimize ppr/oicvm agressivo",  "site_url": "https://optimize.pt/ppr/agressivo/", "min_subs": 15},
-    {"match": "optimize ppr/oicvm ativo",      "site_url": "https://optimize.pt/ppr/ativo/",    "min_subs": 15},
-    {"match": "optimize ppr/oicvm equilibrado","site_url": "https://optimize.pt/ppr/equilibrado/","min_subs": 15},
-    {"match": "optimize ppr/oicvm moderado",   "site_url": "https://optimize.pt/ppr/moderado/", "min_subs": 15},
+    {"match": "optimize ppr/oicvm agressivo",  "site_url": "https://optimize.pt/ppr/agressivo/", "min_subs": 15, "isin": "PTOPZEHM0017"},
+    {"match": "optimize ppr/oicvm ativo",      "site_url": "https://optimize.pt/ppr/ativo/",    "min_subs": 15, "isin": "PTOPZAHM0003"},
+    {"match": "optimize ppr/oicvm equilibrado","site_url": "https://optimize.pt/ppr/equilibrado/","min_subs": 15, "isin": "PTOPZBHM0002"},
+    {"match": "optimize ppr/oicvm moderado",   "site_url": "https://optimize.pt/ppr/moderado/", "min_subs": 15, "isin": "PTOPZDHM0000"},
     # Optimize LFO Leopardo: dados vindos do IFI PDF (hardcoded).
     # Premium=P, Discount=D, Standard=S
     {"match": "optimize lfo ppr/oicvm leopardo - categoria p",
