@@ -2282,12 +2282,26 @@ body::-webkit-scrollbar,
     }, { passive: false });
 
     var touchStartY = 0;
+    var touchScrollable = null;
     window.addEventListener('touchstart', function (e) {
       touchStartY = e.touches[0].clientY;
+      // Detectar se o toque começa dentro de um elemento scrollável
+      // (dropdown de selector, etc.). Se sim, deixar o scroll nativo
+      // tratar — sem forwardar ao parent: caso contrário o dropdown
+      // rola E a página mãe rola ao mesmo tempo (tremor em mobile).
+      touchScrollable = findScrollableAncestor(e.target);
     }, { passive: true });
     window.addEventListener('touchmove', function (e) {
       var deltaY = touchStartY - e.touches[0].clientY;
       touchStartY = e.touches[0].clientY;
+      if (touchScrollable) {
+        var st = touchScrollable.scrollTop;
+        var sh = touchScrollable.scrollHeight;
+        var ch = touchScrollable.clientHeight;
+        var atTop = st <= 0 && deltaY < 0;
+        var atBottom = st + ch >= sh - 1 && deltaY > 0;
+        if (!atTop && !atBottom) return;
+      }
       window.parent.postMessage({ type: 'ppr-scroll', deltaY: deltaY }, '*');
     }, { passive: true });
   }
