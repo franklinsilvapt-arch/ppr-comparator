@@ -1067,7 +1067,7 @@
       var input = slot.querySelector('.lpc-slot-input');
       var clearBtn = slot.querySelector('.lpc-slot-clear');
 
-      input.addEventListener('focus', function () {
+      function openDropdown() {
         // Slot preenchido: não abrir dropdown. Utilizador só pode limpar
         // via botão × - evita perder a seleção por engano ao clicar.
         if (state.selected[idx]) return;
@@ -1075,7 +1075,13 @@
         selectorState.query = '';
         selectorState.highlightIdx = 0;
         renderDropdown();
-      });
+      }
+      // focus: desktop + mobile normal flow
+      input.addEventListener('focus', openDropdown);
+      // click: fallback para iOS Safari em iframe cross-origin, onde
+      // focus nem sempre dispara no primeiro tap (sobretudo se o
+      // utilizador tinha outro input focado antes).
+      input.addEventListener('click', openDropdown);
       input.addEventListener('blur', function () {
         setTimeout(function () {
           if (selectorState.activeSlot === idx) {
