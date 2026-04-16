@@ -1285,6 +1285,9 @@ body::-webkit-scrollbar,
     if (slotIdx < 0 || state.selected[slotIdx]) {
       dd.classList.remove('is-open');
       if (dd.parentNode) dd.parentNode.removeChild(dd);
+      // Dropdown fechou: refazer cálculo de altura para encolher o
+      // iframe de volta ao tamanho natural.
+      __sendHeight();
       return;
     }
     var slots = root.querySelectorAll('.lpc-slot');
@@ -1311,6 +1314,10 @@ body::-webkit-scrollbar,
       });
     }
     dd.classList.add('is-open');
+    // Dropdown abriu: forçar recálculo para expandir o iframe e
+    // acomodar a lista, sobretudo no PPR 3 que fica mais abaixo
+    // e cuja lista extrapolava o fundo do iframe (overflow:hidden).
+    __sendHeight();
   }
 
   function selectFundInSlot(slotIdx, id) {
@@ -2142,11 +2149,13 @@ body::-webkit-scrollbar,
     reportHeight();
   }
 
+  var __sendHeight = function () {};
+  var __scheduleHeight = function () {};
   function reportHeight() {
     if (window.parent === window) return;
     var last = 0;
     var t = null;
-    function send() {
+    __sendHeight = function send() {
       // scrollHeight ignora overflow:hidden (que temos no html/body para
       // esconder scrollbars internas). getBoundingClientRect iria dar
       // apenas a altura da viewport do iframe (ex. 2400px do fallback do
@@ -2155,6 +2164,19 @@ body::-webkit-scrollbar,
         document.body ? document.body.scrollHeight : 0,
         document.documentElement.scrollHeight
       ));
+      // Se houver um dropdown de selector aberto (PPR 1/2/3), estende
+      // a altura para incluir o seu bottom: dropdowns são position:
+      // absolute e não entram no scrollHeight, logo ficam clipados
+      // pelo overflow:hidden do body. Sobretudo no PPR 3 (mais abaixo
+      // no layout), o dropdown extrapolava o fundo do iframe.
+      var dd = document.querySelector('.lpc-dropdown.is-open');
+      if (dd) {
+        var r = dd.getBoundingClientRect();
+        var scrollY = window.pageYOffset ||
+          (document.documentElement && document.documentElement.scrollTop) || 0;
+        var bottom = Math.ceil(r.bottom + scrollY + 12);
+        if (bottom > h) h = bottom;
+      }
       // Threshold baixo (1px). O debounce de 120ms + o clamp >=2 no
       // listener do parent já absorvem os reflows espúrios de 1-2px
       // induzidos por hovers/tooltips.
@@ -2162,21 +2184,21 @@ body::-webkit-scrollbar,
         last = h;
         window.parent.postMessage({ type: 'ppr-height', height: h }, '*');
       }
-    }
-    function schedule() {
+    };
+    __scheduleHeight = function () {
       if (t) return;
-      t = setTimeout(function () { t = null; send(); }, 120);
-    }
-    send();
-    new ResizeObserver(schedule).observe(document.documentElement);
-    window.addEventListener('load', send);
+      t = setTimeout(function () { t = null; __sendHeight(); }, 120);
+    };
+    __sendHeight();
+    new ResizeObserver(__scheduleHeight).observe(document.documentElement);
+    window.addEventListener('load', __sendHeight);
     // Re-fires tardios: Chart.js completa o layout ~100-500ms pós init
     // e fontes custom (Inter) podem terminar a carregar depois ainda.
     // Garante que a altura final é capturada mesmo que o ResizeObserver
     // não dispare (diferença inferior ao seu rouding interno).
-    setTimeout(send, 500);
-    setTimeout(send, 1500);
-    setTimeout(send, 3000);
+    setTimeout(__sendHeight, 500);
+    setTimeout(__sendHeight, 1500);
+    setTimeout(__sendHeight, 3000);
   }
 
   // Safari em iframe cross-origin não encaminha wheel/touch scroll para a
