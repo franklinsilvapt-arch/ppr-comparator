@@ -104,9 +104,9 @@ MANUAL_OVERRIDES = [
      "isin": "PTOPZVHM0008", "min_subs": 1000, "tec": 2.47},
     # --- Sixty Degrees (min_subs por categoria do prospeto mar/2026) ---
     {"match": "sixty degrees ppr/oicvm flexível",     "site_url": "https://sixty-degrees.com/fund/sixty-degrees-ppr-oicvm-flexivel/"},
-    {"match": "sixty degrees ppr/oicvm flexível - categoria i", "min_subs": 100000, "tec": 1.39, "risk_class": 2},
-    {"match": "sixty degrees ppr/oicvm flexível - categoria r", "min_subs": 1,      "tec": 1.89, "risk_class": 2},
-    {"match": "sixty degrees ppr/oicvm flexível - categoria c", "min_subs": 250,    "tec": 1.89, "risk_class": 2},
+    {"match": "sixty degrees ppr/oicvm flexível - categoria i", "min_subs": 100000, "tec": 1.39, "risk_class": 2, "isin": "PTSXYAHM0000", "inception": "2019-10-01"},
+    {"match": "sixty degrees ppr/oicvm flexível - categoria r", "min_subs": 1,      "tec": 1.89, "risk_class": 2, "isin": "PTSXYBHM0009", "inception": "2021-02-02"},
+    {"match": "sixty degrees ppr/oicvm flexível - categoria c", "min_subs": 250,    "tec": 1.89, "risk_class": 2, "isin": "PTSTYCHM0004", "inception": "2025-12-29"},
     {"match": "sixty degrees ações globais ppr",      "site_url": "https://sixty-degrees.com/fund/sixty-degrees-acoes-globais-ppr-oicvm/"},
     {"match": "sixty degrees medina ppr",             "site_url": "https://sixty-degrees.com/fund/sixty-degrees-medina-ppr-oiavm-flexivel/"},
     # --- BPI — 4 fundos com ISINs do FT tearsheet ---
