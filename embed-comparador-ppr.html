@@ -2098,20 +2098,32 @@ body::-webkit-scrollbar,
   // o iframe e NÃO há scroll interno activo (overflow-auto).
   function forwardScroll() {
     if (window.parent === window) return;
+    // Encontra o ancestor scrollável mais próximo do target. Robust vs
+    // class-based matching: procura qualquer elemento com overflow[-y]
+    // auto|scroll E que REALMENTE tem conteúdo a rolar (scrollHeight
+    // excede clientHeight). O dropdown de selector é o caso principal,
+    // mas isto também cobre qualquer elemento scrollável futuro.
+    function findScrollableAncestor(el) {
+      while (el && el !== document.body) {
+        if (el.nodeType === 1) {
+          var cs = getComputedStyle(el);
+          var oy = cs.overflowY;
+          if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight) {
+            return el;
+          }
+        }
+        el = el.parentNode;
+      }
+      return null;
+    }
     window.addEventListener('wheel', function (e) {
-      // .lpc-dropdown é o dropdown de selector de PPR (overflow-y:auto,
-      // ~260px altura). Quando aberto, o user espera que o scroll mexa
-      // APENAS a lista, não a página mãe. Sem esta excepção o wheel
-      // era encaminhado via postMessage e a página inteira rolava.
-      var scrollable = e.target.closest && e.target.closest(
-        '[data-scrollable], .overflow-auto, .overflow-scroll, .lpc-dropdown'
-      );
+      var scrollable = findScrollableAncestor(e.target);
       if (scrollable) {
         var st = scrollable.scrollTop;
         var sh = scrollable.scrollHeight;
         var ch = scrollable.clientHeight;
-        var atTop = st === 0 && e.deltaY < 0;
-        var atBottom = st + ch >= sh && e.deltaY > 0;
+        var atTop = st <= 0 && e.deltaY < 0;
+        var atBottom = st + ch >= sh - 1 && e.deltaY > 0;
         if (!atTop && !atBottom) return;
       }
       e.preventDefault();
