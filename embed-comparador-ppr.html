@@ -165,8 +165,7 @@ body::-webkit-scrollbar,
   font-size: 13px;
   font-weight: 600;
   line-height: 18px;
-  letter-spacing: 0.4px;
-  text-transform: uppercase;
+  letter-spacing: 0.2px;
   color: var(--text-tertiary);
   margin-bottom: 20px;
   padding-bottom: 10px;
@@ -536,6 +535,9 @@ body::-webkit-scrollbar,
   gap: 12px;
   margin-top: 20px;
 }
+/* Quando vazio (0 PPRs seleccionados) colapsa para não deixar margem
+   residual que varia a altura total do comparador vs estado 1+ PPRs. */
+#lf-pc-calc .lpc-returns-strip:empty { margin-top: 0; }
 #lf-pc-calc .lpc-return-cell {
   background: var(--bg-secondary);
   padding: 14px 16px;
@@ -934,7 +936,7 @@ body::-webkit-scrollbar,
           <button class="lpc-tab is-active" data-period="since">Desde início</button>
         </div>
         <div class="lpc-tabs lpc-mode-toggle" id="lpc-mode-tabs">
-          <button class="lpc-tab is-active" data-mode="eur">1.000 €</button>
+          <button class="lpc-tab is-active" data-mode="eur">1.000€</button>
           <button class="lpc-tab" data-mode="pct">%</button>
         </div>
       </div>
@@ -1107,7 +1109,7 @@ body::-webkit-scrollbar,
     return neg ? '-' + s : s;
   }
   function fmtEur(v) {
-    return fmtNumPT(v) + '\u00A0€';
+    return fmtNumPT(v) + '€';
   }
   function fmtEurDec(v) { return fmtEur(v); }
 
@@ -1448,7 +1450,7 @@ body::-webkit-scrollbar,
     var noteEl = document.getElementById('lpc-chart-note');
     if (noteEl) {
       var baseTxt = isEur
-        ? 'Investimento simulado de ' + fmtNumPT(BASE_EUR) + '\u00A0€ no início do período.'
+        ? 'Investimento simulado de ' + fmtNumPT(BASE_EUR) + '€ no início do período.'
         : 'Retorno acumulado em % desde o início do período.';
       var estTxt = estimated.length
         ? ' Curva estimada (tracejada) para: ' + estimated.join(', ') + '.'
@@ -1543,7 +1545,7 @@ body::-webkit-scrollbar,
           var intPart = Math.floor(finalEur);
           var dec = Math.round((finalEur - intPart) * 100).toString().padStart(2, '0');
           valueHtml =
-            '<div class="lpc-return-value">' + fmtNumPT(intPart) + ',' + dec + '\u00A0€</div>'
+            '<div class="lpc-return-value">' + fmtNumPT(intPart) + ',' + dec + '€</div>'
             + '<div class="lpc-return-sub ' + pctCls + '">' + pctStr + '</div>';
         } else {
           valueHtml = '<div class="lpc-return-value ' + pctCls + '">' + pctStr + '</div>';
@@ -1668,7 +1670,7 @@ body::-webkit-scrollbar,
       { label: 'ISIN',                    render: function (f) { return f.isin || NA; } },
       { label: 'TEC (custo anual)',       tip: 'Taxa de encargos correntes. Percentagem anual cobrada pela gestora sobre o valor do fundo.',
         render: function (f) { return fmt(f.tec, '%'); } },
-      { label: 'Subscrição mínima',       render: function (f) { return f.minSubs == null ? NA : fmtNumPT(f.minSubs) + '\u00A0€'; } },
+      { label: 'Subscrição mínima',       render: function (f) { return f.minSubs == null ? NA : fmtNumPT(f.minSubs) + '€'; } },
       { label: 'Classe de risco',         tip: 'Indicador sintético de risco (ISR) numa escala de 1 (menor risco, potencial retorno menor) a 7 (maior risco, potencial retorno maior). Definido pela gestora ao abrigo do regime PPR.',
         render: function (f) {
           if (f.riskClass == null) return NA;
