@@ -2099,7 +2099,13 @@ body::-webkit-scrollbar,
   function forwardScroll() {
     if (window.parent === window) return;
     window.addEventListener('wheel', function (e) {
-      var scrollable = e.target.closest && e.target.closest('[data-scrollable], .overflow-auto, .overflow-scroll');
+      // .lpc-dropdown é o dropdown de selector de PPR (overflow-y:auto,
+      // ~260px altura). Quando aberto, o user espera que o scroll mexa
+      // APENAS a lista, não a página mãe. Sem esta excepção o wheel
+      // era encaminhado via postMessage e a página inteira rolava.
+      var scrollable = e.target.closest && e.target.closest(
+        '[data-scrollable], .overflow-auto, .overflow-scroll, .lpc-dropdown'
+      );
       if (scrollable) {
         var st = scrollable.scrollTop;
         var sh = scrollable.scrollHeight;
