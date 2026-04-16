@@ -146,7 +146,10 @@ body::-webkit-scrollbar,
   align-items: center;
   justify-content: center;
   gap: 8px;
-  margin-top: 12px;
+  /* margin negativo no fim absorve ~30% da folga com a secção Webflow
+     seguinte (Glossário) sem cortar visualmente a linha do rodapé. */
+  margin-top: 8px;
+  margin-bottom: -16px;
   font-size: 12px;
   line-height: 18px;
   color: #96A0B0;
@@ -2068,12 +2071,6 @@ body::-webkit-scrollbar,
         document.body ? document.body.scrollHeight : 0,
         document.documentElement.scrollHeight
       ));
-      // Compensa o espaço residual que sobrava entre o rodapé do embed
-      // e a secção Glossário na página Webflow - reduz em ~30% a folga
-      // percebida sem cortar conteúdo visível (o último elemento é uma
-      // linha de 12px de margem + 18px de line-height; aparar 40px
-      // mantém a linha do rodapé totalmente visível).
-      h = Math.max(0, h - 40);
       // Threshold de 4px evita flickering com hovers/tooltips que causam
       // reflows de 1-2px - isso fazia a página mãe saltar no scroll.
       if (h && Math.abs(h - last) > 4) {
