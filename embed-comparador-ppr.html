@@ -566,6 +566,14 @@ body::-webkit-scrollbar,
   flex-shrink: 0;
   margin-top: var(--spacing-xxs);
 }
+#lf-pc-calc .lpc-warning span {
+  /* Safari default min-width:auto em flex children impede shrink do
+     texto, que transbordava para fora do warning box. min-width:0
+     força o span a fazer shrink e wrap dentro do flex container. */
+  min-width: 0;
+  flex: 1 1 auto;
+  word-wrap: break-word;
+}
 
 /* ---------- Chart ---------- */
 #lf-pc-calc .lpc-chart-canvas-wrap {
