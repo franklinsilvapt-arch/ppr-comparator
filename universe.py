@@ -146,6 +146,9 @@ MANUAL_OVERRIDES = [
     # --- Smart Invest (Banco Invest, 1 URL cobre os 3) ---
     {"match": "smart invest ppr",              "site_url": "https://www.bancoinvest.pt/poupanca-e-investimento/pprs/smart-invest",
      "min_subs": 50},
+    {"match": "smart invest ppr/oicvm dinâmico",     "isin": "PTARMIHM0004"},
+    {"match": "smart invest ppr/oicvm moderado",     "isin": "PTARMHHM0005"},
+    {"match": "smart invest ppr/oicvm conservador",  "isin": "PTARMGHM0006"},
     # --- Oxy Capital (1 URL cobre todas as ~52 categorias) ---
     {"match": "oxy capital liquid opportunities","site_url": "https://oxycapital.com/public-markets/"},
     # Oxy per-categoria: ISIN + min_subs + TEC do IFI PDF. Overrides
