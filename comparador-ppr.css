@@ -732,10 +732,14 @@
   border-radius: var(--radius-xl);
   overflow-x: auto;
   background: var(--bg-white);
-  /* inertia touch-scroll em iOS Safari + contain overscroll para
-     evitar chaining vertical durante swipe horizontal nas tabelas. */
+  /* inertia touch-scroll em iOS Safari. overscroll-behavior-x:contain
+     evita que um swipe horizontal na tabela puxe a página mãe para o
+     lado, mas deixa o eixo Y livre (auto) — senão o swipe vertical
+     dentro da tabela ficava preso em mobile em vez de rolar a página. */
   -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+  overscroll-behavior-x: contain;
+  overscroll-behavior-y: auto;
+  touch-action: pan-x pan-y;
   /* scrollbar escondida em todos os browsers — o scroll horizontal
      continua a funcionar por swipe/drag, só não mostra barra. */
   scrollbar-width: none;
