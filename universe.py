@@ -126,9 +126,9 @@ MANUAL_OVERRIDES = [
     {"match": "caixa wealth defensivo",        "isin": "PTCXGYHM0028"},
     {"match": "caixa wealth moderado",         "isin": "PTCXGPHM0011"},
     # Caixa (não-Wealth) individuais
-    {"match": "caixa arrojado ppr",            "isin": "PTCXGHHM0011"},
-    {"match": "caixa defensivo ppr",           "isin": "PTCXGFHM0013"},
-    {"match": "caixa moderado ppr",            "isin": "PTCXGGHM0012"},
+    {"match": "caixa arrojado ppr",            "isin": "PTCXGHHM0011", "min_subs": 100},
+    {"match": "caixa defensivo ppr",           "isin": "PTCXGFHM0013", "min_subs": 100},
+    {"match": "caixa moderado ppr",            "isin": "PTCXGGHM0012", "min_subs": 100},
     # Invest Tendências Globais
     {"match": "invest tendências globais",     "isin": "PTARMJHM0003"},
     # --- Santander ---
