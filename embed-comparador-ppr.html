@@ -2231,7 +2231,17 @@ body::-webkit-scrollbar,
       t = setTimeout(function () { t = null; __sendHeight(); }, 120);
     };
     __sendHeight();
-    new ResizeObserver(__scheduleHeight).observe(document.documentElement);
+    // ResizeObserver: Safari 13.1+ (May 2020). Em Safari antigos não
+    // existe; caímos num fallback com setInterval leve.
+    try {
+      if (typeof ResizeObserver !== 'undefined') {
+        new ResizeObserver(__scheduleHeight).observe(document.documentElement);
+      } else {
+        setInterval(__scheduleHeight, 500);
+      }
+    } catch (err) {
+      setInterval(__scheduleHeight, 500);
+    }
     window.addEventListener('load', __sendHeight);
     // Re-fires tardios: Chart.js completa o layout ~100-500ms pós init
     // e fontes custom (Inter) podem terminar a carregar depois ainda.
@@ -2242,76 +2252,53 @@ body::-webkit-scrollbar,
     setTimeout(__sendHeight, 3000);
   }
 
-  // Safari em iframe cross-origin não encaminha wheel/touch scroll para a
-  // página mãe - o scroll "trava" quando o rato está sobre o comparador.
-  // Fix: interceptar os eventos e retransmitir via postMessage. O listener
-  // correspondente vive no custom code do Webflow (aplica window.scrollBy
-  // com o deltaY recebido). Só ataca o problema quando o evento é SOBRE
-  // o iframe e NÃO há scroll interno activo (overflow-auto).
+  // Forwards APENAS o wheel event para a página mãe. Safari desktop
+  // em iframe cross-origin não propaga wheel nativamente (o scroll
+  // "trava" ao passar o rato sobre o iframe) — daí o workaround via
+  // postMessage.
+  //
+  // Em mobile NÃO fazemos forward de touch: os browsers móveis já
+  // propagam touch scroll através de iframes nativamente. O nosso
+  // forward anterior estava a competir com o scroll nativo e causava
+  // tremor. -webkit-overflow-scrolling:touch + overscroll-behavior:
+  // contain nos scrollables internos (.lpc-dropdown, .lpc-table-wrap)
+  // cuidam do resto.
   function forwardScroll() {
-    if (window.parent === window) return;
-    // Encontra o ancestor scrollável mais próximo do target. Robust vs
-    // class-based matching: procura qualquer elemento com overflow[-y]
-    // auto|scroll E que REALMENTE tem conteúdo a rolar (scrollHeight
-    // excede clientHeight). O dropdown de selector é o caso principal,
-    // mas isto também cobre qualquer elemento scrollável futuro.
-    // axis: 'y' só olha overflow-y, 'any' olha Y OU X (para touch, onde
-    // um swipe pode ser vertical OU horizontal, ex. em tabelas com
-    // overflow-x:auto).
-    function findScrollableAncestor(el, axis) {
-      axis = axis || 'y';
-      while (el && el !== document.body) {
-        if (el.nodeType === 1) {
-          var cs = getComputedStyle(el);
-          var oy = cs.overflowY, ox = cs.overflowX;
-          var scrollsY = (oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight;
-          var scrollsX = (ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth;
-          if (axis === 'y' && scrollsY) return el;
-          if (axis === 'any' && (scrollsY || scrollsX)) return el;
+    try {
+      if (window.parent === window) return;
+      window.addEventListener('wheel', function (e) {
+        // Se estiver sobre um elemento com scroll interno activo
+        // (dropdown, tabela com overflow), aplica o scroll directamente
+        // nesse elemento em vez de forwardar. Safari cross-origin
+        // ignora o scroll nativo em alguns casos, por isso fazemos à
+        // mão: scrollTop += deltaY.
+        var el = e.target;
+        while (el && el !== document.body) {
+          if (el.nodeType === 1) {
+            var cs = getComputedStyle(el);
+            var oy = cs.overflowY;
+            if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight) {
+              var st = el.scrollTop;
+              var atTop = st <= 0 && e.deltaY < 0;
+              var atBottom = st + el.clientHeight >= el.scrollHeight - 1 && e.deltaY > 0;
+              if (!atTop && !atBottom) {
+                e.preventDefault();
+                el.scrollTop = st + e.deltaY;
+                return;
+              }
+              break;
+            }
+          }
+          el = el.parentNode;
         }
-        el = el.parentNode;
-      }
-      return null;
+        e.preventDefault();
+        window.parent.postMessage({ type: 'ppr-scroll', deltaY: e.deltaY }, '*');
+      }, { passive: false });
+    } catch (err) {
+      // Safari antigo ou contexto restrito: o embed continua a
+      // funcionar, só sem forward de scroll. Melhor que crashar.
+      if (console && console.warn) console.warn('forwardScroll: ' + err);
     }
-    window.addEventListener('wheel', function (e) {
-      var scrollable = findScrollableAncestor(e.target);
-      if (scrollable) {
-        var st = scrollable.scrollTop;
-        var sh = scrollable.scrollHeight;
-        var ch = scrollable.clientHeight;
-        var atTop = st <= 0 && e.deltaY < 0;
-        var atBottom = st + ch >= sh - 1 && e.deltaY > 0;
-        if (!atTop && !atBottom) {
-          // Scroll manual: Safari em iframe cross-origin não aplica
-          // scroll nativo consistentemente, mesmo para elementos com
-          // overflow-y:auto. Mexer o scrollTop directamente garante
-          // que a lista rola em todos os browsers.
-          e.preventDefault();
-          scrollable.scrollTop = st + e.deltaY;
-          return;
-        }
-      }
-      e.preventDefault();
-      window.parent.postMessage({ type: 'ppr-scroll', deltaY: e.deltaY }, '*');
-    }, { passive: false });
-
-    var touchStartY = 0;
-    var touchScrollable = null;
-    window.addEventListener('touchstart', function (e) {
-      touchStartY = e.touches[0].clientY;
-      // axis='any' apanha tanto dropdowns (overflow-y) como tabelas
-      // (overflow-x). Enquanto o toque estiver dentro de um scrollable,
-      // NÃO forwardamos ao parent — deixamos o -webkit-overflow-scrolling
-      // nativo tratar. Sem isto, o swipe do utilizador fazia scroll
-      // interno E scroll da página mãe ao mesmo tempo (tremor).
-      touchScrollable = findScrollableAncestor(e.target, 'any');
-    }, { passive: true });
-    window.addEventListener('touchmove', function (e) {
-      if (touchScrollable) return;  // scroll nativo trata
-      var deltaY = touchStartY - e.touches[0].clientY;
-      touchStartY = e.touches[0].clientY;
-      window.parent.postMessage({ type: 'ppr-scroll', deltaY: deltaY }, '*');
-    }, { passive: true });
   }
   forwardScroll();
 
