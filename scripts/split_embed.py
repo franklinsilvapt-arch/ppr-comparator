@@ -7,9 +7,32 @@ from pathlib import Path
 ROOT = Path(__file__).parent.parent
 src = (ROOT / "embed-comparador-ppr.html").read_text(encoding="utf-8")
 
-# 1. CSS
+# 1. CSS - remover rules em html/body que afectariam a página Webflow
 style_m = re.search(r"<style>\s*(.*?)\s*</style>", src, re.DOTALL)
 css = style_m.group(1)
+
+# Substitui bloco 'html, body, #lf-pc-calc {...}' por só '#lf-pc-calc {...}'
+# (scoped) e remove ::-webkit-scrollbar rules em html/body. O componente
+# corre na página Webflow: não pode tocar no chrome global.
+css = re.sub(
+    r"html, body, #lf-pc-calc \{[^}]*\}",
+    "#lf-pc-calc { margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }",
+    css,
+    flags=re.DOTALL,
+)
+# Remove scrollbar rules em html/body (deixa só a do #lf-pc-calc)
+css = re.sub(
+    r"html::-webkit-scrollbar,\s*body::-webkit-scrollbar,\s*",
+    "",
+    css,
+)
+# Remove @import do Inter (fonte já carregada pelo Webflow)
+css = re.sub(
+    r"@import url\('https://fonts\.googleapis\.com/css2\?family=Inter[^']*'\);\s*",
+    "",
+    css,
+)
+
 (ROOT / "comparador-ppr.css").write_text(css + "\n", encoding="utf-8")
 
 # 2. Markup interno (.lpc-container ... </div>)

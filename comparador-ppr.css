@@ -1,16 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
-
-/* Root do comparador - scoped a #lf-pc-calc para não afectar o
-   resto do Webflow. Sem margin/padding (host é uma div vazia),
-   sem overflow:hidden (o scroll é da página, não do componente).
-   -webkit-tap-highlight-color:transparent em todos os filhos para UX
-   consistente em iOS/Android. */
-#lf-pc-calc {
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
-}
-#lf-pc-calc * { -webkit-tap-highlight-color: transparent; }
+/* iframe sem margins nativas do body. O iframe auto-redimensiona via
+   postMessage para a altura exacta do conteúdo, por isso não é suposto
+   precisar de scroll interno — escondemos as scrollbars só visualmente
+   (scrollbar-width:none + ::-webkit-scrollbar display:none). NÃO
+   usamos overflow:hidden aqui: em iOS Safari isso bloqueia o
+   scroll-on-focus automático quando o teclado abre e pode quebrar o
+   tap em inputs dentro de iframe cross-origin.
+   -webkit-text-size-adjust:100% impede o Safari de auto-escalar texto
+   em landscape. */
+#lf-pc-calc { margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+#lf-pc-calc::-webkit-scrollbar { display: none; width: 0; height: 0; }
+/* Tap highlight transparente em iOS/Android para UX consistente */
+#lf-pc-calc, #lf-pc-calc * { -webkit-tap-highlight-color: transparent; }
 
 /* ============================================================
    LF Design System Tokens (extraídos do Figma)
