@@ -2218,17 +2218,20 @@ body::-webkit-scrollbar,
         var bottom = Math.max(bottomFromDd, bottomFromWrap) + 12;
         if (bottom > h) h = Math.ceil(bottom);
       }
-      // Threshold baixo (1px). O debounce de 120ms + o clamp >=2 no
-      // listener do parent já absorvem os reflows espúrios de 1-2px
-      // induzidos por hovers/tooltips.
-      if (h && Math.abs(h - last) > 0) {
+      // Threshold de 4px evita postMessage spam por reflows espúrios de
+      // 1-2px (hover, tooltips, font-loading) que em Chrome mobile
+      // com Lenis smooth scroll conseguiam empancar o scroll da página
+      // mãe ao fim de alguns segundos.
+      if (h && Math.abs(h - last) > 4) {
         last = h;
         window.parent.postMessage({ type: 'ppr-height', height: h }, '*');
       }
     };
     __scheduleHeight = function () {
       if (t) return;
-      t = setTimeout(function () { t = null; __sendHeight(); }, 120);
+      // Debounce agressivo (200ms) — mais um colchão para não saturar
+      // o parent em Chrome mobile.
+      t = setTimeout(function () { t = null; __sendHeight(); }, 200);
     };
     __sendHeight();
     // ResizeObserver: Safari 13.1+ (May 2020). Em Safari antigos não
@@ -2237,19 +2240,16 @@ body::-webkit-scrollbar,
       if (typeof ResizeObserver !== 'undefined') {
         new ResizeObserver(__scheduleHeight).observe(document.documentElement);
       } else {
-        setInterval(__scheduleHeight, 500);
+        setInterval(__scheduleHeight, 1000);
       }
     } catch (err) {
-      setInterval(__scheduleHeight, 500);
+      setInterval(__scheduleHeight, 1000);
     }
     window.addEventListener('load', __sendHeight);
-    // Re-fires tardios: Chart.js completa o layout ~100-500ms pós init
-    // e fontes custom (Inter) podem terminar a carregar depois ainda.
-    // Garante que a altura final é capturada mesmo que o ResizeObserver
-    // não dispare (diferença inferior ao seu rouding interno).
-    setTimeout(__sendHeight, 500);
-    setTimeout(__sendHeight, 1500);
-    setTimeout(__sendHeight, 3000);
+    // Um só re-fire após ~500ms para capturar a altura pós-layout do
+    // Chart.js + fontes. Os 1500/3000ms anteriores causavam flushes
+    // desnecessários que em Chrome mobile chegavam a empancar a Lenis.
+    setTimeout(__sendHeight, 600);
   }
 
   // Forwards APENAS o wheel event para a página mãe. Safari desktop
