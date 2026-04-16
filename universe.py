@@ -269,6 +269,8 @@ for _fam, _tecs, _isins in _BANKINTER_FAMILIES:
 # histórico que não pertence à UP específica.
 MANUAL_OVERRIDES.extend([
     {"match": "bankinter 25 ppr / oicvm - categoria a", "inception": "2019-11-15"},
+    {"match": "bankinter 50 ppr / oicvm - categoria a", "inception": "2019-11-15"},
+    {"match": "bankinter 75 ppr / oicvm - categoria a", "inception": "2019-11-15"},
 ])
 
 # --- Caixa Wealth per-categoria min_subs ---
