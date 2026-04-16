@@ -2068,6 +2068,12 @@ body::-webkit-scrollbar,
         document.body ? document.body.scrollHeight : 0,
         document.documentElement.scrollHeight
       ));
+      // Compensa o espaço residual que sobrava entre o rodapé do embed
+      // e a secção Glossário na página Webflow - reduz em ~30% a folga
+      // percebida sem cortar conteúdo visível (o último elemento é uma
+      // linha de 12px de margem + 18px de line-height; aparar 40px
+      // mantém a linha do rodapé totalmente visível).
+      h = Math.max(0, h - 40);
       // Threshold de 4px evita flickering com hovers/tooltips que causam
       // reflows de 1-2px - isso fazia a página mãe saltar no scroll.
       if (h && Math.abs(h - last) > 4) {
