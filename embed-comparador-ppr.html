@@ -1317,7 +1317,11 @@ body::-webkit-scrollbar,
     // Dropdown abriu: forçar recálculo para expandir o iframe e
     // acomodar a lista, sobretudo no PPR 3 que fica mais abaixo
     // e cuja lista extrapolava o fundo do iframe (overflow:hidden).
-    __sendHeight();
+    // Double-rAF garante que o layout do dropdown está completo
+    // antes de lermos as dimensões via getBoundingClientRect.
+    requestAnimationFrame(function () {
+      requestAnimationFrame(__sendHeight);
+    });
   }
 
   function selectFundInSlot(slotIdx, id) {
@@ -2167,15 +2171,26 @@ body::-webkit-scrollbar,
       // Se houver um dropdown de selector aberto (PPR 1/2/3), estende
       // a altura para incluir o seu bottom: dropdowns são position:
       // absolute e não entram no scrollHeight, logo ficam clipados
-      // pelo overflow:hidden do body. Sobretudo no PPR 3 (mais abaixo
-      // no layout), o dropdown extrapolava o fundo do iframe.
+      // pelo overflow:hidden de #lf-pc-calc. Sobretudo no PPR 3 (mais
+      // abaixo no layout), o dropdown extrapolava o fundo do iframe.
+      // Fallback: mesmo que o rect do dropdown ainda não esteja
+      // laid-out (acabou de ser apendido ao DOM), usar a base do
+      // slot-wrap + max-height conhecido (320px) como estimativa
+      // garantida.
       var dd = document.querySelector('.lpc-dropdown.is-open');
       if (dd) {
-        var r = dd.getBoundingClientRect();
         var scrollY = window.pageYOffset ||
           (document.documentElement && document.documentElement.scrollTop) || 0;
-        var bottom = Math.ceil(r.bottom + scrollY + 12);
-        if (bottom > h) h = bottom;
+        var r = dd.getBoundingClientRect();
+        var bottomFromDd = r.height > 0 ? r.bottom + scrollY : 0;
+        var wrap = dd.parentElement;
+        var bottomFromWrap = 0;
+        if (wrap) {
+          var wr = wrap.getBoundingClientRect();
+          bottomFromWrap = wr.bottom + scrollY + 6 + 320;
+        }
+        var bottom = Math.max(bottomFromDd, bottomFromWrap) + 12;
+        if (bottom > h) h = Math.ceil(bottom);
       }
       // Threshold baixo (1px). O debounce de 120ms + o clamp >=2 no
       // listener do parent já absorvem os reflows espúrios de 1-2px
