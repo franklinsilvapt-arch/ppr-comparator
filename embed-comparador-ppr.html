@@ -170,7 +170,7 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-4xl);
   max-width: 842px;
   margin: 0 auto;
   padding: 0;
@@ -181,7 +181,8 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-chart-card {
   background: var(--bg-white);
   border-radius: var(--radius-3xl);
-  outline: 4px solid var(--border-tertiary);
+  box-shadow: var(--shadow-border);
+  border: 1px solid var(--border-secondary);
   padding: var(--spacing-6xl);
 }
 
@@ -189,7 +190,7 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-header {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: var(--spacing-2xl);
   align-items: flex-start;
   justify-content: flex-end;
 }
@@ -199,7 +200,7 @@ body::-webkit-scrollbar,
   line-height: 30px;
   letter-spacing: -0.4px;
   color: var(--text-primary);
-  margin-bottom: 6px;
+  margin-bottom: var(--spacing-sm);
 }
 #lf-pc-calc .lpc-sub {
   font-size: 14px;
@@ -211,11 +212,11 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-updated {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-xl);
   background: var(--green-soft);
   color: var(--green-text);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
@@ -230,7 +231,7 @@ body::-webkit-scrollbar,
   box-shadow: 0 0 0 3px rgba(23, 178, 106, 0.18);
 }
 #lf-pc-calc .lpc-updated.is-stale {
-  background: #FFF4E0;
+  background: var(--color-warning-50);
   color: var(--warning-dark);
 }
 #lf-pc-calc .lpc-updated.is-stale .lpc-updated-dot {
@@ -243,11 +244,11 @@ body::-webkit-scrollbar,
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-top: 12px;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
   font-size: 12px;
   line-height: 18px;
-  color: #96A0B0;
+  color: var(--color-grey-400);
   font-weight: 500;
 }
 #lf-pc-calc .lpc-footer-updated.is-stale {
@@ -265,13 +266,13 @@ body::-webkit-scrollbar,
   line-height: 18px;
   letter-spacing: 0.2px;
   color: var(--text-tertiary);
-  margin-bottom: 20px;
-  padding-bottom: 10px;
+  margin-bottom: var(--spacing-3xl);
+  padding-bottom: var(--spacing-lg);
   border-bottom: 1px solid var(--border-secondary);
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  gap: 12px;
+  gap: var(--spacing-xl);
   flex-wrap: wrap;
 }
 #lf-pc-calc .lpc-counter {
@@ -286,12 +287,12 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-slots {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 12px;
+  gap: var(--spacing-xl);
 }
 #lf-pc-calc .lpc-slot {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--spacing-sm);
 }
 #lf-pc-calc .lpc-slot-label {
   font-size: 12px;
@@ -302,7 +303,7 @@ body::-webkit-scrollbar,
   color: var(--text-tertiary);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--spacing-sm);
 }
 #lf-pc-calc .lpc-slot-dot {
   width: 8px;
@@ -382,14 +383,14 @@ body::-webkit-scrollbar,
   right: 0;
   background: var(--bg-white);
   border: 1px solid var(--border-secondary);
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   box-shadow: 0 12px 16px -4px rgba(18, 23, 33, 0.08),
               0 4px 6px -2px rgba(18, 23, 33, 0.03);
   max-height: 320px;
   overflow-y: auto;
   z-index: 50;
   display: none;
-  padding: 6px;
+  padding: var(--spacing-sm);
 }
 #lf-pc-calc .lpc-dropdown.is-open {
   display: block;
@@ -402,7 +403,7 @@ body::-webkit-scrollbar,
   letter-spacing: -0.1px;
   color: var(--text-secondary);
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   transition: background 0.15s ease, color 0.15s ease;
   white-space: normal;
   word-break: break-word;
@@ -420,7 +421,7 @@ body::-webkit-scrollbar,
   flex-shrink: 0;
 }
 #lf-pc-calc .lpc-option-empty {
-  padding: 12px;
+  padding: var(--spacing-xl);
   color: var(--text-placeholder);
   font-size: 13px;
   text-align: center;
@@ -433,9 +434,9 @@ body::-webkit-scrollbar,
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 14px;
-  padding-bottom: 12px;
+  padding-bottom: var(--spacing-xl);
   border-bottom: 1px solid var(--border-secondary);
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-4xl);
 }
 #lf-pc-calc .lpc-tabs-title {
   font-size: 16px;
@@ -447,12 +448,12 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-tabs-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-md);
   flex-wrap: wrap;
 }
 #lf-pc-calc .lpc-tabs {
   display: inline-flex;
-  gap: 4px;
+  gap: var(--spacing-xs);
   background: transparent;
 }
 #lf-pc-calc .lpc-tab {
@@ -462,7 +463,7 @@ body::-webkit-scrollbar,
   line-height: 18px;
   letter-spacing: -0.1px;
   padding: 7px 12px;
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   border: none;
   cursor: pointer;
   background: transparent;
@@ -482,12 +483,12 @@ body::-webkit-scrollbar,
   display: inline-flex;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 3px;
   gap: 0;
 }
 #lf-pc-calc .lpc-mode-toggle .lpc-tab {
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 6px 14px;
   font-size: 13px;
   font-weight: 600;
@@ -512,14 +513,14 @@ body::-webkit-scrollbar,
   align-items: center;
   justify-content: center;
   min-height: 280px;
-  gap: 12px;
+  gap: var(--spacing-xl);
   color: var(--text-placeholder);
   text-align: center;
 }
 #lf-pc-calc .lpc-empty-chart-icon {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   background: var(--bg-secondary);
   display: flex;
   align-items: center;
@@ -529,23 +530,23 @@ body::-webkit-scrollbar,
 
 /* Warning banner (perfil de risco divergente) */
 #lf-pc-calc .lpc-warning {
-  margin-top: 20px;
+  margin-top: var(--spacing-3xl);
   padding: 12px 14px;
-  background: #FFFAEB;
-  border: 1px solid #FEDF89;
-  border-radius: 12px;
+  background: var(--color-warning-50);
+  border: 1px solid var(--color-warning-200);
+  border-radius: var(--radius-xl);
   font-size: 13px;
   font-weight: 500;
   line-height: 20px;
   letter-spacing: -0.1px;
   color: var(--warning-dark);
   display: flex;
-  gap: 10px;
+  gap: var(--spacing-lg);
   align-items: flex-start;
 }
 #lf-pc-calc .lpc-warning svg {
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: var(--spacing-xxs);
 }
 
 /* ---------- Chart ---------- */
@@ -564,20 +565,20 @@ body::-webkit-scrollbar,
   line-height: 18px;
   color: var(--text-tertiary);
   text-align: center;
-  margin-top: 16px;
+  margin-top: var(--spacing-2xl);
 }
 
 /* ---------- Benchmark toggle ---------- */
 #lf-pc-calc .lpc-benchmark-row {
   display: flex;
   justify-content: flex-end;
-  margin-top: 12px;
-  margin-bottom: 4px;
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-xs);
 }
 #lf-pc-calc .lpc-benchmark-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-md);
   cursor: pointer;
   font-size: 13px;
   font-weight: 500;
@@ -590,7 +591,7 @@ body::-webkit-scrollbar,
   -webkit-appearance: none;
   width: 32px;
   height: 18px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   background: var(--border-primary);
   position: relative;
   cursor: pointer;
@@ -621,7 +622,7 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-return-vs-bench {
   font-size: 11px;
   color: var(--text-tertiary);
-  margin-top: 4px;
+  margin-top: var(--spacing-xs);
   font-weight: 500;
 }
 #lf-pc-calc .lpc-return-vs-bench .pos { color: var(--green-text); }
@@ -633,8 +634,8 @@ body::-webkit-scrollbar,
   /* min(180px, 100%) evita que items forcem overflow horizontal
      quando o container é mais estreito que 180px */
   grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
-  gap: 12px;
-  margin-top: 20px;
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-3xl);
 }
 /* Quando vazio (0 PPRs seleccionados) colapsa para não deixar margem
    residual que varia a altura total do comparador vs estado 1+ PPRs. */
@@ -642,7 +643,7 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-return-cell {
   background: var(--bg-secondary);
   padding: 14px 16px;
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   border: 1px solid var(--border-tertiary);
 }
 #lf-pc-calc .lpc-return-name {
@@ -651,10 +652,10 @@ body::-webkit-scrollbar,
   line-height: 18px;
   letter-spacing: -0.1px;
   color: var(--text-tertiary);
-  margin-bottom: 6px;
+  margin-bottom: var(--spacing-sm);
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--spacing-sm);
   overflow: hidden;
 }
 #lf-pc-calc .lpc-return-name-text {
@@ -681,13 +682,13 @@ body::-webkit-scrollbar,
 }
 #lf-pc-calc .lpc-return-value.neg,
 #lf-pc-calc .lpc-return-value .neg {
-  color: #B42318;
+  color: var(--color-error-700);
 }
 #lf-pc-calc .lpc-return-sub {
   font-size: 13px;
   font-weight: 500;
   line-height: 18px;
-  margin-top: 2px;
+  margin-top: var(--spacing-xxs);
   letter-spacing: -0.1px;
   color: var(--text-tertiary);
 }
@@ -695,7 +696,7 @@ body::-webkit-scrollbar,
   color: var(--green-text);
 }
 #lf-pc-calc .lpc-return-sub.neg {
-  color: #B42318;
+  color: var(--color-error-700);
 }
 
 /* ---------- Tables (compare + risk) ---------- */
@@ -705,7 +706,7 @@ body::-webkit-scrollbar,
   line-height: 30px;
   letter-spacing: -0.4px;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-md);
 }
 #lf-pc-calc .lpc-section-hint {
   font-size: 13px;
@@ -713,14 +714,14 @@ body::-webkit-scrollbar,
   line-height: 20px;
   letter-spacing: -0.1px;
   color: var(--text-secondary);
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-4xl);
   display: flex;
   align-items: flex-start;
-  gap: 6px;
+  gap: var(--spacing-sm);
 }
 #lf-pc-calc .lpc-table-wrap {
   border: 1px solid var(--border-secondary);
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   overflow-x: auto;
   background: var(--bg-white);
   /* scrollbar escondida em todos os browsers — o scroll horizontal
@@ -785,14 +786,14 @@ body::-webkit-scrollbar,
   font-size: 11px;
   line-height: 16px;
   color: var(--text-placeholder);
-  margin-top: 2px;
+  margin-top: var(--spacing-xxs);
 }
 #lf-pc-calc .lpc-swatch-inline {
   display: inline-block;
   width: 10px;
   height: 10px;
   border-radius: 3px;
-  margin-right: 8px;
+  margin-right: var(--spacing-md);
   vertical-align: middle;
 }
 
@@ -800,7 +801,7 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-risk-pill {
   display: inline-block;
   padding: 3px 10px;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
@@ -809,12 +810,12 @@ body::-webkit-scrollbar,
   color: var(--green-text);
 }
 #lf-pc-calc .lpc-risk-pill.r-mid {
-  background: #FFF4E0;
+  background: var(--color-warning-50);
   color: var(--warning-dark);
 }
 #lf-pc-calc .lpc-risk-pill.r-high {
   background: #FEE4E2;
-  color: #B42318;
+  color: var(--color-error-700);
 }
 
 /* ---------- Info icon (tooltip trigger click+hover) ---------- */
@@ -823,13 +824,13 @@ body::-webkit-scrollbar,
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: #96A0B0;
+  color: var(--color-grey-400);
   cursor: help;
   line-height: 0;
   transition: color 0.15s ease;
   position: relative;
   /* aumenta a tap target sem mexer no layout visual */
-  padding: 4px;
+  padding: var(--spacing-xs);
   margin: -4px;
 }
 #lf-pc-calc .lpc-info-icon:hover,
@@ -843,14 +844,14 @@ body::-webkit-scrollbar,
   transform: translateX(-50%);
   min-width: 200px;
   max-width: 280px;
-  padding: 10px 12px;
+  padding: var(--spacing-lg) var(--spacing-xl);
   background: var(--dark);
   color: #FFFFFF;
   font-size: 12px;
   font-weight: 500;
   line-height: 17px;
   letter-spacing: -0.1px;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
   white-space: normal;
   text-align: left;
@@ -896,7 +897,7 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-label-tip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--spacing-sm);
 }
 
 /* ---------- Responsive ---------- */
@@ -907,7 +908,7 @@ body::-webkit-scrollbar,
 @media (max-width: 640px) {
   #lf-pc-calc .lpc-card,
   #lf-pc-calc .lpc-chart-card {
-    padding: 24px 20px;
+    padding: var(--spacing-4xl) var(--spacing-3xl);
   }
   #lf-pc-calc .lpc-title {
     font-size: 18px;
@@ -930,7 +931,7 @@ body::-webkit-scrollbar,
   #lf-pc-calc .lpc-tabs-header {
     align-items: flex-start;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-xl);
   }
   /* scroll horizontal em tab bars sem scrollbar visível (poupa altura) */
   #lf-pc-calc .lpc-tabs-controls {
@@ -951,7 +952,7 @@ body::-webkit-scrollbar,
   }
   #lf-pc-calc .lpc-table th,
   #lf-pc-calc .lpc-table td {
-    padding: 10px 12px;
+    padding: var(--spacing-lg) var(--spacing-xl);
     font-size: 12.5px;
   }
   #lf-pc-calc .lpc-table tbody th {
@@ -980,7 +981,7 @@ body::-webkit-scrollbar,
   }
   #lf-pc-calc .lpc-table th,
   #lf-pc-calc .lpc-table td {
-    padding: 8px 10px;
+    padding: var(--spacing-md) var(--spacing-lg);
     font-size: 12px;
   }
   #lf-pc-calc .lpc-table tbody th {
