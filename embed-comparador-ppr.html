@@ -2163,12 +2163,31 @@ body::-webkit-scrollbar,
   // -----------------------------------------------------------
   // DATA LOADING
   // -----------------------------------------------------------
+  async function fetchWithRetry(url, opts, attempts) {
+    attempts = attempts || 3;
+    var lastErr;
+    for (var i = 0; i < attempts; i++) {
+      try {
+        var res = await fetch(url, opts);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res;
+      } catch (e) {
+        lastErr = e;
+        // Backoff exponencial: 300ms, 900ms, 2700ms. Cobre blips
+        // transitórios do CDN do GitHub Pages (503/timeout ocasionais).
+        if (i < attempts - 1) {
+          await new Promise(function (r) { setTimeout(r, 300 * Math.pow(3, i)); });
+        }
+      }
+    }
+    throw lastErr;
+  }
+
   async function loadData() {
     try {
       var bust = Math.floor(Date.now() / (5 * 60 * 1000));
       var url = DATA_URL + (DATA_URL.indexOf('?') !== -1 ? '&' : '?') + 'v=' + bust;
-      var res = await fetch(url, { cache: 'no-store' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      var res = await fetchWithRetry(url, { cache: 'no-store' }, 3);
       var json = await res.json();
       if (!json.funds || !Array.isArray(json.funds) || json.funds.length === 0) {
         throw new Error('JSON sem fundos');
@@ -2185,7 +2204,7 @@ body::-webkit-scrollbar,
       USING_MOCK = false;
     } catch (e) {
       LOAD_ERROR = e.message || String(e);
-      console.warn('[comparador-ppr] fetch falhou, usando dados mock:', LOAD_ERROR);
+      if (console && console.warn) console.warn('[comparador-ppr] fetch falhou após retries, usando mock:', LOAD_ERROR);
       USING_MOCK = true;
     }
     // Arranque sem fundos seleccionados - utilizador escolhe activamente
