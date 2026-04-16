@@ -526,6 +526,42 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-return-vs-bench .pos { color: var(--green-text); }
 #lf-pc-calc .lpc-return-vs-bench .neg { color: var(--error); }
 
+/* ---------- Botão Comparar (espelha a action das outras calculadoras
+   do site: fundo laranja de marca, texto branco, cantos arredondados) */
+#lf-pc-calc .lpc-compare-action {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+#lf-pc-calc .lpc-btn-compare {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0;
+  background: var(--brand);
+  color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.2px;
+  padding: 12px 32px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+  min-width: 180px;
+}
+#lf-pc-calc .lpc-btn-compare:hover:not(:disabled) {
+  background: #E84F16;
+}
+#lf-pc-calc .lpc-btn-compare:active:not(:disabled) {
+  transform: translateY(1px);
+}
+#lf-pc-calc .lpc-btn-compare:disabled {
+  background: #E5E7EB;
+  color: #96A0B0;
+  cursor: not-allowed;
+}
+
 /* ---------- Returns strip ---------- */
 #lf-pc-calc .lpc-returns-strip {
   display: grid;
@@ -920,7 +956,12 @@ body::-webkit-scrollbar,
       </div>
     </div>
     <div id="lpc-dropdown-portal" style="position:relative;"></div>
+    <div class="lpc-compare-action">
+      <button type="button" id="lpc-compare-btn" class="lpc-btn-compare" disabled>Comparar</button>
+    </div>
   </div>
+
+  <div class="lpc-outputs" id="lpc-outputs" hidden>
 
   <!-- CHART -->
   <div class="lpc-chart-card">
@@ -988,6 +1029,8 @@ body::-webkit-scrollbar,
     <span id="lpc-updated-text">A carregar dados...</span>
   </div>
 
+  </div><!-- /.lpc-outputs -->
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -1044,7 +1087,7 @@ body::-webkit-scrollbar,
   var MAX_SELECT = 3;
   var PREFERRED_DEFAULTS = ['invest-ar', 'casa-inv-sg-founders', 'sgf-dr-financas'];
 
-  var state = { selected: [null, null, null], period: 'since', mode: 'eur', showBenchmark: false };
+  var state = { selected: [null, null, null], period: 'since', mode: 'eur', showBenchmark: false, compared: false };
   var selectorState = { query: '', activeSlot: -1, highlightIdx: 0 };
   var chart = null;
 
@@ -1924,12 +1967,38 @@ body::-webkit-scrollbar,
       renderAll();
     });
   }
+  var compareBtn = document.getElementById('lpc-compare-btn');
+  if (compareBtn) {
+    compareBtn.addEventListener('click', function () {
+      if (compareBtn.disabled) return;
+      state.compared = true;
+      renderAll();
+    });
+  }
 
   function renderAll() {
     renderSelector();
-    renderChart();
-    renderCompareTable();
-    renderRiskTable();
+    updateCompareAction();
+    if (state.compared) {
+      renderChart();
+      renderCompareTable();
+      renderRiskTable();
+    }
+  }
+
+  // Estado do botão 'Comparar' + visibilidade dos outputs. Segue o
+  // pattern das outras calculadoras do site (juros compostos): inputs
+  // visíveis, outputs só aparecem após click. O botão fica desabilitado
+  // enquanto não houver pelo menos 1 PPR seleccionado.
+  function updateCompareAction() {
+    var btn = document.getElementById('lpc-compare-btn');
+    var outputs = document.getElementById('lpc-outputs');
+    if (!btn || !outputs) return;
+    var count = state.selected.filter(Boolean).length;
+    btn.disabled = count === 0;
+    btn.textContent = state.compared ? 'Atualizar comparação' : 'Comparar';
+    if (state.compared) outputs.removeAttribute('hidden');
+    else outputs.setAttribute('hidden', '');
   }
 
   function wireSlots() {
@@ -2128,7 +2197,15 @@ body::-webkit-scrollbar,
         var ch = scrollable.clientHeight;
         var atTop = st <= 0 && e.deltaY < 0;
         var atBottom = st + ch >= sh - 1 && e.deltaY > 0;
-        if (!atTop && !atBottom) return;
+        if (!atTop && !atBottom) {
+          // Scroll manual: Safari em iframe cross-origin não aplica
+          // scroll nativo consistentemente, mesmo para elementos com
+          // overflow-y:auto. Mexer o scrollTop directamente garante
+          // que a lista rola em todos os browsers.
+          e.preventDefault();
+          scrollable.scrollTop = st + e.deltaY;
+          return;
+        }
       }
       e.preventDefault();
       window.parent.postMessage({ type: 'ppr-scroll', deltaY: e.deltaY }, '*');
