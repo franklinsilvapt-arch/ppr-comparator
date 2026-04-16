@@ -530,8 +530,6 @@ body::-webkit-scrollbar,
    do site: fundo laranja de marca, texto branco, cantos arredondados) */
 #lf-pc-calc .lpc-compare-action {
   margin-top: 24px;
-  display: flex;
-  justify-content: center;
 }
 #lf-pc-calc .lpc-btn-compare {
   appearance: none;
@@ -544,11 +542,11 @@ body::-webkit-scrollbar,
   font-weight: 600;
   line-height: 24px;
   letter-spacing: -0.2px;
-  padding: 12px 32px;
+  padding: 14px 32px;
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.15s, transform 0.05s;
-  min-width: 180px;
+  width: 100%;
 }
 #lf-pc-calc .lpc-btn-compare:hover:not(:disabled) {
   background: #E84F16;
@@ -1973,6 +1971,21 @@ body::-webkit-scrollbar,
       if (compareBtn.disabled) return;
       state.compared = true;
       renderAll();
+      // Scroll da página mãe até ao topo do chart - como cross-origin
+      // scrollIntoView não funciona no iframe, enviamos postMessage
+      // com o offset do chart relativo ao topo do iframe. O parent
+      // soma com a posição do iframe e faz window.scrollTo.
+      setTimeout(function () {
+        if (window.parent === window) return;
+        var chartCard = document.querySelector('.lpc-chart-card');
+        if (!chartCard) return;
+        var offsetTop = chartCard.getBoundingClientRect().top +
+          (document.documentElement.scrollTop || document.body.scrollTop || 0);
+        window.parent.postMessage({
+          type: 'ppr-scroll-to',
+          offsetTop: Math.max(0, offsetTop)
+        }, '*');
+      }, 60);
     });
   }
 
@@ -1995,6 +2008,9 @@ body::-webkit-scrollbar,
     var outputs = document.getElementById('lpc-outputs');
     if (!btn || !outputs) return;
     var count = state.selected.filter(Boolean).length;
+    // Apagar todos os PPRs reseta o estado 'compared': outputs voltam
+    // a ficar escondidos até nova acção do utilizador.
+    if (count === 0 && state.compared) state.compared = false;
     btn.disabled = count === 0;
     btn.textContent = state.compared ? 'Atualizar comparação' : 'Comparar';
     if (state.compared) outputs.removeAttribute('hidden');
