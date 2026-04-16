@@ -27,31 +27,129 @@ html::-webkit-scrollbar,
 body::-webkit-scrollbar,
 #lf-pc-calc::-webkit-scrollbar { display: none; width: 0; height: 0; }
 
+/* ============================================================
+   LF Design System Tokens (extraídos do Figma)
+   Primitives → Semantic → Component patterns. Mantido em sync
+   com lf-design-system-tokens.css. Alias herdados (--brand,
+   --green, --dark, etc.) preservam compatibilidade das regras
+   existentes sem refactor massivo.
+   ============================================================ */
 #lf-pc-calc {
-  --text-primary: #202432;
-  --text-secondary: #3A4454;
-  --text-tertiary: #4F5969;
-  --text-placeholder: #697386;
-  --brand: #FF5A1F;
-  --green-text: #067647;
-  --error: #F04438;
-  --bg-white: #FFFFFF;
-  --bg-secondary: #F9FAFB;
-  --border-primary: #CED5DF;
-  --border-secondary: #E9ECF1;
-  --border-tertiary: #F2F4F7;
-  --dark: #121721;
-  --blue-primary: #155EEF;
-  --blue-bg: #EFF4FF;
-  --accent-blue: #2970FF;
+  /* PRIMITIVES - Brand */
+  --color-brand-50: #fff4ed;
+  --color-brand-100: #ffe7d4;
+  --color-brand-200: #ffcaa8;
+  --color-brand-300: #ffa570;
+  --color-brand-400: #ff7437;
+  --color-brand-500: #ff5a1f;
+  --color-brand-600: #f03406;
+  --color-brand-700: #c72307;
+  /* PRIMITIVES - Grey */
+  --color-grey-25: #fcfcfd;
+  --color-grey-50: #f9fafb;
+  --color-grey-100: #f2f4f7;
+  --color-grey-200: #e9ecf1;
+  --color-grey-300: #ced5df;
+  --color-grey-400: #96a0b0;
+  --color-grey-500: #697386;
+  --color-grey-600: #4f5969;
+  --color-grey-700: #3a4454;
+  --color-grey-800: #2d3543;
+  --color-grey-900: #202432;
+  --color-grey-950: #121721;
+  /* PRIMITIVES - Blue */
+  --color-blue-50: #eff4ff;
+  --color-blue-100: #d1e0ff;
+  --color-blue-300: #84adff;
+  --color-blue-500: #2970ff;
+  --color-blue-600: #155eef;
+  /* PRIMITIVES - Error */
+  --color-error-50: #fef3f2;
+  --color-error-300: #fda29b;
+  --color-error-500: #f04438;
+  --color-error-600: #d92d20;
+  --color-error-700: #b42318;
+  /* PRIMITIVES - Warning */
+  --color-warning-50: #fffaeb;
+  --color-warning-200: #fedf89;
+  --color-warning-500: #f79009;
+  --color-warning-700: #b54708;
+  /* PRIMITIVES - Success */
+  --color-success-50: #ecfdf3;
+  --color-success-200: #a9efc5;
+  --color-success-500: #17b26a;
+  --color-success-700: #067647;
+
+  /* SEMANTIC - Text */
+  --text-primary: var(--color-grey-900);
+  --text-secondary: var(--color-grey-700);
+  --text-tertiary: var(--color-grey-600);
+  --text-quaternary: var(--color-grey-500);
+  --text-placeholder: var(--color-grey-500);
+  --text-disabled: var(--color-grey-500);
+  --text-white: #ffffff;
+  --text-error: var(--color-error-600);
+  --text-warning: var(--color-warning-700);
+  --text-success: var(--color-success-700);
+  --text-blue: var(--color-blue-600);
+  /* SEMANTIC - Background */
+  --bg-primary: var(--color-grey-25);
+  --bg-secondary: var(--color-grey-50);
+  --bg-tertiary: var(--color-grey-100);
+  --bg-quaternary: var(--color-grey-200);
+  --bg-white: #ffffff;
+  --bg-brand: var(--color-brand-500);
+  --bg-soft-blue: var(--color-blue-50);
+  --bg-primary-dark: var(--color-grey-950);
+  /* SEMANTIC - Border */
+  --border-primary: var(--color-grey-300);
+  --border-secondary: var(--color-grey-200);
+  --border-tertiary: var(--color-grey-100);
+  --border-hover: var(--color-grey-700);
+  --border-blue: var(--color-blue-500);
+  --border-error: var(--color-error-300);
+  --border-focus: var(--color-blue-100);
+  /* SEMANTIC - Button */
+  --btn-brand-bg: var(--color-brand-500);
+  --btn-brand-bg-hover: var(--color-brand-600);
+  --btn-brand-fg: #ffffff;
+
+  /* LEGACY ALIASES - mantidos para compat com rules existentes */
+  --brand: var(--color-brand-500);
+  --green-text: var(--color-success-700);
+  --error: var(--color-error-500);
+  --dark: var(--color-grey-950);
+  --blue-primary: var(--color-blue-600);
+  --blue-bg: var(--color-blue-50);
+  --accent-blue: var(--color-blue-500);
   --accent-orange: #FD8D2B;
-  --green: #17B26A;
-  --green-soft: #ecfdf3;
-  --warning: #F79009;
-  --warning-dark: #B54708;
-  --accent-blue-light: #84ADFF;
+  --green: var(--color-success-500);
+  --green-soft: var(--color-success-50);
+  --warning: var(--color-warning-500);
+  --warning-dark: var(--color-warning-700);
+  --accent-blue-light: var(--color-blue-300);
   --accent-orange-light: #FEAD67;
   --accent-green: #12B76A;
+
+  /* SPACING tokens */
+  --spacing-xxs: 2px; --spacing-xs: 4px; --spacing-sm: 6px;
+  --spacing-md: 8px; --spacing-lg: 10px; --spacing-xl: 12px;
+  --spacing-2xl: 16px; --spacing-3xl: 20px; --spacing-4xl: 24px;
+  --spacing-5xl: 32px; --spacing-6xl: 40px;
+  /* RADIUS tokens */
+  --radius-xs: 4px; --radius-sm: 6px; --radius-md: 8px;
+  --radius-lg: 10px; --radius-xl: 12px; --radius-2xl: 16px;
+  --radius-3xl: 20px; --radius-full: 999px;
+  /* SHADOWS */
+  --shadow-border:
+    0px 4px 6px -2px rgba(18, 23, 33, 0.03),
+    0px 12px 16px -4px rgba(18, 23, 33, 0.08),
+    0px 0px 1px 0px rgba(18, 23, 33, 0.12);
+  --shadow-md:
+    0px 4px 6px -2px rgba(18, 23, 33, 0.03),
+    0px 12px 16px -4px rgba(18, 23, 33, 0.08);
+  --focus-ring: 0 0 0 4px var(--color-blue-100);
+  --focus-ring-error: 0 0 0 4px #fee4e2;
 
   font-family: 'Inter', sans-serif;
   font-size: 16px;
@@ -82,9 +180,9 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-card,
 #lf-pc-calc .lpc-chart-card {
   background: var(--bg-white);
-  border-radius: 20px;
+  border-radius: var(--radius-3xl);
   outline: 4px solid var(--border-tertiary);
-  padding: 40px;
+  padding: var(--spacing-6xl);
 }
 
 /* ---------- Header ---------- */
@@ -217,7 +315,7 @@ body::-webkit-scrollbar,
 }
 #lf-pc-calc .lpc-slot-input {
   width: 100%;
-  padding: 10px 36px 10px 12px;
+  padding: var(--spacing-lg) 36px var(--spacing-lg) var(--spacing-xl);
   font-family: 'Inter', sans-serif;
   /* 16px no mínimo para evitar auto-zoom do iOS Safari no focus.
      Em desktop reduzimos via media query para manter o aspecto actual. */
@@ -228,7 +326,7 @@ body::-webkit-scrollbar,
   color: var(--text-primary);
   background: var(--bg-white);
   border: 1px solid var(--border-primary);
-  border-radius: 12px;
+  border-radius: var(--radius-xl);
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
   text-overflow: ellipsis;
@@ -236,6 +334,9 @@ body::-webkit-scrollbar,
 #lf-pc-calc .lpc-slot-input::placeholder {
   color: var(--text-placeholder);
   font-weight: 400;
+}
+#lf-pc-calc .lpc-slot-input:hover {
+  border-color: var(--border-hover);
 }
 #lf-pc-calc .lpc-slot-input:focus {
   border-color: var(--brand);
