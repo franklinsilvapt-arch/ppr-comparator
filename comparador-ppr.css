@@ -1,0 +1,991 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* Root do comparador - scoped a #lf-pc-calc para não afectar o
+   resto do Webflow. Sem margin/padding (host é uma div vazia),
+   sem overflow:hidden (o scroll é da página, não do componente).
+   -webkit-tap-highlight-color:transparent em todos os filhos para UX
+   consistente em iOS/Android. */
+#lf-pc-calc {
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+#lf-pc-calc * { -webkit-tap-highlight-color: transparent; }
+
+/* ============================================================
+   LF Design System Tokens (extraídos do Figma)
+   Primitives → Semantic → Component patterns. Mantido em sync
+   com lf-design-system-tokens.css. Alias herdados (--brand,
+   --green, --dark, etc.) preservam compatibilidade das regras
+   existentes sem refactor massivo.
+   ============================================================ */
+#lf-pc-calc {
+  /* PRIMITIVES - Brand */
+  --color-brand-50: #fff4ed;
+  --color-brand-100: #ffe7d4;
+  --color-brand-200: #ffcaa8;
+  --color-brand-300: #ffa570;
+  --color-brand-400: #ff7437;
+  --color-brand-500: #ff5a1f;
+  --color-brand-600: #f03406;
+  --color-brand-700: #c72307;
+  /* PRIMITIVES - Grey */
+  --color-grey-25: #fcfcfd;
+  --color-grey-50: #f9fafb;
+  --color-grey-100: #f2f4f7;
+  --color-grey-200: #e9ecf1;
+  --color-grey-300: #ced5df;
+  --color-grey-400: #96a0b0;
+  --color-grey-500: #697386;
+  --color-grey-600: #4f5969;
+  --color-grey-700: #3a4454;
+  --color-grey-800: #2d3543;
+  --color-grey-900: #202432;
+  --color-grey-950: #121721;
+  /* PRIMITIVES - Blue */
+  --color-blue-50: #eff4ff;
+  --color-blue-100: #d1e0ff;
+  --color-blue-300: #84adff;
+  --color-blue-500: #2970ff;
+  --color-blue-600: #155eef;
+  /* PRIMITIVES - Error */
+  --color-error-50: #fef3f2;
+  --color-error-300: #fda29b;
+  --color-error-500: #f04438;
+  --color-error-600: #d92d20;
+  --color-error-700: #b42318;
+  /* PRIMITIVES - Warning */
+  --color-warning-50: #fffaeb;
+  --color-warning-200: #fedf89;
+  --color-warning-500: #f79009;
+  --color-warning-700: #b54708;
+  /* PRIMITIVES - Success */
+  --color-success-50: #ecfdf3;
+  --color-success-200: #a9efc5;
+  --color-success-500: #17b26a;
+  --color-success-700: #067647;
+
+  /* SEMANTIC - Text */
+  --text-primary: var(--color-grey-900);
+  --text-secondary: var(--color-grey-700);
+  --text-tertiary: var(--color-grey-600);
+  --text-quaternary: var(--color-grey-500);
+  --text-placeholder: var(--color-grey-500);
+  --text-disabled: var(--color-grey-500);
+  --text-white: #ffffff;
+  --text-error: var(--color-error-600);
+  --text-warning: var(--color-warning-700);
+  --text-success: var(--color-success-700);
+  --text-blue: var(--color-blue-600);
+  /* SEMANTIC - Background */
+  --bg-primary: var(--color-grey-25);
+  --bg-secondary: var(--color-grey-50);
+  --bg-tertiary: var(--color-grey-100);
+  --bg-quaternary: var(--color-grey-200);
+  --bg-white: #ffffff;
+  --bg-brand: var(--color-brand-500);
+  --bg-soft-blue: var(--color-blue-50);
+  --bg-primary-dark: var(--color-grey-950);
+  /* SEMANTIC - Border */
+  --border-primary: var(--color-grey-300);
+  --border-secondary: var(--color-grey-200);
+  --border-tertiary: var(--color-grey-100);
+  --border-hover: var(--color-grey-700);
+  --border-blue: var(--color-blue-500);
+  --border-error: var(--color-error-300);
+  --border-focus: var(--color-blue-100);
+  /* SEMANTIC - Button */
+  --btn-brand-bg: var(--color-brand-500);
+  --btn-brand-bg-hover: var(--color-brand-600);
+  --btn-brand-fg: #ffffff;
+
+  /* LEGACY ALIASES - mantidos para compat com rules existentes */
+  --brand: var(--color-brand-500);
+  --green-text: var(--color-success-700);
+  --error: var(--color-error-500);
+  --dark: var(--color-grey-950);
+  --blue-primary: var(--color-blue-600);
+  --blue-bg: var(--color-blue-50);
+  --accent-blue: var(--color-blue-500);
+  --accent-orange: #FD8D2B;
+  --green: var(--color-success-500);
+  --green-soft: var(--color-success-50);
+  --warning: var(--color-warning-500);
+  --warning-dark: var(--color-warning-700);
+  --accent-blue-light: var(--color-blue-300);
+  --accent-orange-light: #FEAD67;
+  --accent-green: #12B76A;
+
+  /* SPACING tokens */
+  --spacing-xxs: 2px; --spacing-xs: 4px; --spacing-sm: 6px;
+  --spacing-md: 8px; --spacing-lg: 10px; --spacing-xl: 12px;
+  --spacing-2xl: 16px; --spacing-3xl: 20px; --spacing-4xl: 24px;
+  --spacing-5xl: 32px; --spacing-6xl: 40px;
+  /* RADIUS tokens */
+  --radius-xs: 4px; --radius-sm: 6px; --radius-md: 8px;
+  --radius-lg: 10px; --radius-xl: 12px; --radius-2xl: 16px;
+  --radius-3xl: 20px; --radius-full: 999px;
+  /* SHADOWS */
+  --shadow-border:
+    0px 4px 6px -2px rgba(18, 23, 33, 0.03),
+    0px 12px 16px -4px rgba(18, 23, 33, 0.08),
+    0px 0px 1px 0px rgba(18, 23, 33, 0.12);
+  --shadow-md:
+    0px 4px 6px -2px rgba(18, 23, 33, 0.03),
+    0px 12px 16px -4px rgba(18, 23, 33, 0.08);
+  --focus-ring: 0 0 0 4px var(--color-blue-100);
+  --focus-ring-error: 0 0 0 4px #fee4e2;
+
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  background: transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+#lf-pc-calc *,
+#lf-pc-calc *::before,
+#lf-pc-calc *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ---------- Container ---------- */
+#lf-pc-calc .lpc-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+  max-width: 842px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* ---------- Card shell ---------- */
+#lf-pc-calc .lpc-card,
+#lf-pc-calc .lpc-chart-card {
+  background: var(--bg-white);
+  border-radius: var(--radius-3xl);
+  box-shadow: var(--shadow-border);
+  border: 1px solid var(--border-secondary);
+  padding: var(--spacing-6xl);
+}
+
+/* ---------- Header ---------- */
+#lf-pc-calc .lpc-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2xl);
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+#lf-pc-calc .lpc-title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 30px;
+  letter-spacing: -0.4px;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+}
+#lf-pc-calc .lpc-sub {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.2px;
+  color: var(--text-secondary);
+}
+#lf-pc-calc .lpc-updated {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-xl);
+  background: var(--green-soft);
+  color: var(--green-text);
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  flex-shrink: 0;
+}
+#lf-pc-calc .lpc-updated-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 0 3px rgba(23, 178, 106, 0.18);
+}
+#lf-pc-calc .lpc-updated.is-stale {
+  background: var(--color-warning-50);
+  color: var(--warning-dark);
+}
+#lf-pc-calc .lpc-updated.is-stale .lpc-updated-dot {
+  background: var(--warning);
+  box-shadow: 0 0 0 3px rgba(247, 144, 9, 0.22);
+}
+/* Footer discreto com a data de actualização - no fim do comparador.
+   Estilo subtil, sem pill de fundo, para não competir com o disclaimer. */
+#lf-pc-calc .lpc-footer-updated {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--color-grey-400);
+  font-weight: 500;
+}
+#lf-pc-calc .lpc-footer-updated.is-stale {
+  color: var(--warning-dark);
+}
+#lf-pc-calc .lpc-footer-updated.is-stale .lpc-updated-dot {
+  background: var(--warning);
+  box-shadow: 0 0 0 3px rgba(247, 144, 9, 0.22);
+}
+
+/* ---------- Section label ---------- */
+#lf-pc-calc .lpc-section-label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0.2px;
+  color: var(--text-tertiary);
+  margin-bottom: var(--spacing-3xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--border-secondary);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+#lf-pc-calc .lpc-counter {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: -0.1px;
+  text-transform: none;
+  color: var(--text-placeholder);
+}
+
+/* ---------- Slots (3 search inputs, um por PPR selecionado) ---------- */
+#lf-pc-calc .lpc-slots {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xl);
+}
+#lf-pc-calc .lpc-slot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+#lf-pc-calc .lpc-slot-label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+#lf-pc-calc .lpc-slot-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-primary);
+}
+#lf-pc-calc .lpc-slot-wrap {
+  position: relative;
+}
+#lf-pc-calc .lpc-slot-input {
+  width: 100%;
+  padding: var(--spacing-lg) 36px var(--spacing-lg) var(--spacing-xl);
+  font-family: 'Inter', sans-serif;
+  /* 16px no mínimo para evitar auto-zoom do iOS Safari no focus.
+     Em desktop reduzimos via media query para manter o aspecto actual. */
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--text-primary);
+  background: var(--bg-white);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-xl);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  text-overflow: ellipsis;
+  /* Safari/WebKit: remover estilos nativos que podem quebrar focus
+     visual e resetar propriedades que causavam behaviour inconsistente
+     dentro de iframe cross-origin. touch-action:manipulation elimina
+     o delay de 300ms de double-tap em iOS. */
+  -webkit-appearance: none;
+  appearance: none;
+  touch-action: manipulation;
+}
+#lf-pc-calc .lpc-slot-input::placeholder {
+  color: var(--text-placeholder);
+  font-weight: 400;
+}
+#lf-pc-calc .lpc-slot-input:hover {
+  border-color: var(--border-hover);
+}
+#lf-pc-calc .lpc-slot-input:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.12);
+}
+#lf-pc-calc .lpc-slot.is-filled .lpc-slot-input {
+  padding-left: 14px;
+  border-color: var(--border-secondary);
+  background: var(--bg-secondary);
+  cursor: default;
+}
+#lf-pc-calc .lpc-slot-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-placeholder);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s, color 0.15s;
+}
+#lf-pc-calc .lpc-slot.is-filled .lpc-slot-clear {
+  display: inline-flex;
+}
+#lf-pc-calc .lpc-slot-clear:hover {
+  background: var(--border-secondary);
+  color: var(--text-primary);
+}
+#lf-pc-calc .lpc-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--bg-white);
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 12px 16px -4px rgba(18, 23, 33, 0.08),
+              0 4px 6px -2px rgba(18, 23, 33, 0.03);
+  max-height: 320px;
+  overflow-y: auto;
+  /* inertia touch-scroll em iOS Safari. Sem isto, o scroll do
+     dropdown dentro de iframe cross-origin não funciona nativamente
+     e o nosso fallback via postMessage criava tremor. */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  z-index: 50;
+  display: none;
+  padding: var(--spacing-sm);
+}
+#lf-pc-calc .lpc-dropdown.is-open {
+  display: block;
+}
+#lf-pc-calc .lpc-option {
+  padding: 9px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background 0.15s ease, color 0.15s ease;
+  white-space: normal;
+  word-break: break-word;
+}
+#lf-pc-calc .lpc-option:hover,
+#lf-pc-calc .lpc-option.is-highlighted {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+#lf-pc-calc .lpc-option-meta {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--text-placeholder);
+  flex-shrink: 0;
+}
+#lf-pc-calc .lpc-option-empty {
+  padding: var(--spacing-xl);
+  color: var(--text-placeholder);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ---------- Tabs (período e modo) ---------- */
+#lf-pc-calc .lpc-tabs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-bottom: var(--spacing-xl);
+  border-bottom: 1px solid var(--border-secondary);
+  margin-bottom: var(--spacing-4xl);
+}
+#lf-pc-calc .lpc-tabs-title {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  letter-spacing: -0.2px;
+  color: var(--text-primary);
+}
+#lf-pc-calc .lpc-tabs-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+#lf-pc-calc .lpc-tabs {
+  display: inline-flex;
+  gap: var(--spacing-xs);
+  background: transparent;
+}
+#lf-pc-calc .lpc-tab {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  padding: 7px 12px;
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-placeholder);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+#lf-pc-calc .lpc-tab:hover {
+  color: var(--text-secondary);
+}
+#lf-pc-calc .lpc-tab.is-active {
+  background: var(--blue-bg);
+  color: var(--blue-primary);
+}
+/* Toggle €/% - visualmente distinto dos tabs de período.
+   Fundo orange suave + letra brand, com outline e peso 600. */
+#lf-pc-calc .lpc-mode-toggle {
+  display: inline-flex;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius-full);
+  padding: 3px;
+  gap: 0;
+}
+#lf-pc-calc .lpc-mode-toggle .lpc-tab {
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+#lf-pc-calc .lpc-mode-toggle .lpc-tab.is-active {
+  background: var(--brand);
+  color: #fff;
+  box-shadow: 0 1px 2px rgba(255, 90, 31, 0.25);
+}
+#lf-pc-calc .lpc-mode-toggle .lpc-tab:hover {
+  color: var(--text-primary);
+}
+#lf-pc-calc .lpc-mode-toggle .lpc-tab.is-active:hover {
+  color: #fff;
+}
+
+/* Empty state do chart quando nada seleccionado */
+#lf-pc-calc .lpc-empty-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  gap: var(--spacing-xl);
+  color: var(--text-placeholder);
+  text-align: center;
+}
+#lf-pc-calc .lpc-empty-chart-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-xl);
+  background: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+}
+
+/* Warning banner (perfil de risco divergente) */
+#lf-pc-calc .lpc-warning {
+  margin-top: var(--spacing-3xl);
+  padding: 12px 14px;
+  background: var(--color-warning-50);
+  border: 1px solid var(--color-warning-200);
+  border-radius: var(--radius-xl);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--warning-dark);
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+}
+#lf-pc-calc .lpc-warning svg {
+  flex-shrink: 0;
+  margin-top: var(--spacing-xxs);
+}
+
+/* ---------- Chart ---------- */
+#lf-pc-calc .lpc-chart-canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 360px;
+}
+#lf-pc-calc .lpc-chart-canvas-wrap canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+#lf-pc-calc .lpc-chart-note {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  color: var(--text-tertiary);
+  text-align: center;
+  margin-top: var(--spacing-2xl);
+}
+
+/* ---------- Benchmark toggle ---------- */
+#lf-pc-calc .lpc-benchmark-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-xs);
+}
+#lf-pc-calc .lpc-benchmark-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  user-select: none;
+  padding: 4px 0;
+}
+#lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 32px;
+  height: 18px;
+  border-radius: var(--radius-full);
+  background: var(--border-primary);
+  position: relative;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+#lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  transition: transform 0.15s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+}
+#lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"]:checked {
+  background: var(--brand);
+}
+#lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"]:checked::after {
+  transform: translateX(14px);
+}
+#lf-pc-calc .lpc-benchmark-text {
+  white-space: nowrap;
+}
+#lf-pc-calc .lpc-return-vs-bench {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: var(--spacing-xs);
+  font-weight: 500;
+}
+#lf-pc-calc .lpc-return-vs-bench .pos { color: var(--green-text); }
+#lf-pc-calc .lpc-return-vs-bench .neg { color: var(--error); }
+
+/* ---------- Returns strip ---------- */
+#lf-pc-calc .lpc-returns-strip {
+  display: grid;
+  /* min(180px, 100%) evita que items forcem overflow horizontal
+     quando o container é mais estreito que 180px */
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-3xl);
+}
+/* Quando vazio (0 PPRs seleccionados) colapsa para não deixar margem
+   residual que varia a altura total do comparador vs estado 1+ PPRs. */
+#lf-pc-calc .lpc-returns-strip:empty { margin-top: 0; }
+#lf-pc-calc .lpc-return-cell {
+  background: var(--bg-secondary);
+  padding: 14px 16px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border-tertiary);
+}
+#lf-pc-calc .lpc-return-name {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  color: var(--text-tertiary);
+  margin-bottom: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  overflow: hidden;
+}
+#lf-pc-calc .lpc-return-name-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#lf-pc-calc .lpc-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+#lf-pc-calc .lpc-return-value {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+}
+#lf-pc-calc .lpc-return-value.pos,
+#lf-pc-calc .lpc-return-value .pos {
+  color: var(--green-text);
+}
+#lf-pc-calc .lpc-return-value.neg,
+#lf-pc-calc .lpc-return-value .neg {
+  color: var(--color-error-700);
+}
+#lf-pc-calc .lpc-return-sub {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  margin-top: var(--spacing-xxs);
+  letter-spacing: -0.1px;
+  color: var(--text-tertiary);
+}
+#lf-pc-calc .lpc-return-sub.pos {
+  color: var(--green-text);
+}
+#lf-pc-calc .lpc-return-sub.neg {
+  color: var(--color-error-700);
+}
+
+/* ---------- Tables (compare + risk) ---------- */
+#lf-pc-calc .lpc-section-title {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 30px;
+  letter-spacing: -0.4px;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+}
+#lf-pc-calc .lpc-section-hint {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-4xl);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+}
+#lf-pc-calc .lpc-table-wrap {
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-xl);
+  overflow-x: auto;
+  background: var(--bg-white);
+  /* inertia touch-scroll em iOS Safari + contain overscroll para
+     evitar chaining vertical durante swipe horizontal nas tabelas. */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  /* scrollbar escondida em todos os browsers — o scroll horizontal
+     continua a funcionar por swipe/drag, só não mostra barra. */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+#lf-pc-calc .lpc-table-wrap::-webkit-scrollbar { display: none; }
+#lf-pc-calc .lpc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 560px;
+}
+#lf-pc-calc .lpc-table th,
+#lf-pc-calc .lpc-table td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-secondary);
+  vertical-align: top;
+}
+#lf-pc-calc .lpc-table thead th {
+  background: var(--bg-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-secondary);
+}
+#lf-pc-calc .lpc-table tbody tr:last-child td,
+#lf-pc-calc .lpc-table tbody tr:last-child th {
+  border-bottom: none;
+}
+#lf-pc-calc .lpc-table tbody th {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--text-tertiary);
+  background: var(--bg-secondary);
+  width: 200px;
+  border-right: 1px solid var(--border-secondary);
+  white-space: nowrap;
+}
+#lf-pc-calc .lpc-table tbody td {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--text-primary);
+}
+#lf-pc-calc .lpc-fund-col {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--text-primary);
+}
+#lf-pc-calc .lpc-fund-col .lpc-fund-meta {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 16px;
+  color: var(--text-placeholder);
+  margin-top: var(--spacing-xxs);
+}
+#lf-pc-calc .lpc-swatch-inline {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: var(--spacing-md);
+  vertical-align: middle;
+}
+
+/* ---------- Risk pills (classe 1-7) ---------- */
+#lf-pc-calc .lpc-risk-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  background: var(--green-soft);
+  color: var(--green-text);
+}
+#lf-pc-calc .lpc-risk-pill.r-mid {
+  background: var(--color-warning-50);
+  color: var(--warning-dark);
+}
+#lf-pc-calc .lpc-risk-pill.r-high {
+  background: #FEE4E2;
+  color: var(--color-error-700);
+}
+
+/* ---------- Info icon (tooltip trigger click+hover) ---------- */
+#lf-pc-calc .lpc-info-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-grey-400);
+  cursor: help;
+  line-height: 0;
+  transition: color 0.15s ease;
+  position: relative;
+  /* aumenta a tap target sem mexer no layout visual */
+  padding: var(--spacing-xs);
+  margin: -4px;
+}
+#lf-pc-calc .lpc-info-icon:hover,
+#lf-pc-calc .lpc-info-icon.is-open {
+  color: var(--text-tertiary);
+}
+#lf-pc-calc .lpc-tip-bubble {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 200px;
+  max-width: 280px;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  background: var(--dark);
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 17px;
+  letter-spacing: -0.1px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  white-space: normal;
+  text-align: left;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+#lf-pc-calc .lpc-tip-bubble::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--dark);
+}
+#lf-pc-calc .lpc-info-icon.is-open .lpc-tip-bubble,
+#lf-pc-calc .lpc-info-icon:hover .lpc-tip-bubble {
+  opacity: 1;
+}
+/* em tabelas, posiciona a bolha à direita para não ser cortada pelo scroll */
+#lf-pc-calc .lpc-table .lpc-tip-bubble {
+  left: 0;
+  transform: none;
+}
+#lf-pc-calc .lpc-table .lpc-tip-bubble::after {
+  left: 14px;
+  transform: none;
+}
+/* toggle do benchmark está alinhado à direita do card - a bolha tem
+   de abrir PARA A ESQUERDA para não sair do viewport. */
+#lf-pc-calc .lpc-benchmark-toggle .lpc-tip-bubble {
+  left: auto;
+  right: -8px;
+  transform: none;
+}
+#lf-pc-calc .lpc-benchmark-toggle .lpc-tip-bubble::after {
+  left: auto;
+  right: 14px;
+  transform: none;
+}
+#lf-pc-calc .lpc-label-tip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+/* ---------- Responsive ---------- */
+@media (min-width: 641px) {
+  /* Em desktop não há risco de auto-zoom: voltamos aos 14px. */
+  #lf-pc-calc .lpc-slot-input { font-size: 14px; }
+}
+@media (max-width: 640px) {
+  #lf-pc-calc .lpc-card,
+  #lf-pc-calc .lpc-chart-card {
+    padding: var(--spacing-4xl) var(--spacing-3xl);
+  }
+  #lf-pc-calc .lpc-title {
+    font-size: 18px;
+    line-height: 26px;
+  }
+  #lf-pc-calc .lpc-sub {
+    font-size: 13px;
+    line-height: 18px;
+  }
+  #lf-pc-calc .lpc-chart-canvas-wrap {
+    height: 280px;
+  }
+  #lf-pc-calc .lpc-slots {
+    grid-template-columns: 1fr;
+  }
+  #lf-pc-calc .lpc-section-title {
+    font-size: 17px;
+    line-height: 24px;
+  }
+  #lf-pc-calc .lpc-tabs-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+  }
+  /* scroll horizontal em tab bars sem scrollbar visível (poupa altura) */
+  #lf-pc-calc .lpc-tabs-controls {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  #lf-pc-calc .lpc-tabs-controls::-webkit-scrollbar { display: none; }
+  #lf-pc-calc .lpc-tabs {
+    flex-wrap: nowrap;
+  }
+  #lf-pc-calc .lpc-tab {
+    white-space: nowrap;
+    padding: 7px 10px;
+    font-size: 12.5px;
+  }
+  #lf-pc-calc .lpc-table th,
+  #lf-pc-calc .lpc-table td {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    font-size: 12.5px;
+  }
+  #lf-pc-calc .lpc-table tbody th {
+    width: 140px;
+  }
+  /* nos cartões de rentabilidade, número principal ligeiramente menor */
+  #lf-pc-calc .lpc-return-value {
+    font-size: 18px;
+    line-height: 24px;
+  }
+  #lf-pc-calc .lpc-warning {
+    font-size: 12.5px;
+    line-height: 18px;
+  }
+  /* dropdown do selector: limitar altura para não empurrar layout */
+  #lf-pc-calc .lpc-dropdown {
+    max-height: 260px;
+  }
+}
+
+/* ecrãs muito estreitos (≤380px) */
+@media (max-width: 380px) {
+  #lf-pc-calc .lpc-card,
+  #lf-pc-calc .lpc-chart-card {
+    padding: 20px 14px;
+  }
+  #lf-pc-calc .lpc-table th,
+  #lf-pc-calc .lpc-table td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 12px;
+  }
+  #lf-pc-calc .lpc-table tbody th {
+    width: 120px;
+  }
+}
