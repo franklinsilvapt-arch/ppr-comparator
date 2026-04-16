@@ -351,6 +351,10 @@
       dropdownEl = document.createElement('div');
       dropdownEl.id = 'lpc-dropdown';
       dropdownEl.className = 'lpc-dropdown';
+      // Lenis (smooth-scroll do Webflow) intercepta wheel events
+      // globalmente. data-lenis-prevent marca este elemento como
+      // excluido do Lenis - o browser trata native scroll da lista.
+      dropdownEl.setAttribute('data-lenis-prevent', '');
     }
     return dropdownEl;
   }
