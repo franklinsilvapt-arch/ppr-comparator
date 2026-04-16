@@ -93,6 +93,15 @@ def main():
         if fid in all_prices:
             prices = all_prices[fid]["Close"] if "Close" in all_prices[fid].columns else all_prices[fid].iloc[:, 0]
             prices = prices.dropna().sort_index()
+            # Clipar ao último gap >60 dias: algumas categorias têm
+            # histórico antigo da UP-mãe seguido de longa lacuna antes
+            # da própria categoria arrancar. Ver comentário em
+            # scripts/recalc_from_cache.py:_clip_after_major_gap.
+            if len(prices) >= 2:
+                deltas = prices.index.to_series().diff().dt.days
+                big = deltas[deltas > 60]
+                if not big.empty:
+                    prices = prices.loc[big.index[-1]:]
             # Clip à data de constituição real se fornecida (útil quando o
             # scraper devolve a série NAV da família em vez da data de
             # criação da categoria específica).

@@ -38,13 +38,30 @@ def load_benchmark() -> pd.Series | None:
     return df[col].dropna()
 
 
+def _clip_after_major_gap(s: pd.Series, gap_days: int = 60) -> pd.Series:
+    """Se a série tem um gap > gap_days entre cotações consecutivas,
+    mantém só os dados a partir do ÚLTIMO grande gap. Uso: algumas
+    categorias Bankinter têm histórico 2016-2018 seguido de 15 meses
+    em branco, depois retomam em 2019-10 — a parte antiga é da UP
+    original, não da categoria actual, por isso deve ser ignorada."""
+    if len(s) < 2:
+        return s
+    deltas = s.index.to_series().diff().dt.days
+    big = deltas[deltas > gap_days]
+    if big.empty:
+        return s
+    last_gap_end = big.index[-1]
+    return s.loc[last_gap_end:]
+
+
 def load_prices(fid: str) -> pd.Series | None:
     p = RAW / f"{fid}.csv"
     if not p.exists():
         return None
     df = pd.read_csv(p, index_col=0, parse_dates=True)
     col = "Close" if "Close" in df.columns else df.columns[0]
-    return df[col].dropna().sort_index()
+    s = df[col].dropna().sort_index()
+    return _clip_after_major_gap(s)
 
 
 def main():
