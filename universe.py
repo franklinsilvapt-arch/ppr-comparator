@@ -278,6 +278,17 @@ MANUAL_OVERRIDES.extend([
     {"match": "bankinter 75 ppr / oicvm - categoria a", "inception": "2019-11-15"},
 ])
 
+# benchmark ETF override: a classificação de risco SRRI da CMVM (risk_class)
+# nem sempre reflecte a exposição accionista real. Para estes fundos, o ETF
+# de referência mais justo é o de exposição similar, não o que o risk_class
+# mapearia. Todos os categoria A/B/C usam o mesmo ETF (a exposição é igual).
+MANUAL_OVERRIDES.extend([
+    # Bankinter 25 tem 25% acções -> V20A (LifeStrategy 20% Equity)
+    {"match": "bankinter 25 ppr / oicvm - categoria a", "benchmark_ticker_override": "V20A"},
+    {"match": "bankinter 25 ppr / oicvm - categoria b", "benchmark_ticker_override": "V20A"},
+    {"match": "bankinter 25 ppr / oicvm - categoria c", "benchmark_ticker_override": "V20A"},
+])
+
 # --- Caixa Wealth per-categoria min_subs ---
 # A: 125.000€, B: 500.000€, C: 1.000.000€, D: 5.000.000€
 _CAIXA_WEALTH_FAMILIES = [

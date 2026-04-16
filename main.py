@@ -87,7 +87,7 @@ def main():
             "prospectus_url": f.get("prospectus_url"),
             "notes": f.get("notes"),
             "hidden": bool(f.get("hidden")),
-            "benchmark_ticker": bench_module.risk_to_ticker(f.get("risk_class")),
+            "benchmark_ticker": f.get("benchmark_ticker_override") or bench_module.risk_to_ticker(f.get("risk_class")),
         }
 
         if fid in all_prices:
