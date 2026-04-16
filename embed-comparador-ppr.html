@@ -2070,9 +2070,10 @@ body::-webkit-scrollbar,
         document.body ? document.body.scrollHeight : 0,
         document.documentElement.scrollHeight
       ));
-      // Threshold de 4px evita flickering com hovers/tooltips que causam
-      // reflows de 1-2px - isso fazia a página mãe saltar no scroll.
-      if (h && Math.abs(h - last) > 4) {
+      // Threshold baixo (1px). O debounce de 120ms + o clamp >=2 no
+      // listener do parent já absorvem os reflows espúrios de 1-2px
+      // induzidos por hovers/tooltips.
+      if (h && Math.abs(h - last) > 0) {
         last = h;
         window.parent.postMessage({ type: 'ppr-height', height: h }, '*');
       }
@@ -2084,6 +2085,13 @@ body::-webkit-scrollbar,
     send();
     new ResizeObserver(schedule).observe(document.documentElement);
     window.addEventListener('load', send);
+    // Re-fires tardios: Chart.js completa o layout ~100-500ms pós init
+    // e fontes custom (Inter) podem terminar a carregar depois ainda.
+    // Garante que a altura final é capturada mesmo que o ResizeObserver
+    // não dispare (diferença inferior ao seu rouding interno).
+    setTimeout(send, 500);
+    setTimeout(send, 1500);
+    setTimeout(send, 3000);
   }
 
   // Safari em iframe cross-origin não encaminha wheel/touch scroll para a
