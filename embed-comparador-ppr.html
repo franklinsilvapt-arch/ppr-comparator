@@ -550,8 +550,13 @@ body::-webkit-scrollbar,
 
 /* Warning banner (perfil de risco divergente) */
 #lf-pc-calc .lpc-warning {
+  /* Layout sem flex: SVG é absolute e o texto ocupa o block inteiro
+     com padding-left para reservar espaço. Evita bugs de flex-shrink
+     em Safari (desktop + mobile) que faziam o span transbordar do
+     warning box e renderizar em coluna estreita à direita. */
+  position: relative;
   margin-top: var(--spacing-3xl);
-  padding: 12px 14px;
+  padding: 12px 14px 12px 40px;
   background: var(--color-warning-50);
   border: 1px solid var(--color-warning-200);
   border-radius: var(--radius-xl);
@@ -560,21 +565,15 @@ body::-webkit-scrollbar,
   line-height: 20px;
   letter-spacing: -0.1px;
   color: var(--warning-dark);
-  display: flex;
-  gap: var(--spacing-lg);
-  align-items: flex-start;
+  word-wrap: break-word;
 }
 #lf-pc-calc .lpc-warning svg {
-  flex-shrink: 0;
-  margin-top: var(--spacing-xxs);
+  position: absolute;
+  left: 14px;
+  top: 14px;
 }
 #lf-pc-calc .lpc-warning span {
-  /* Safari default min-width:auto em flex children impede shrink do
-     texto, que transbordava para fora do warning box. min-width:0
-     força o span a fazer shrink e wrap dentro do flex container. */
-  min-width: 0;
-  flex: 1 1 auto;
-  word-wrap: break-word;
+  display: block;
 }
 
 /* ---------- Chart ---------- */
