@@ -42,7 +42,7 @@
   <!-- CHART -->
   <div class="lpc-chart-card">
     <div class="lpc-tabs-header">
-      <h3 class="lpc-tabs-title">Rentabilidade acumulada</h3>
+      <div class="lpc-tabs-title">Rentabilidade acumulada</div>
       <div class="lpc-tabs-controls">
         <div class="lpc-tabs" id="lpc-period-tabs">
           <button class="lpc-tab" data-period="ytd">YTD</button>
@@ -79,7 +79,7 @@
 
   <!-- COMPARE TABLE -->
   <div class="lpc-card">
-    <h3 class="lpc-section-title" style="margin-bottom: 24px;">Comparação detalhada</h3>
+    <div class="lpc-section-title" style="margin-bottom: 24px;">Comparação detalhada</div>
     <div class="lpc-table-wrap">
       <table class="lpc-table" id="lpc-compare-table">
         <thead><tr id="lpc-compare-head"></tr></thead>
@@ -90,7 +90,7 @@
 
   <!-- RISK TABLE -->
   <div class="lpc-card">
-    <h3 class="lpc-section-title" style="margin-bottom: 24px;">Métricas de risco</h3>
+    <div class="lpc-section-title" style="margin-bottom: 24px;">Métricas de risco</div>
     <div class="lpc-table-wrap">
       <table class="lpc-table" id="lpc-risk-table">
         <thead><tr id="lpc-risk-head"></tr></thead>

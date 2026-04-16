@@ -457,11 +457,13 @@ body::-webkit-scrollbar,
   margin-bottom: var(--spacing-4xl);
 }
 #lf-pc-calc .lpc-tabs-title {
+  font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
   letter-spacing: -0.2px;
   color: var(--text-primary);
+  margin: 0;
 }
 #lf-pc-calc .lpc-tabs-controls {
   display: flex;
@@ -727,12 +729,13 @@ body::-webkit-scrollbar,
 
 /* ---------- Tables (compare + risk) ---------- */
 #lf-pc-calc .lpc-section-title {
+  font-family: 'Inter', sans-serif;
   font-size: 20px;
   font-weight: 500;
   line-height: 30px;
   letter-spacing: -0.4px;
   color: var(--text-primary);
-  margin-bottom: var(--spacing-md);
+  margin: 0 0 var(--spacing-md) 0;
 }
 #lf-pc-calc .lpc-section-hint {
   font-size: 13px;
@@ -1057,7 +1060,7 @@ body::-webkit-scrollbar,
   <!-- CHART -->
   <div class="lpc-chart-card">
     <div class="lpc-tabs-header">
-      <h3 class="lpc-tabs-title">Rentabilidade acumulada</h3>
+      <div class="lpc-tabs-title">Rentabilidade acumulada</div>
       <div class="lpc-tabs-controls">
         <div class="lpc-tabs" id="lpc-period-tabs">
           <button class="lpc-tab" data-period="ytd">YTD</button>
@@ -1094,7 +1097,7 @@ body::-webkit-scrollbar,
 
   <!-- COMPARE TABLE -->
   <div class="lpc-card">
-    <h3 class="lpc-section-title" style="margin-bottom: 24px;">Comparação detalhada</h3>
+    <div class="lpc-section-title" style="margin-bottom: 24px;">Comparação detalhada</div>
     <div class="lpc-table-wrap">
       <table class="lpc-table" id="lpc-compare-table">
         <thead><tr id="lpc-compare-head"></tr></thead>
@@ -1105,7 +1108,7 @@ body::-webkit-scrollbar,
 
   <!-- RISK TABLE -->
   <div class="lpc-card">
-    <h3 class="lpc-section-title" style="margin-bottom: 24px;">Métricas de risco</h3>
+    <div class="lpc-section-title" style="margin-bottom: 24px;">Métricas de risco</div>
     <div class="lpc-table-wrap">
       <table class="lpc-table" id="lpc-risk-table">
         <thead><tr id="lpc-risk-head"></tr></thead>

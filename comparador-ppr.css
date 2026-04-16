@@ -436,11 +436,13 @@
   margin-bottom: var(--spacing-4xl);
 }
 #lf-pc-calc .lpc-tabs-title {
+  font-family: 'Inter', sans-serif;
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
   letter-spacing: -0.2px;
   color: var(--text-primary);
+  margin: 0;
 }
 #lf-pc-calc .lpc-tabs-controls {
   display: flex;
@@ -706,12 +708,13 @@
 
 /* ---------- Tables (compare + risk) ---------- */
 #lf-pc-calc .lpc-section-title {
+  font-family: 'Inter', sans-serif;
   font-size: 20px;
   font-weight: 500;
   line-height: 30px;
   letter-spacing: -0.4px;
   color: var(--text-primary);
-  margin-bottom: var(--spacing-md);
+  margin: 0 0 var(--spacing-md) 0;
 }
 #lf-pc-calc .lpc-section-hint {
   font-size: 13px;
