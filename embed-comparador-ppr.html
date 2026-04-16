@@ -1815,7 +1815,16 @@ body::-webkit-scrollbar,
           }
           return r;
         });
-        var lastDate = withData[0].labels[withData[0].labels.length - 1];
+        // Data final = MIN das últimas cotações de cada fundo. Usar o
+        // último label da série rebased não funciona porque está
+        // downsampled (o último ponto pode estar vários dias antes da
+        // última cotação real). _lastDate vem de last_price_date, que
+        // é a data real da última observação no CSV do fundo.
+        var lastDates = pairs.map(function (p) { return p.fund._lastDate; })
+          .filter(Boolean);
+        var lastDate = lastDates.length
+          ? lastDates.reduce(function (a, b) { return a < b ? a : b; })
+          : withData[0].labels[withData[0].labels.length - 1];
         rebaseInfo = { from: cutoff, to: lastDate };
       }
     }

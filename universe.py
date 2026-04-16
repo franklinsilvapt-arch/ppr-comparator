@@ -36,10 +36,15 @@ MANUAL_OVERRIDES = [
     # --- Plataforma IMGA (hospeda ABANCA + IMGA) ---
     # ISINs ABANCA obtidos via search FT (IMGA não os expõe no HTML).
     # O FT fallback no main.py usa estes para puxar a série histórica.
-    {"match": "ciclo de vida +55",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-plus55/", "isin": "PTAFIYHM0012", "min_subs": 100},
-    {"match": "ciclo de vida -34",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-34/",     "isin": "PTAFIUHM0016", "min_subs": 100},
-    {"match": "ciclo de vida 35-44",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-35-44/",  "isin": "PTAFIVHM0015", "min_subs": 100},
-    {"match": "ciclo de vida 45-54",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-45-54/",  "isin": "PTAFIWHM0014", "min_subs": 100},
+    # ABANCA Ciclo de Vida: os CSVs públicos começam em 2018-10 com NAV
+    # fixado a 5,0000 durante semanas (placeholder do período de "fria"
+    # pós-constituição, sem trades reais). O primeiro movimento >1% só
+    # acontece em meados de Janeiro 2019. Clipamos a série a 2019-01-01
+    # para o gráfico não arrastar a linha plana enganadora.
+    {"match": "ciclo de vida +55",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-plus55/", "isin": "PTAFIYHM0012", "min_subs": 100, "inception": "2019-01-01"},
+    {"match": "ciclo de vida -34",     "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-34/",     "isin": "PTAFIUHM0016", "min_subs": 100, "inception": "2019-01-01"},
+    {"match": "ciclo de vida 35-44",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-35-44/",  "isin": "PTAFIVHM0015", "min_subs": 100, "inception": "2019-01-01"},
+    {"match": "ciclo de vida 45-54",   "site_url": "https://www.imga.pt/fim/ppr/abanca-pproicvm-ciclo-de-vida-45-54/",  "isin": "PTAFIWHM0014", "min_subs": 100, "inception": "2019-01-01"},
     {"match": "imga crescimento ppr",  "site_url": "https://www.imga.pt/fim/ppr/imga-crescimento-pproicvm/"},
     {"match": "imga investimento ppr", "site_url": "https://www.imga.pt/fim/ppr/imga-investimento-pproicvm/"},
     {"match": "imga poupança ppr",     "site_url": "https://www.imga.pt/fim/ppr/imga-poupança-pproicvm/"},
