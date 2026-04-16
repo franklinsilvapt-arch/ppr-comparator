@@ -2077,6 +2077,40 @@ body::-webkit-scrollbar,
     window.addEventListener('load', send);
   }
 
+  // Safari em iframe cross-origin não encaminha wheel/touch scroll para a
+  // página mãe - o scroll "trava" quando o rato está sobre o comparador.
+  // Fix: interceptar os eventos e retransmitir via postMessage. O listener
+  // correspondente vive no custom code do Webflow (aplica window.scrollBy
+  // com o deltaY recebido). Só ataca o problema quando o evento é SOBRE
+  // o iframe e NÃO há scroll interno activo (overflow-auto).
+  function forwardScroll() {
+    if (window.parent === window) return;
+    window.addEventListener('wheel', function (e) {
+      var scrollable = e.target.closest && e.target.closest('[data-scrollable], .overflow-auto, .overflow-scroll');
+      if (scrollable) {
+        var st = scrollable.scrollTop;
+        var sh = scrollable.scrollHeight;
+        var ch = scrollable.clientHeight;
+        var atTop = st === 0 && e.deltaY < 0;
+        var atBottom = st + ch >= sh && e.deltaY > 0;
+        if (!atTop && !atBottom) return;
+      }
+      e.preventDefault();
+      window.parent.postMessage({ type: 'ppr-scroll', deltaY: e.deltaY }, '*');
+    }, { passive: false });
+
+    var touchStartY = 0;
+    window.addEventListener('touchstart', function (e) {
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    window.addEventListener('touchmove', function (e) {
+      var deltaY = touchStartY - e.touches[0].clientY;
+      touchStartY = e.touches[0].clientY;
+      window.parent.postMessage({ type: 'ppr-scroll', deltaY: deltaY }, '*');
+    }, { passive: true });
+  }
+  forwardScroll();
+
   init();
 })();
 </script>
