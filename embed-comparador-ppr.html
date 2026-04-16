@@ -388,6 +388,11 @@ body::-webkit-scrollbar,
               0 4px 6px -2px rgba(18, 23, 33, 0.03);
   max-height: 320px;
   overflow-y: auto;
+  /* inertia touch-scroll em iOS Safari. Sem isto, o scroll do
+     dropdown dentro de iframe cross-origin não funciona nativamente
+     e o nosso fallback via postMessage criava tremor. */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   z-index: 50;
   display: none;
   padding: var(--spacing-sm);
@@ -724,6 +729,10 @@ body::-webkit-scrollbar,
   border-radius: var(--radius-xl);
   overflow-x: auto;
   background: var(--bg-white);
+  /* inertia touch-scroll em iOS Safari + contain overscroll para
+     evitar chaining vertical durante swipe horizontal nas tabelas. */
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   /* scrollbar escondida em todos os browsers — o scroll horizontal
      continua a funcionar por swipe/drag, só não mostra barra. */
   scrollbar-width: none;
@@ -2246,14 +2255,19 @@ body::-webkit-scrollbar,
     // auto|scroll E que REALMENTE tem conteúdo a rolar (scrollHeight
     // excede clientHeight). O dropdown de selector é o caso principal,
     // mas isto também cobre qualquer elemento scrollável futuro.
-    function findScrollableAncestor(el) {
+    // axis: 'y' só olha overflow-y, 'any' olha Y OU X (para touch, onde
+    // um swipe pode ser vertical OU horizontal, ex. em tabelas com
+    // overflow-x:auto).
+    function findScrollableAncestor(el, axis) {
+      axis = axis || 'y';
       while (el && el !== document.body) {
         if (el.nodeType === 1) {
           var cs = getComputedStyle(el);
-          var oy = cs.overflowY;
-          if ((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight) {
-            return el;
-          }
+          var oy = cs.overflowY, ox = cs.overflowX;
+          var scrollsY = (oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight;
+          var scrollsX = (ox === 'auto' || ox === 'scroll') && el.scrollWidth > el.clientWidth;
+          if (axis === 'y' && scrollsY) return el;
+          if (axis === 'any' && (scrollsY || scrollsX)) return el;
         }
         el = el.parentNode;
       }
@@ -2285,23 +2299,17 @@ body::-webkit-scrollbar,
     var touchScrollable = null;
     window.addEventListener('touchstart', function (e) {
       touchStartY = e.touches[0].clientY;
-      // Detectar se o toque começa dentro de um elemento scrollável
-      // (dropdown de selector, etc.). Se sim, deixar o scroll nativo
-      // tratar — sem forwardar ao parent: caso contrário o dropdown
-      // rola E a página mãe rola ao mesmo tempo (tremor em mobile).
-      touchScrollable = findScrollableAncestor(e.target);
+      // axis='any' apanha tanto dropdowns (overflow-y) como tabelas
+      // (overflow-x). Enquanto o toque estiver dentro de um scrollable,
+      // NÃO forwardamos ao parent — deixamos o -webkit-overflow-scrolling
+      // nativo tratar. Sem isto, o swipe do utilizador fazia scroll
+      // interno E scroll da página mãe ao mesmo tempo (tremor).
+      touchScrollable = findScrollableAncestor(e.target, 'any');
     }, { passive: true });
     window.addEventListener('touchmove', function (e) {
+      if (touchScrollable) return;  // scroll nativo trata
       var deltaY = touchStartY - e.touches[0].clientY;
       touchStartY = e.touches[0].clientY;
-      if (touchScrollable) {
-        var st = touchScrollable.scrollTop;
-        var sh = touchScrollable.scrollHeight;
-        var ch = touchScrollable.clientHeight;
-        var atTop = st <= 0 && deltaY < 0;
-        var atBottom = st + ch >= sh - 1 && deltaY > 0;
-        if (!atTop && !atBottom) return;
-      }
       window.parent.postMessage({ type: 'ppr-scroll', deltaY: deltaY }, '*');
     }, { passive: true });
   }
