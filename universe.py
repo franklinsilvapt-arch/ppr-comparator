@@ -59,7 +59,7 @@ MANUAL_OVERRIDES = [
      "isin": "PTIGA6HM0002", "min_subs": 200, "tec": 1.75, "risk_class": 5},
     # --- BIZ Capital ---
     {"match": "biz europa valoriza",   "site_url": "https://bizcapital.eu/biz-europa-ppr/",
-     "isin": "PTBZSKHM0003", "min_subs": 100, "risk_class": 4},
+     "isin": "PTBZSKHM0003", "min_subs": 100, "risk_class": 4, "hidden": True},
     # --- Bankinter (precisa curl_cffi) ---
     # Mega TT: histórico via FT (ISIN → FT symbol → chartapi).
     {"match": "bankinter mega tt",     "site_url": "https://www.bankinter.pt/fundos/fundo-mega-tt",
