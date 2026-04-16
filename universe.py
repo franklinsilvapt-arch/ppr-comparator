@@ -238,7 +238,9 @@ for _cat in ("categoria em", "categoria en", "categoria eo"):
 _BANKINTER_CAT_MIN = {"a": 500, "b": 100000, "c": 250000}
 # (fam_match, TECs_por_cat ou None, ISINs_por_cat ou None)
 _BANKINTER_FAMILIES = [
-    ("bankinter mega tt ppr / oicvm",    None, None),
+    ("bankinter mega tt ppr / oicvm",
+        None,
+        {"a": "PTBKCAHM0000", "b": "PTBKCJHM0001", "c": "PTBKCBHM0009"}),
     ("bankinter 100 ppr / oicvm",
         {"a": 2.39, "b": 1.68, "c": 1.56},
         {"a": "PTBKCLHM0007", "b": "PTBKCMHM0006", "c": "PTBKCNHM0005"}),
