@@ -2060,7 +2060,14 @@ body::-webkit-scrollbar,
     var last = 0;
     var t = null;
     function send() {
-      var h = Math.ceil(document.documentElement.getBoundingClientRect().height);
+      // scrollHeight ignora overflow:hidden (que temos no html/body para
+      // esconder scrollbars internas). getBoundingClientRect iria dar
+      // apenas a altura da viewport do iframe (ex. 2400px do fallback do
+      // Webflow), não a altura real do conteúdo.
+      var h = Math.ceil(Math.max(
+        document.body ? document.body.scrollHeight : 0,
+        document.documentElement.scrollHeight
+      ));
       // Threshold de 4px evita flickering com hovers/tooltips que causam
       // reflows de 1-2px - isso fazia a página mãe saltar no scroll.
       if (h && Math.abs(h - last) > 4) {
