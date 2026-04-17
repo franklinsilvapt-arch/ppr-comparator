@@ -938,6 +938,13 @@ body::-webkit-scrollbar,
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
+  /* Safari em desktop e iOS estica inline-flex dentro de <th> com
+     width fixa (200px) + white-space:nowrap, afastando o icon do
+     texto até ao fim da cell. width:max-content força content-sizing
+     e mantém o icon colado à direita do label. Chrome já assumia
+     content-sizing por defeito, logo não há regressão. */
+  width: max-content;
+  max-width: 100%;
 }
 
 /* ---------- Responsive ---------- */
