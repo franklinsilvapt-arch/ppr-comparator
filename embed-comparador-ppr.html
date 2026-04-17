@@ -844,26 +844,44 @@ body::-webkit-scrollbar,
   vertical-align: middle;
 }
 
-/* ---------- Risk pills (classe 1-7) ---------- */
+/* ---------- Risk pills (classe 1-7) ----------
+   Pill com barras estilo signal-strength (1-7 crescentes) + texto "N/7".
+   Monocromático intencional - a classe de risco é lida pela densidade
+   das barras preenchidas, não pela cor. */
 #lf-pc-calc .lpc-risk-pill {
-  display: inline-block;
-  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
   border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
   letter-spacing: -0.1px;
-  background: var(--green-soft);
-  color: var(--green-text);
 }
-#lf-pc-calc .lpc-risk-pill.r-mid {
-  background: var(--color-warning-50);
-  color: var(--warning-dark);
+#lf-pc-calc .lpc-risk-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1.5px;
+  height: 12px;
 }
-#lf-pc-calc .lpc-risk-pill.r-high {
-  background: #FEE4E2;
-  color: var(--color-error-700);
+#lf-pc-calc .lpc-risk-bar {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--color-grey-300);
 }
+#lf-pc-calc .lpc-risk-bar.is-filled {
+  background: var(--text-primary);
+}
+#lf-pc-calc .lpc-risk-bar.h1 { height: 3px; }
+#lf-pc-calc .lpc-risk-bar.h2 { height: 4.5px; }
+#lf-pc-calc .lpc-risk-bar.h3 { height: 6px; }
+#lf-pc-calc .lpc-risk-bar.h4 { height: 7.5px; }
+#lf-pc-calc .lpc-risk-bar.h5 { height: 9px; }
+#lf-pc-calc .lpc-risk-bar.h6 { height: 10.5px; }
+#lf-pc-calc .lpc-risk-bar.h7 { height: 12px; }
 
 /* ---------- Info icon (tooltip trigger click+hover) ---------- */
 #lf-pc-calc .lpc-info-icon {
@@ -1838,8 +1856,17 @@ body::-webkit-scrollbar,
       { label: 'Classe de risco',         tip: 'Indicador sintético de risco (ISR) numa escala de 1 (menor risco, potencial retorno menor) a 7 (maior risco, potencial retorno maior). Definido pela gestora ao abrigo do regime PPR.',
         render: function (f) {
           if (f.riskClass == null) return NA;
-          var cls = f.riskClass >= 5 ? 'r-high' : f.riskClass >= 3 ? 'r-mid' : '';
-          return '<span class="lpc-risk-pill ' + cls + '">' + f.riskClass + '</span>';
+          var rc = f.riskClass;
+          var bars = '';
+          for (var i = 1; i <= 7; i++) {
+            bars += '<span class="lpc-risk-bar h' + i
+              + (i <= rc ? ' is-filled' : '') + '"></span>';
+          }
+          return '<span class="lpc-risk-pill" aria-label="Classe de risco '
+            + rc + ' em 7">'
+            + '<span class="lpc-risk-bars" aria-hidden="true">' + bars + '</span>'
+            + '<span>' + rc + '/7</span>'
+            + '</span>';
         } },
       { label: 'Rentabilidade 1 ano',     render: function (f) { return formatPct(f.returns['1y']); } },
       { label: 'Rentabilidade 3 anos',
