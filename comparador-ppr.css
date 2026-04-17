@@ -823,26 +823,44 @@
   vertical-align: middle;
 }
 
-/* ---------- Risk pills (classe 1-7) ---------- */
+/* ---------- Risk pills (classe 1-7) ----------
+   Pill com barras estilo signal-strength (1-7 crescentes) + texto "N/7".
+   Monocromático intencional - a classe de risco é lida pela densidade
+   das barras preenchidas, não pela cor. */
 #lf-pc-calc .lpc-risk-pill {
-  display: inline-block;
-  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
   border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
   letter-spacing: -0.1px;
-  background: var(--green-soft);
-  color: var(--green-text);
 }
-#lf-pc-calc .lpc-risk-pill.r-mid {
-  background: var(--color-warning-50);
-  color: var(--warning-dark);
+#lf-pc-calc .lpc-risk-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 1.5px;
+  height: 12px;
 }
-#lf-pc-calc .lpc-risk-pill.r-high {
-  background: #FEE4E2;
-  color: var(--color-error-700);
+#lf-pc-calc .lpc-risk-bar {
+  width: 3px;
+  border-radius: 1px;
+  background: var(--color-grey-300);
 }
+#lf-pc-calc .lpc-risk-bar.is-filled {
+  background: var(--text-primary);
+}
+#lf-pc-calc .lpc-risk-bar.h1 { height: 3px; }
+#lf-pc-calc .lpc-risk-bar.h2 { height: 4.5px; }
+#lf-pc-calc .lpc-risk-bar.h3 { height: 6px; }
+#lf-pc-calc .lpc-risk-bar.h4 { height: 7.5px; }
+#lf-pc-calc .lpc-risk-bar.h5 { height: 9px; }
+#lf-pc-calc .lpc-risk-bar.h6 { height: 10.5px; }
+#lf-pc-calc .lpc-risk-bar.h7 { height: 12px; }
 
 /* ---------- Info icon (tooltip trigger click+hover) ---------- */
 #lf-pc-calc .lpc-info-icon {
@@ -864,10 +882,15 @@
   color: var(--text-tertiary);
 }
 #lf-pc-calc .lpc-tip-bubble {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
+  /* position:fixed escapa a qualquer containing block - em particular
+     o overflow-x:auto de .lpc-table-wrap, que antes cortava a bolha
+     em Chrome quando aberta sobre a tabela de métricas de risco.
+     A posição (x, y) e a posição da seta são calculadas em JS via
+     getBoundingClientRect + clamp ao viewport para não sair do iframe. */
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate3d(var(--lpc-tip-x, 0px), var(--lpc-tip-y, 0px), 0);
   min-width: 200px;
   max-width: 280px;
   padding: var(--spacing-lg) var(--spacing-xl);
@@ -881,49 +904,44 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
   white-space: normal;
   text-align: left;
-  z-index: 50;
+  z-index: 9999;
   pointer-events: none;
   opacity: 0;
+  visibility: hidden;
   transition: opacity 0.12s ease;
+}
+#lf-pc-calc .lpc-tip-bubble.is-visible {
+  opacity: 1;
+  visibility: visible;
 }
 #lf-pc-calc .lpc-tip-bubble::after {
   content: '';
   position: absolute;
   top: 100%;
-  left: 50%;
+  left: var(--lpc-arrow-x, 50%);
   transform: translateX(-50%);
   border: 5px solid transparent;
   border-top-color: var(--dark);
 }
-#lf-pc-calc .lpc-info-icon.is-open .lpc-tip-bubble,
-#lf-pc-calc .lpc-info-icon:hover .lpc-tip-bubble {
-  opacity: 1;
-}
-/* em tabelas, posiciona a bolha à direita para não ser cortada pelo scroll */
-#lf-pc-calc .lpc-table .lpc-tip-bubble {
-  left: 0;
-  transform: none;
-}
-#lf-pc-calc .lpc-table .lpc-tip-bubble::after {
-  left: 14px;
-  transform: none;
-}
-/* toggle do benchmark está alinhado à direita do card - a bolha tem
-   de abrir PARA A ESQUERDA para não sair do viewport. */
-#lf-pc-calc .lpc-benchmark-toggle .lpc-tip-bubble {
-  left: auto;
-  right: -8px;
-  transform: none;
-}
-#lf-pc-calc .lpc-benchmark-toggle .lpc-tip-bubble::after {
-  left: auto;
-  right: 14px;
-  transform: none;
+/* Fallback: quando não há espaço acima do ícone, o JS vira a bolha
+   para baixo e a seta aponta para cima. */
+#lf-pc-calc .lpc-tip-bubble.is-below::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--dark);
 }
 #lf-pc-calc .lpc-label-tip {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
+  /* Safari em desktop e iOS estica inline-flex dentro de <th> com
+     width fixa (200px) + white-space:nowrap, afastando o icon do
+     texto até ao fim da cell. width:max-content força content-sizing
+     e mantém o icon colado à direita do label. Chrome já assumia
+     content-sizing por defeito, logo não há regressão. */
+  width: max-content;
+  max-width: 100%;
 }
 
 /* ---------- Responsive ---------- */

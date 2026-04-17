@@ -61,7 +61,7 @@
     <div class="lpc-benchmark-row">
       <label class="lpc-benchmark-toggle" for="lpc-benchmark-checkbox">
         <input type="checkbox" id="lpc-benchmark-checkbox">
-        <span class="lpc-benchmark-text">ETF de referência</span>
+        <span class="lpc-benchmark-text">sobrepor ETF de referência</span>
         <span class="lpc-info-icon" tabindex="0" aria-label="Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
           <span class="lpc-tip-bubble">Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.</span>
@@ -806,8 +806,17 @@
       { label: 'Classe de risco',         tip: 'Indicador sintético de risco (ISR) numa escala de 1 (menor risco, potencial retorno menor) a 7 (maior risco, potencial retorno maior). Definido pela gestora ao abrigo do regime PPR.',
         render: function (f) {
           if (f.riskClass == null) return NA;
-          var cls = f.riskClass >= 5 ? 'r-high' : f.riskClass >= 3 ? 'r-mid' : '';
-          return '<span class="lpc-risk-pill ' + cls + '">' + f.riskClass + '</span>';
+          var rc = f.riskClass;
+          var bars = '';
+          for (var i = 1; i <= 7; i++) {
+            bars += '<span class="lpc-risk-bar h' + i
+              + (i <= rc ? ' is-filled' : '') + '"></span>';
+          }
+          return '<span class="lpc-risk-pill" aria-label="Classe de risco '
+            + rc + ' em 7">'
+            + '<span class="lpc-risk-bars" aria-hidden="true">' + bars + '</span>'
+            + '<span>' + rc + '/7</span>'
+            + '</span>';
         } },
       { label: 'Rentabilidade 1 ano',     render: function (f) { return formatPct(f.returns['1y']); } },
       { label: 'Rentabilidade 3 anos',
@@ -1182,29 +1191,127 @@
     updateBadge();
   }
 
-  // Tooltip tap-to-toggle (mobile) - o title nativo não dispara em touch.
-  // Mantemos o title (acessibilidade / copy-paste / hover em nested elements)
-  // e adicionamos um handler explícito que abre/fecha a bolha.
+  // Tooltip positioning - calculado em JS para escapar a containing
+  // blocks com overflow (ex: .lpc-table-wrap com overflow-x:auto) que
+  // antes cortavam a bolha em Chrome. Também uniformiza comportamento
+  // entre Safari e Chrome, onde a estratégia anterior de left:50% +
+  // translateX dentro de tabela rendia mal em Safari desktop.
+  function positionTip(icon) {
+    var bubble = icon.querySelector('.lpc-tip-bubble');
+    if (!bubble) return;
+    // getBoundingClientRect funciona com visibility:hidden, logo
+    // medimos a bolha sem a mostrar.
+    var ir = icon.getBoundingClientRect();
+    var br = bubble.getBoundingClientRect();
+    var margin = 8;
+    var gap = 6;
+    var vw = document.documentElement.clientWidth || window.innerWidth;
+    var vh = document.documentElement.clientHeight || window.innerHeight;
+
+    var iconCenterX = ir.left + ir.width / 2;
+    var x = iconCenterX - br.width / 2;
+    var y = ir.top - br.height - gap;
+    var below = false;
+    // Sem espaço acima: vira para baixo.
+    if (y < margin) {
+      y = ir.bottom + gap;
+      below = true;
+    }
+    // Clamp horizontal para não cortar nas margens do viewport.
+    if (x < margin) x = margin;
+    if (x + br.width > vw - margin) x = vw - br.width - margin;
+
+    // Posiciona a seta sobre o centro do ícone (relativa à bolha).
+    var arrowX = iconCenterX - x;
+    if (arrowX < 12) arrowX = 12;
+    if (arrowX > br.width - 12) arrowX = br.width - 12;
+
+    bubble.style.setProperty('--lpc-tip-x', Math.round(x) + 'px');
+    bubble.style.setProperty('--lpc-tip-y', Math.round(y) + 'px');
+    bubble.style.setProperty('--lpc-arrow-x', Math.round(arrowX) + 'px');
+    bubble.classList.toggle('is-below', below);
+  }
+  function showTip(icon) {
+    var bubble = icon.querySelector('.lpc-tip-bubble');
+    if (!bubble) return;
+    positionTip(icon);
+    bubble.classList.add('is-visible');
+  }
+  function hideTip(icon) {
+    var bubble = icon.querySelector('.lpc-tip-bubble');
+    if (bubble) bubble.classList.remove('is-visible');
+  }
+
+  // Hover (desktop): mouseover/out delegados com check de relatedTarget
+  // para não piscar quando o cursor passa entre filhos do mesmo ícone.
+  root.addEventListener('mouseover', function (e) {
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    if (!icon) return;
+    if (e.relatedTarget && icon.contains(e.relatedTarget)) return;
+    showTip(icon);
+  });
+  root.addEventListener('mouseout', function (e) {
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    if (!icon) return;
+    if (e.relatedTarget && icon.contains(e.relatedTarget)) return;
+    // Preserva tooltips "pinned" por tap até próximo click.
+    if (icon.classList.contains('is-open')) return;
+    hideTip(icon);
+  });
+  // Teclado (Tab/Shift+Tab para acessibilidade)
+  root.addEventListener('focusin', function (e) {
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    if (icon) showTip(icon);
+  });
+  root.addEventListener('focusout', function (e) {
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    if (!icon) return;
+    if (icon.classList.contains('is-open')) return;
+    hideTip(icon);
+  });
+
+  // Tap (mobile) toggle - o title nativo não dispara em touch. Tap num
+  // ícone pinna a bolha (classe is-open) até nova interacção; tap fora
+  // fecha tudo.
   root.addEventListener('click', function (e) {
-    var icon = e.target.closest ? e.target.closest('.lpc-info-icon') : null;
-    // fecha qualquer bolha aberta
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    // Fecha outras bolhas pinnadas.
     root.querySelectorAll('.lpc-info-icon.is-open').forEach(function (el) {
-      if (el !== icon) el.classList.remove('is-open');
+      if (el !== icon) {
+        el.classList.remove('is-open');
+        hideTip(el);
+      }
     });
     if (icon) {
       e.preventDefault();
       e.stopPropagation();
-      icon.classList.toggle('is-open');
+      var wasOpen = icon.classList.toggle('is-open');
+      if (wasOpen) showTip(icon); else hideTip(icon);
     }
   });
-  // Esc fecha tooltips abertas
+  // Esc fecha tudo.
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       root.querySelectorAll('.lpc-info-icon.is-open').forEach(function (el) {
         el.classList.remove('is-open');
       });
+      root.querySelectorAll('.lpc-tip-bubble.is-visible').forEach(function (b) {
+        b.classList.remove('is-visible');
+      });
     }
   });
+  // Reposiciona bolhas visíveis em scroll/resize - com position:fixed
+  // o browser não reposiciona automaticamente quando o ícone se move.
+  var __repositionOpenTips = function () {
+    root.querySelectorAll('.lpc-tip-bubble.is-visible').forEach(function (b) {
+      var icon = b.parentElement;
+      if (icon && icon.classList && icon.classList.contains('lpc-info-icon')) {
+        positionTip(icon);
+      }
+    });
+  };
+  window.addEventListener('scroll', __repositionOpenTips, { passive: true });
+  window.addEventListener('resize', __repositionOpenTips);
 
   async function init() {
     if (typeof Chart === 'undefined') { setTimeout(init, 50); return; }
