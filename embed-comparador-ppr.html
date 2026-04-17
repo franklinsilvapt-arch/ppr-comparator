@@ -885,10 +885,15 @@ body::-webkit-scrollbar,
   color: var(--text-tertiary);
 }
 #lf-pc-calc .lpc-tip-bubble {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  transform: translateX(-50%);
+  /* position:fixed escapa a qualquer containing block - em particular
+     o overflow-x:auto de .lpc-table-wrap, que antes cortava a bolha
+     em Chrome quando aberta sobre a tabela de métricas de risco.
+     A posição (x, y) e a posição da seta são calculadas em JS via
+     getBoundingClientRect + clamp ao viewport para não sair do iframe. */
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate3d(var(--lpc-tip-x, 0px), var(--lpc-tip-y, 0px), 0);
   min-width: 200px;
   max-width: 280px;
   padding: var(--spacing-lg) var(--spacing-xl);
@@ -902,44 +907,32 @@ body::-webkit-scrollbar,
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
   white-space: normal;
   text-align: left;
-  z-index: 50;
+  z-index: 9999;
   pointer-events: none;
   opacity: 0;
+  visibility: hidden;
   transition: opacity 0.12s ease;
+}
+#lf-pc-calc .lpc-tip-bubble.is-visible {
+  opacity: 1;
+  visibility: visible;
 }
 #lf-pc-calc .lpc-tip-bubble::after {
   content: '';
   position: absolute;
   top: 100%;
-  left: 50%;
+  left: var(--lpc-arrow-x, 50%);
   transform: translateX(-50%);
   border: 5px solid transparent;
   border-top-color: var(--dark);
 }
-#lf-pc-calc .lpc-info-icon.is-open .lpc-tip-bubble,
-#lf-pc-calc .lpc-info-icon:hover .lpc-tip-bubble {
-  opacity: 1;
-}
-/* em tabelas, posiciona a bolha à direita para não ser cortada pelo scroll */
-#lf-pc-calc .lpc-table .lpc-tip-bubble {
-  left: 0;
-  transform: none;
-}
-#lf-pc-calc .lpc-table .lpc-tip-bubble::after {
-  left: 14px;
-  transform: none;
-}
-/* toggle do benchmark está alinhado à direita do card - a bolha tem
-   de abrir PARA A ESQUERDA para não sair do viewport. */
-#lf-pc-calc .lpc-benchmark-toggle .lpc-tip-bubble {
-  left: auto;
-  right: -8px;
-  transform: none;
-}
-#lf-pc-calc .lpc-benchmark-toggle .lpc-tip-bubble::after {
-  left: auto;
-  right: 14px;
-  transform: none;
+/* Fallback: quando não há espaço acima do ícone, o JS vira a bolha
+   para baixo e a seta aponta para cima. */
+#lf-pc-calc .lpc-tip-bubble.is-below::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: var(--dark);
 }
 #lf-pc-calc .lpc-label-tip {
   display: inline-flex;
@@ -2214,29 +2207,127 @@ body::-webkit-scrollbar,
     updateBadge();
   }
 
-  // Tooltip tap-to-toggle (mobile) - o title nativo não dispara em touch.
-  // Mantemos o title (acessibilidade / copy-paste / hover em nested elements)
-  // e adicionamos um handler explícito que abre/fecha a bolha.
+  // Tooltip positioning - calculado em JS para escapar a containing
+  // blocks com overflow (ex: .lpc-table-wrap com overflow-x:auto) que
+  // antes cortavam a bolha em Chrome. Também uniformiza comportamento
+  // entre Safari e Chrome, onde a estratégia anterior de left:50% +
+  // translateX dentro de tabela rendia mal em Safari desktop.
+  function positionTip(icon) {
+    var bubble = icon.querySelector('.lpc-tip-bubble');
+    if (!bubble) return;
+    // getBoundingClientRect funciona com visibility:hidden, logo
+    // medimos a bolha sem a mostrar.
+    var ir = icon.getBoundingClientRect();
+    var br = bubble.getBoundingClientRect();
+    var margin = 8;
+    var gap = 6;
+    var vw = document.documentElement.clientWidth || window.innerWidth;
+    var vh = document.documentElement.clientHeight || window.innerHeight;
+
+    var iconCenterX = ir.left + ir.width / 2;
+    var x = iconCenterX - br.width / 2;
+    var y = ir.top - br.height - gap;
+    var below = false;
+    // Sem espaço acima: vira para baixo.
+    if (y < margin) {
+      y = ir.bottom + gap;
+      below = true;
+    }
+    // Clamp horizontal para não cortar nas margens do viewport.
+    if (x < margin) x = margin;
+    if (x + br.width > vw - margin) x = vw - br.width - margin;
+
+    // Posiciona a seta sobre o centro do ícone (relativa à bolha).
+    var arrowX = iconCenterX - x;
+    if (arrowX < 12) arrowX = 12;
+    if (arrowX > br.width - 12) arrowX = br.width - 12;
+
+    bubble.style.setProperty('--lpc-tip-x', Math.round(x) + 'px');
+    bubble.style.setProperty('--lpc-tip-y', Math.round(y) + 'px');
+    bubble.style.setProperty('--lpc-arrow-x', Math.round(arrowX) + 'px');
+    bubble.classList.toggle('is-below', below);
+  }
+  function showTip(icon) {
+    var bubble = icon.querySelector('.lpc-tip-bubble');
+    if (!bubble) return;
+    positionTip(icon);
+    bubble.classList.add('is-visible');
+  }
+  function hideTip(icon) {
+    var bubble = icon.querySelector('.lpc-tip-bubble');
+    if (bubble) bubble.classList.remove('is-visible');
+  }
+
+  // Hover (desktop): mouseover/out delegados com check de relatedTarget
+  // para não piscar quando o cursor passa entre filhos do mesmo ícone.
+  root.addEventListener('mouseover', function (e) {
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    if (!icon) return;
+    if (e.relatedTarget && icon.contains(e.relatedTarget)) return;
+    showTip(icon);
+  });
+  root.addEventListener('mouseout', function (e) {
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    if (!icon) return;
+    if (e.relatedTarget && icon.contains(e.relatedTarget)) return;
+    // Preserva tooltips "pinned" por tap até próximo click.
+    if (icon.classList.contains('is-open')) return;
+    hideTip(icon);
+  });
+  // Teclado (Tab/Shift+Tab para acessibilidade)
+  root.addEventListener('focusin', function (e) {
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    if (icon) showTip(icon);
+  });
+  root.addEventListener('focusout', function (e) {
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    if (!icon) return;
+    if (icon.classList.contains('is-open')) return;
+    hideTip(icon);
+  });
+
+  // Tap (mobile) toggle - o title nativo não dispara em touch. Tap num
+  // ícone pinna a bolha (classe is-open) até nova interacção; tap fora
+  // fecha tudo.
   root.addEventListener('click', function (e) {
-    var icon = e.target.closest ? e.target.closest('.lpc-info-icon') : null;
-    // fecha qualquer bolha aberta
+    var icon = e.target && e.target.closest ? e.target.closest('.lpc-info-icon') : null;
+    // Fecha outras bolhas pinnadas.
     root.querySelectorAll('.lpc-info-icon.is-open').forEach(function (el) {
-      if (el !== icon) el.classList.remove('is-open');
+      if (el !== icon) {
+        el.classList.remove('is-open');
+        hideTip(el);
+      }
     });
     if (icon) {
       e.preventDefault();
       e.stopPropagation();
-      icon.classList.toggle('is-open');
+      var wasOpen = icon.classList.toggle('is-open');
+      if (wasOpen) showTip(icon); else hideTip(icon);
     }
   });
-  // Esc fecha tooltips abertas
+  // Esc fecha tudo.
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       root.querySelectorAll('.lpc-info-icon.is-open').forEach(function (el) {
         el.classList.remove('is-open');
       });
+      root.querySelectorAll('.lpc-tip-bubble.is-visible').forEach(function (b) {
+        b.classList.remove('is-visible');
+      });
     }
   });
+  // Reposiciona bolhas visíveis em scroll/resize - com position:fixed
+  // o browser não reposiciona automaticamente quando o ícone se move.
+  var __repositionOpenTips = function () {
+    root.querySelectorAll('.lpc-tip-bubble.is-visible').forEach(function (b) {
+      var icon = b.parentElement;
+      if (icon && icon.classList && icon.classList.contains('lpc-info-icon')) {
+        positionTip(icon);
+      }
+    });
+  };
+  window.addEventListener('scroll', __repositionOpenTips, { passive: true });
+  window.addEventListener('resize', __repositionOpenTips);
 
   async function init() {
     if (typeof Chart === 'undefined') { setTimeout(init, 50); return; }
