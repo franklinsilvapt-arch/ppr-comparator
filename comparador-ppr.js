@@ -640,6 +640,23 @@
                 return ' ' + item.dataset.label + ': '
                   + (isEur ? fmtEurDec(item.parsed.y)
                            : ((item.parsed.y >= 0 ? '+' : '') + item.parsed.y.toFixed(2).replace('.', ',') + '%'));
+              },
+              // Quando PPRs têm granularidade diferente (diário vs semanal),
+              // num determinado dia alguns podem não ter ponto - Chart.js
+              // omitia-os do tooltip mesmo com a linha visível via
+              // spanGaps. Listamos aqui os que faltam com '—' para o
+              // utilizador perceber que a linha está a ser interpolada.
+              afterBody: function (items) {
+                if (!items.length) return [];
+                var idx = items[0].dataIndex;
+                var shown = {};
+                items.forEach(function (it) { shown[it.datasetIndex] = true; });
+                var extras = [];
+                datasets.forEach(function (ds, di) {
+                  if (shown[di]) return;
+                  if (ds.data[idx] == null) extras.push(' ' + ds.label + ': —');
+                });
+                return extras;
               }
             }
           }

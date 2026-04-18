@@ -495,19 +495,16 @@
   padding: 3px;
   gap: 0;
 }
-/* Separador vertical entre "1.000€" e "%" - tornar evidente que
-   são duas opções alternativas, não um rótulo único. Só visível
-   quando nenhum dos segmentos adjacentes é o activo, para o pill
-   colorido nunca parecer "cortado". */
+/* Separador vertical entre "1.000€" e "%" - deixa claro que são
+   duas opções alternativas, não um rótulo único. Sempre visível:
+   o pill colorido do botão activo tem margens próprias e não
+   sobrepõe a coluna do separador. */
 #lf-pc-calc .lpc-mode-sep {
   width: 1px;
   background: var(--color-grey-300);
-  margin: 4px 1px;
+  margin: 5px 1px;
   align-self: stretch;
-}
-#lf-pc-calc .lpc-mode-toggle .lpc-tab.is-active + .lpc-mode-sep,
-#lf-pc-calc .lpc-mode-sep:has(+ .lpc-tab.is-active) {
-  visibility: hidden;
+  flex-shrink: 0;
 }
 #lf-pc-calc .lpc-mode-toggle .lpc-tab {
   border-radius: var(--radius-full);
