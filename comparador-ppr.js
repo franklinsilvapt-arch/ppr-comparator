@@ -45,7 +45,7 @@
       <div class="lpc-tabs-title">Rentabilidade acumulada</div>
       <div class="lpc-tabs-controls">
         <div class="lpc-tabs" id="lpc-period-tabs">
-          <button class="lpc-tab" data-period="ytd">YTD</button>
+          <button class="lpc-tab" data-period="ytd">YTD<span class="lpc-info-icon lpc-info-icon--tab" tabindex="0" aria-label="YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual."><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg><span class="lpc-tip-bubble">YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual.</span></span></button>
           <button class="lpc-tab" data-period="1y">1 ano</button>
           <button class="lpc-tab" data-period="3y">3 anos</button>
           <button class="lpc-tab" data-period="5y">5 anos</button>
@@ -54,6 +54,7 @@
         </div>
         <div class="lpc-tabs lpc-mode-toggle" id="lpc-mode-tabs">
           <button class="lpc-tab is-active" data-mode="eur">1.000€</button>
+          <span class="lpc-mode-sep" aria-hidden="true"></span>
           <button class="lpc-tab" data-mode="pct">%</button>
         </div>
       </div>
@@ -489,12 +490,24 @@
     // linhas do benchmark vão ficar escondidas (>2 tickers): assim a
     // delta per-cartão é calculada sobre a MESMA janela que o chart
     // mostra e é honestamente comparável.
+    // Guarda datas pré-rebase só dos fundos para depois identificar
+    // qual(is) causaram o clipping (ignora benchmarks).
+    var fundFirstDates = seriesList.map(function (s) { return s ? s.labels[0] : null; });
     var cutoffSources = validSeries.map(function (s) { return s.labels[0]; });
     if (state.showBenchmark && distinctTickers.length > 0) {
       distinctTickers.forEach(function (t) { cutoffSources.push(benchByTicker[t].labels[0]); });
     }
+    var clippingFundNames = [];
+    var hasEarlierFund = false;
+    var rebaseCutoff = null;
     if (cutoffSources.length >= 2) {
       var cutoff = cutoffSources.reduce(function (a, b) { return a > b ? a : b; });
+      rebaseCutoff = cutoff;
+      fundFirstDates.forEach(function (d, i) {
+        if (!d) return;
+        if (d === cutoff) clippingFundNames.push(pairs[i].fund.name);
+        else if (d < cutoff) hasEarlierFund = true;
+      });
       validSeries.forEach(function (s) {
         if (s.labels[0] >= cutoff) return;
         var idx = s.labels.findIndex(function (l) { return l >= cutoff; });
@@ -587,7 +600,18 @@
       var estTxt = estimated.length
         ? ' Curva estimada (tracejada) para: ' + estimated.join(', ') + '.'
         : '';
-      noteEl.textContent = baseTxt + estTxt;
+      // Quando "Desde início" e algum fundo forçou o corte da janela
+      // comum, nomeia o(s) responsável(is) + data de início usada.
+      var clipTxt = '';
+      if (state.period === 'since' && hasEarlierFund && clippingFundNames.length && rebaseCutoff) {
+        var MONTHS_PT = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+        var dm = /^(\d{4})-(\d{2})/.exec(rebaseCutoff);
+        var prettyDate = dm ? (MONTHS_PT[parseInt(dm[2], 10) - 1] + '/' + dm[1]) : rebaseCutoff;
+        var verb = clippingFundNames.length === 1 ? 'só tem' : 'só têm';
+        clipTxt = ' ' + clippingFundNames.join(' e ') + ' ' + verb
+          + ' dados desde ' + prettyDate + ' — gráfico ajustado para esse período.';
+      }
+      noteEl.textContent = baseTxt + estTxt + clipTxt;
     }
 
     if (chart) chart.destroy();
@@ -800,7 +824,7 @@
 
     var rows = [
       { label: 'ISIN',                    render: function (f) { return f.isin || NA; } },
-      { label: 'Data de início do PPR',
+      { label: 'Data de início',
         tip: 'Data da primeira cotação disponível para este PPR. Pode ser posterior à data de constituição oficial se a fonte de dados não tem histórico mais antigo.',
         render: function (f) {
           var s = f._backendSeries && f._backendSeries.since;
@@ -1051,7 +1075,10 @@
   // WIRING
   // -----------------------------------------------------------
   root.querySelectorAll('#lpc-period-tabs .lpc-tab').forEach(function (btn) {
-    btn.addEventListener('click', function () {
+    btn.addEventListener('click', function (e) {
+      // O botão YTD contém um .lpc-info-icon para explicar a sigla.
+      // Clicks/taps dentro do icon não devem trocar o período.
+      if (e.target && e.target.closest && e.target.closest('.lpc-info-icon')) return;
       root.querySelectorAll('#lpc-period-tabs .lpc-tab').forEach(function (b) { b.classList.remove('is-active'); });
       btn.classList.add('is-active');
       state.period = btn.dataset.period;
@@ -1074,7 +1101,52 @@
     });
   }
 
+  // Esconde botões de período (1y/3y/5y/10y) quando o fundo mais jovem
+  // da selecção não cobre esse período. Evita mostrar opções que no fim
+  // cairiam sempre no mesmo recorte que "Desde início".
+  function periodStartDate(period) {
+    var today = new Date();
+    var y = today.getFullYear();
+    var m = today.getMonth();
+    var d = today.getDate();
+    var dt;
+    if (period === '1y') dt = new Date(y - 1, m, d);
+    else if (period === '3y') dt = new Date(y - 3, m, d);
+    else if (period === '5y') dt = new Date(y - 5, m, d);
+    else if (period === '10y') dt = new Date(y - 10, m, d);
+    else return null;
+    return dt.toISOString().slice(0, 10);
+  }
+  function fundCoversPeriod(fund, period) {
+    if (period === 'ytd' || period === 'since') return true;
+    var s = fund && fund._backendSeries && fund._backendSeries.since;
+    if (!s || !s.labels || !s.labels.length) return true;
+    var needed = periodStartDate(period);
+    if (!needed) return true;
+    return s.labels[0] <= needed;
+  }
+  function updateAvailablePeriods() {
+    var pairs = pairedSelected();
+    var btns = root.querySelectorAll('#lpc-period-tabs .lpc-tab');
+    btns.forEach(function (btn) {
+      var p = btn.dataset.period;
+      var covered = !pairs.length || pairs.every(function (pair) {
+        return fundCoversPeriod(pair.fund, p);
+      });
+      btn.style.display = covered ? '' : 'none';
+    });
+    // Se o período activo ficou escondido, cai para "Desde início".
+    var active = root.querySelector('#lpc-period-tabs .lpc-tab.is-active');
+    if (active && active.style.display === 'none') {
+      active.classList.remove('is-active');
+      var since = root.querySelector('#lpc-period-tabs .lpc-tab[data-period="since"]');
+      if (since) since.classList.add('is-active');
+      state.period = 'since';
+    }
+  }
+
   function renderAll() {
+    updateAvailablePeriods();
     renderSelector();
     renderChart();
     renderCompareTable();

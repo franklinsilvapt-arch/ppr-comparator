@@ -476,15 +476,38 @@
   background: var(--blue-bg);
   color: var(--blue-primary);
 }
+/* Variante do info-icon quando vive dentro de um <button class="lpc-tab">
+   (ex: YTD). Remove o negative-margin habitual (pensado para labels de
+   tabela) e encosta o icon ao texto com um gap explícito. */
+#lf-pc-calc .lpc-tab .lpc-info-icon--tab {
+  margin: 0 0 0 6px;
+  padding: 2px;
+  vertical-align: middle;
+}
 /* Toggle €/% - visualmente distinto dos tabs de período.
    Fundo orange suave + letra brand, com outline e peso 600. */
 #lf-pc-calc .lpc-mode-toggle {
   display: inline-flex;
+  align-items: stretch;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-full);
   padding: 3px;
   gap: 0;
+}
+/* Separador vertical entre "1.000€" e "%" - tornar evidente que
+   são duas opções alternativas, não um rótulo único. Só visível
+   quando nenhum dos segmentos adjacentes é o activo, para o pill
+   colorido nunca parecer "cortado". */
+#lf-pc-calc .lpc-mode-sep {
+  width: 1px;
+  background: var(--color-grey-300);
+  margin: 4px 1px;
+  align-self: stretch;
+}
+#lf-pc-calc .lpc-mode-toggle .lpc-tab.is-active + .lpc-mode-sep,
+#lf-pc-calc .lpc-mode-sep:has(+ .lpc-tab.is-active) {
+  visibility: hidden;
 }
 #lf-pc-calc .lpc-mode-toggle .lpc-tab {
   border-radius: var(--radius-full);
