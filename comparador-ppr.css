@@ -488,23 +488,11 @@
    Fundo orange suave + letra brand, com outline e peso 600. */
 #lf-pc-calc .lpc-mode-toggle {
   display: inline-flex;
-  align-items: stretch;
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
   border-radius: var(--radius-full);
   padding: 3px;
   gap: 0;
-}
-/* Separador vertical entre "1.000€" e "%" - deixa claro que são
-   duas opções alternativas, não um rótulo único. Sempre visível:
-   o pill colorido do botão activo tem margens próprias e não
-   sobrepõe a coluna do separador. */
-#lf-pc-calc .lpc-mode-sep {
-  width: 1px;
-  background: var(--color-grey-300);
-  margin: 5px 1px;
-  align-self: stretch;
-  flex-shrink: 0;
 }
 #lf-pc-calc .lpc-mode-toggle .lpc-tab {
   border-radius: var(--radius-full);

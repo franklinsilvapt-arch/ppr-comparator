@@ -54,7 +54,6 @@
         </div>
         <div class="lpc-tabs lpc-mode-toggle" id="lpc-mode-tabs">
           <button class="lpc-tab is-active" data-mode="eur">1.000€</button>
-          <span class="lpc-mode-sep" aria-hidden="true"></span>
           <button class="lpc-tab" data-mode="pct">%</button>
         </div>
       </div>
