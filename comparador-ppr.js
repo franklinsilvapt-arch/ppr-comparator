@@ -1179,12 +1179,17 @@
       var clearBtn = slot.querySelector('.lpc-slot-clear');
 
       function openDropdown() {
-        // Slot preenchido: não abrir dropdown. Utilizador só pode limpar
-        // via botão × - evita perder a seleção por engano ao clicar.
-        if (state.selected[idx]) return;
         selectorState.activeSlot = idx;
         selectorState.query = '';
         selectorState.highlightIdx = 0;
+        // Slot preenchido: permitir substituição directa. Limpa o
+        // display e torna o input editável para o utilizador escrever
+        // nova pesquisa. Se sair sem escolher, o blur restaura o nome
+        // actual (ver handler abaixo).
+        if (state.selected[idx]) {
+          input.readOnly = false;
+          input.value = '';
+        }
         renderDropdown();
       }
       // focus: desktop + mobile normal flow
@@ -1197,19 +1202,23 @@
         setTimeout(function () {
           if (selectorState.activeSlot === idx) {
             selectorState.activeSlot = -1;
+            // Se o slot continua preenchido (utilizador saiu sem
+            // escolher um novo), repor o display ao fundo actual.
+            if (state.selected[idx]) {
+              var f = FUNDS.find(function (x) { return x.id === state.selected[idx]; });
+              if (f) { input.value = f.name; input.readOnly = true; }
+            }
             renderDropdown();
           }
         }, 150);
       });
       input.addEventListener('input', function (e) {
-        if (state.selected[idx]) return;
         selectorState.activeSlot = idx;
         selectorState.query = e.target.value;
         selectorState.highlightIdx = 0;
         renderDropdown();
       });
       input.addEventListener('keydown', function (e) {
-        if (state.selected[idx]) return;
         var matches = filterFunds(selectorState.query);
         if (e.key === 'ArrowDown') {
           e.preventDefault();
