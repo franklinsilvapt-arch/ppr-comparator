@@ -73,8 +73,8 @@
     </div>
     <div id="lpc-chart-note" class="lpc-chart-note"></div>
     <div id="lpc-benchmark-note" class="lpc-chart-note" style="display:none"></div>
-    <div id="lpc-risk-warning"></div>
     <div class="lpc-returns-strip" id="lpc-returns-strip"></div>
+    <div id="lpc-risk-warning"></div>
   </div>
 
   <!-- COMPARE TABLE -->
@@ -800,6 +800,14 @@
 
     var rows = [
       { label: 'ISIN',                    render: function (f) { return f.isin || NA; } },
+      { label: 'Data de início do PPR',
+        tip: 'Data da primeira cotação disponível para este PPR. Pode ser posterior à data de constituição oficial se a fonte de dados não tem histórico mais antigo.',
+        render: function (f) {
+          var s = f._backendSeries && f._backendSeries.since;
+          if (!s || !s.labels || !s.labels.length) return NA;
+          var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s.labels[0]);
+          return m ? (m[3] + '/' + m[2] + '/' + m[1]) : s.labels[0];
+        } },
       { label: 'TEC (custo anual)',       tip: 'Taxa de encargos correntes. Percentagem anual cobrada pela gestora sobre o valor do fundo.',
         render: function (f) { return fmt(f.tec, '%'); } },
       { label: 'Subscrição mínima',       render: function (f) { return f.minSubs == null ? NA : fmtNumPT(f.minSubs) + '€'; } },
