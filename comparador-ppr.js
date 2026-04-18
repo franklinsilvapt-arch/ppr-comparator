@@ -161,6 +161,30 @@
   var MAX_SELECT = 3;
   var PREFERRED_DEFAULTS = ['invest-ar', 'casa-inv-sg-founders', 'sgf-dr-financas'];
 
+  // "Top 10" - fundos destacados no topo da dropdown (ordem relevante:
+  // o primeiro aparece primeiro). Pensado para ajudar utilizadores que
+  // ainda não sabem o que procurar - os PPR mais discutidos / com maior
+  // visibilidade em canais de literacia financeira aparecem primeiro.
+  // Quando houver analytics reais (Google Analytics / logs de pesquisa
+  // próprios), revisitar esta lista.
+  var FEATURED_IDS = [
+    'casa-inv-sg-founders',
+    'sgf-stoik',
+    'golden-sgf-etf-plus',
+    'invest-ar',
+    'optimize-ppr-oicvm-ativo-fundo-de-investimento-aberto-de-pou-370',
+    'bpi-reforma-valorizacao-ppr-oicvm-fundo-de-investimento-aber-334',
+    'caixa-wealth-arrojado-ppr-oicvm-fundo-de-investimento-mobili-342',
+    'bankinter-75-ppr-oicvm-fundo-de-investimento-mobiliario-aber-326',
+    'smart-invest-ppr-oicvm-dinamico-419',
+    'optimize-ppr-oicvm-agressivo-fundo-de-investimento-aberto-de-369'
+  ];
+  var FEATURED_RANK = {};
+  FEATURED_IDS.forEach(function (id, i) { FEATURED_RANK[id] = i; });
+  function featuredRank(f) {
+    return FEATURED_RANK[f.id] != null ? FEATURED_RANK[f.id] : 9999;
+  }
+
   var state = { selected: [null, null, null], period: 'since', mode: 'eur', showBenchmark: false };
   var selectorState = { query: '', activeSlot: -1, highlightIdx: 0 };
   var chart = null;
@@ -336,11 +360,22 @@
     var q = (query || '').trim().toLowerCase();
     var already = selectedIds();
     var pool = FUNDS.filter(function (f) { return already.indexOf(f.id) === -1; });
-    if (!q) return pool.slice(0, 300);
-    return pool.filter(function (f) {
-      return (f.name || '').toLowerCase().indexOf(q) !== -1
-          || (f.manager || '').toLowerCase().indexOf(q) !== -1;
-    }).slice(0, 300);
+    if (q) {
+      pool = pool.filter(function (f) {
+        return (f.name || '').toLowerCase().indexOf(q) !== -1
+            || (f.manager || '').toLowerCase().indexOf(q) !== -1;
+      });
+    }
+    // Destaque no topo (FEATURED_IDS), depois alfabético dentro de
+    // cada grupo. Aplica-se tanto à vista "sem pesquisa" como a
+    // resultados filtrados - se um featured coincide com a query,
+    // sobe ao topo dos resultados.
+    pool.sort(function (a, b) {
+      var diff = featuredRank(a) - featuredRank(b);
+      if (diff !== 0) return diff;
+      return (a.name || '').localeCompare(b.name || '');
+    });
+    return pool.slice(0, 300);
   }
 
   // Dropdown partilhada - é posicionada por baixo do slot activo via
