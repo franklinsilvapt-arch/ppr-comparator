@@ -173,25 +173,55 @@
     'golden-sgf-etf-plus',
     'invest-ar',
     'optimize-ppr-oicvm-ativo-fundo-de-investimento-aberto-de-pou-370',
-    'bpi-reforma-valorizacao-ppr-oicvm-fundo-de-investimento-aber-334',
+    'caixa-acoes-lideres-globais-ppr-oicvm-fundo-de-investimento--335',
     'caixa-wealth-arrojado-ppr-oicvm-fundo-de-investimento-mobili-342',
     'bankinter-75-ppr-oicvm-fundo-de-investimento-mobiliario-aber-326',
     'smart-invest-ppr-oicvm-dinamico-419',
     'optimize-ppr-oicvm-agressivo-fundo-de-investimento-aberto-de-369'
   ];
-  var FEATURED_RANK = {};
-  FEATURED_IDS.forEach(function (id, i) { FEATURED_RANK[id] = i; });
+  var FEATURED_SET = {};
+  FEATURED_IDS.forEach(function (id) { FEATURED_SET[id] = 1; });
+  // Todos os featured partilham a mesma rank (0). A ordem final entre
+  // eles é dada pelo tiebreaker alfabético em filterFunds.
   function featuredRank(f) {
-    return FEATURED_RANK[f.id] != null ? FEATURED_RANK[f.id] : 9999;
+    return FEATURED_SET[f.id] ? 0 : 1;
   }
 
   var state = { selected: [null, null, null], period: 'since', mode: 'eur', showBenchmark: false };
   var selectorState = { query: '', activeSlot: -1, highlightIdx: 0 };
   var chart = null;
 
+  // Nomes de fundos/gestoras no CMVM vêm em caixa inconsistente:
+  // "ALVES RIBEIRO PPR / OICVM", "OPTIMIZE PPR/OICVM AGRESSIVO",
+  // "Bankinter 75 PPR / OICVM - Categoria A", etc. Para display
+  // uniforme convertemos palavras em caixa-alta para Title Case,
+  // preservando siglas e marcas que são legitimamente all-caps.
+  // Palavras que já vêm em case mista são mantidas (não re-Title-Casea
+  // "Ciclo de Vida" para "Ciclo De Vida").
+  var PRESERVE_CAPS = {
+    PPR: 1, OICVM: 1, ETF: 1, ISIN: 1, FII: 1, FIM: 1,
+    SGF: 1, BPI: 1, CGD: 1, IMGA: 1, GNB: 1, BIZ: 1, OXY: 1,
+    ABANCA: 1, BCP: 1, TT: 1, BCI: 1, EUR: 1, USD: 1
+  };
+  function toDisplayName(name) {
+    if (!name) return name;
+    return String(name).replace(/\p{L}+/gu, function (word) {
+      var upper = word.toUpperCase();
+      // Case mista (ex: "Bankinter", "Ciclo", "de") -> preservar.
+      if (word !== upper) return word;
+      // All-caps: preservar siglas conhecidas e letras únicas (A/B/C).
+      if (PRESERVE_CAPS[word]) return word;
+      if (word.length === 1) return word;
+      // Title Case.
+      return word.charAt(0) + word.slice(1).toLowerCase();
+    });
+  }
+
   function normalizeBackendFund(f) {
     return {
-      id: f.id, name: f.name, manager: f.manager,
+      id: f.id,
+      name: toDisplayName(f.name),
+      manager: toDisplayName(f.manager),
       isin: f.isin, tec: f.tec,
       minSubs: f.min_subs,
       riskClass: f.risk_class,
