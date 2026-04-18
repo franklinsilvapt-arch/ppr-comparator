@@ -397,7 +397,11 @@
   function renderDropdown() {
     var dd = ensureDropdown();
     var slotIdx = selectorState.activeSlot;
-    if (slotIdx < 0 || state.selected[slotIdx]) {
+    // Apenas o activeSlot<0 fecha a dropdown. O caso "slot preenchido"
+    // permite ver a lista para substituir o fundo actual (o nome no
+    // input é limpo em openDropdown e restaurado em blur se não houve
+    // escolha nova).
+    if (slotIdx < 0) {
       dd.classList.remove('is-open');
       if (dd.parentNode) dd.parentNode.removeChild(dd);
       // Dropdown fechou: refazer cálculo de altura para encolher o
