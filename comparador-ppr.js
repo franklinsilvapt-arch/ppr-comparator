@@ -823,7 +823,9 @@
     }).join('');
 
     var rows = [
-      { label: 'ISIN',                    render: function (f) { return f.isin || NA; } },
+      { label: 'ISIN',
+        tip: 'International Securities Identification Number: código único de 12 caracteres que identifica o fundo a nível internacional. Útil para procurar o PPR em corretoras ou plataformas de informação financeira.',
+        render: function (f) { return f.isin || NA; } },
       { label: 'Data de início',
         tip: 'Data da primeira cotação disponível para este PPR. Pode ser posterior à data de constituição oficial se a fonte de dados não tem histórico mais antigo.',
         render: function (f) {
