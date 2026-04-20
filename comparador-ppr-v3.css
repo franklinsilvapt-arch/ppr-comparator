@@ -790,18 +790,20 @@
   color: var(--text-primary);
   margin-bottom: var(--spacing-md);
   display: flex;
-  align-items: flex-start;
+  align-items: stretch;
   gap: var(--spacing-sm);
 }
 #lf-pc-calc .lpc-return-name-text {
   display: block;
   word-break: break-word;
+  flex: 1;
+  min-width: 0;
 }
 #lf-pc-calc .lpc-swatch {
   width: 2px;
-  height: 14px;
   border-radius: 1px;
   flex-shrink: 0;
+  align-self: stretch;
 }
 #lf-pc-calc .lpc-return-value {
   font-size: 28px;
