@@ -926,10 +926,11 @@
     var head = document.getElementById('lpc-compare-head');
     var body = document.getElementById('lpc-compare-body');
     head.innerHTML = '<th></th>' + pairs.map(function (p) {
+      var color = SERIES_COLORS[p.slot];
       return '<th class="lpc-fund-col">'
-        + '<span class="lpc-swatch-inline" style="background:' + SERIES_COLORS[p.slot] + '"></span>'
-        + p.fund.name
-        + '<span class="lpc-fund-meta">' + (p.fund.manager || '') + '</span>'
+        + '<span class="lpc-fund-pipe" style="background:' + color + '"></span>'
+        + '<span class="lpc-fund-manager" style="color:' + color + '">' + (p.fund.manager || '') + '</span>'
+        + '<span class="lpc-fund-name">' + p.fund.name + '</span>'
         + '</th>';
     }).join('');
 
@@ -1089,9 +1090,12 @@
     var head = document.getElementById('lpc-risk-head');
     var body = document.getElementById('lpc-risk-body');
     head.innerHTML = '<th></th>' + pairs.map(function (p) {
+      var color = SERIES_COLORS[p.slot];
       return '<th class="lpc-fund-col">'
-        + '<span class="lpc-swatch-inline" style="background:' + SERIES_COLORS[p.slot] + '"></span>'
-        + p.fund.name + '</th>';
+        + '<span class="lpc-fund-pipe" style="background:' + color + '"></span>'
+        + '<span class="lpc-fund-manager" style="color:' + color + '">' + (p.fund.manager || '') + '</span>'
+        + '<span class="lpc-fund-name">' + p.fund.name + '</span>'
+        + '</th>';
     }).join('');
 
     // Constrói as séries 'since' rebased à data comum (mesma lógica do chart).
