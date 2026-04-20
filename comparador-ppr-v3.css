@@ -262,6 +262,52 @@
   color: var(--warning);
 }
 
+/* ---------- Empty state (mostrado antes de carregar "Calcular") ----------
+   Card branco com padding grande, ícone cinzento num quadrado soft e
+   texto centrado. Replica o padrão das restantes calculadoras do
+   literaciafinanceira.pt (ex: calculadora de juros compostos). */
+#lf-pc-calc .lpc-empty-state {
+  background: var(--bg-white);
+  border-radius: var(--radius-3xl);
+  border: 4px solid var(--border-tertiary);
+  padding: 64px var(--spacing-6xl);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-2xl);
+  text-align: center;
+}
+#lf-pc-calc .lpc-empty-state-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--bg-tertiary);
+  color: var(--color-grey-400);
+  flex-shrink: 0;
+}
+#lf-pc-calc .lpc-empty-state-icon > svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+#lf-pc-calc .lpc-empty-state-text {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.1px;
+  color: var(--text-quaternary);
+  max-width: 360px;
+}
+#lf-pc-calc .lpc-empty-state-text strong {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
 /* ---------- Section label (Figma: "Escolhe até 3 PPR para comparar") ---------- */
 #lf-pc-calc .lpc-section-label {
   font-size: 16px;
@@ -319,9 +365,9 @@
 #lf-pc-calc .lpc-calculate-btn:active:not(:disabled) {
   background: var(--color-brand-700);
 }
+/* Disabled mantém cor brand - UX: CTA visualmente sempre activo, o
+   estado "sem selecção" resolve-se via empty state nos resultados. */
 #lf-pc-calc .lpc-calculate-btn:disabled {
-  background: var(--color-grey-300);
-  color: var(--color-grey-500);
   cursor: not-allowed;
 }
 /* is-dirty: há selecção que ainda não foi calculada. Ligeiro pulse

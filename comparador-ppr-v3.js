@@ -45,6 +45,24 @@
     </div>
   </div>
 
+  <!-- EMPTY STATE: antes do primeiro clique em "Calcular" mostra-se este
+       placeholder em vez dos 3 cards de resultado (chart / compare / risk).
+       Consistência com as outras calculadoras do literaciafinanceira.pt. -->
+  <div class="lpc-empty-state" id="lpc-empty-state">
+    <span class="lpc-empty-state-icon" aria-hidden="true">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.6"/>
+        <circle cx="9" cy="9" r="1.6" stroke="currentColor" stroke-width="1.6"/>
+        <path d="M21 15l-4.5-4.5L6 21" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    <p class="lpc-empty-state-text">Preenche os dados e clica em <strong>Calcular</strong> para veres os resultados.</p>
+  </div>
+
+  <!-- RESULTS: chart + tabelas + footer. Escondidos por default (display:none
+       inline) até state.committed=true. renderAll() faz o toggle. -->
+  <div class="lpc-results" id="lpc-results" style="display:none">
+
   <!-- CHART -->
   <div class="lpc-chart-card">
     <div class="lpc-chart-title-row">
@@ -135,6 +153,8 @@
     </span>
     <span id="lpc-updated-text">A carregar dados...</span>
   </div>
+
+  </div> <!-- /lpc-results -->
 
 </div>`;
   }
@@ -411,13 +431,14 @@
         slot.classList.add('is-filled');
         input.value = f.name;
         input.readOnly = true;
-        dot.style.background = SERIES_COLORS[i];
       } else {
         slot.classList.remove('is-filled');
         if (selectorState.activeSlot !== i) input.value = '';
         input.readOnly = false;
-        dot.style.background = 'var(--border-primary)';
       }
+      // Pipe colorido sempre (mesmo em slots vazios) - cor definida em CSS
+      // via [data-slot="X"] .lpc-slot-dot. Ref: Figma 5517:31956.
+      dot.style.background = '';
     });
     var count = selectedIds().length;
     document.getElementById('lpc-counter').textContent = count + '/' + MAX_SELECT + ' selecionados';
@@ -1422,9 +1443,25 @@
   function renderAll() {
     updateAvailablePeriods();
     renderSelector();
-    renderChart();
-    renderCompareTable();
-    renderRiskTable();
+    // Toggle empty state vs results wrapper. Antes do primeiro Calcular
+    // (committed=false), esconde todos os cards de resultado e mostra
+    // apenas o empty state - padrão das restantes calculadoras.
+    var emptyEl = document.getElementById('lpc-empty-state');
+    var resultsEl = document.getElementById('lpc-results');
+    if (emptyEl && resultsEl) {
+      if (state.committed) {
+        emptyEl.style.display = 'none';
+        resultsEl.style.display = '';
+      } else {
+        emptyEl.style.display = '';
+        resultsEl.style.display = 'none';
+      }
+    }
+    if (state.committed) {
+      renderChart();
+      renderCompareTable();
+      renderRiskTable();
+    }
     if (typeof updateCalculateBtnState === 'function') updateCalculateBtnState();
   }
 
