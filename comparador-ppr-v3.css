@@ -248,14 +248,14 @@
   color: var(--warning);
 }
 
-/* ---------- Section label ---------- */
+/* ---------- Section label (Figma: "Escolhe até 3 PPR para comparar") ---------- */
 #lf-pc-calc .lpc-section-label {
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 18px;
-  letter-spacing: 0.2px;
-  color: var(--text-tertiary);
-  margin-bottom: var(--spacing-3xl);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.2px;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-4xl);
   padding-bottom: var(--spacing-lg);
   border-bottom: 1px solid var(--border-secondary);
   display: flex;
@@ -267,34 +267,35 @@
 #lf-pc-calc .lpc-counter {
   font-size: 12px;
   font-weight: 500;
+  line-height: 18px;
   letter-spacing: -0.1px;
   text-transform: none;
-  color: var(--text-placeholder);
+  color: #697386;
 }
 
 /* ---------- Slots (3 search inputs, um por PPR selecionado) ---------- */
 #lf-pc-calc .lpc-slots {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-4xl);
 }
 /* v3: botão Calcular. Gate explícito entre seleccionar PPRs e ver
    resultados. Full-width dentro do card do seletor, cor brand. */
 #lf-pc-calc .lpc-calculate-row {
-  margin-top: var(--spacing-2xl);
+  margin-top: var(--spacing-6xl);
 }
 #lf-pc-calc .lpc-calculate-btn {
   width: 100%;
-  padding: 10px 24px;
+  padding: 8px 16px;
   background: var(--btn-brand-bg);
   color: #fff;
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 20px;
-  letter-spacing: -0.1px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 24px;
+  letter-spacing: -0.2px;
   cursor: pointer;
   transition: background 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
 }
@@ -320,22 +321,25 @@
   gap: var(--spacing-sm);
 }
 #lf-pc-calc .lpc-slot-label {
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 18px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.2px;
+  color: #3A4454;
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
 }
+/* Pipe colorido por slot, alinhado com as cores das séries do gráfico. */
 #lf-pc-calc .lpc-slot-dot {
-  width: 2px;
+  width: 1px;
   height: 12px;
-  border-radius: 1px;
   background: var(--border-primary);
+  flex-shrink: 0;
 }
+#lf-pc-calc .lpc-slot[data-slot="0"] .lpc-slot-dot { background: #FF5A1F; }
+#lf-pc-calc .lpc-slot[data-slot="1"] .lpc-slot-dot { background: #2970FF; }
+#lf-pc-calc .lpc-slot[data-slot="2"] .lpc-slot-dot { background: #875BF7; }
 #lf-pc-calc .lpc-slot-wrap {
   position: relative;
 }
@@ -346,9 +350,9 @@
   /* 16px no mínimo para evitar auto-zoom do iOS Safari no focus.
      Em desktop reduzimos via media query para manter o aspecto actual. */
   font-size: 16px;
-  font-weight: 500;
-  line-height: 20px;
-  letter-spacing: -0.1px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: -0.2px;
   color: var(--text-primary);
   background: var(--bg-white);
   border: 1px solid var(--border-primary);
@@ -377,8 +381,8 @@
 }
 #lf-pc-calc .lpc-slot.is-filled .lpc-slot-input {
   padding-left: 14px;
-  border-color: var(--border-secondary);
-  background: var(--bg-secondary);
+  border-color: var(--border-primary);
+  background: var(--bg-white);
   cursor: default;
 }
 #lf-pc-calc .lpc-slot-clear {
