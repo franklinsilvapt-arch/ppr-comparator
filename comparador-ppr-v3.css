@@ -232,7 +232,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-md);
-  margin-top: var(--spacing-xl);
+  margin-top: var(--spacing-6xl);
+  margin-bottom: var(--spacing-6xl);
   font-size: 12px;
   line-height: 18px;
   color: var(--color-grey-400);
