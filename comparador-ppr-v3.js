@@ -71,8 +71,8 @@
     </div>
     <div class="lpc-chart-modes-row">
       <div class="lpc-tabs lpc-mode-toggle" id="lpc-mode-tabs">
-        <button class="lpc-tab is-active" data-mode="pct">Percentagem</button>
-        <button class="lpc-tab" data-mode="eur">1.000€</button>
+        <button class="lpc-tab" data-mode="pct">Percentagem</button>
+        <button class="lpc-tab is-active" data-mode="eur">1.000€</button>
       </div>
       <label class="lpc-benchmark-toggle" for="lpc-benchmark-checkbox">
         <input type="checkbox" id="lpc-benchmark-checkbox">
@@ -106,13 +106,14 @@
 
   <!-- RISK TABLE -->
   <div class="lpc-card">
-    <div class="lpc-section-title" style="margin-bottom: 24px;">Métrica de risco</div>
+    <div class="lpc-section-title" style="margin-bottom: 24px;">Métricas de risco</div>
     <div class="lpc-table-wrap">
       <table class="lpc-table" id="lpc-risk-table">
         <thead><tr id="lpc-risk-head"></tr></thead>
         <tbody id="lpc-risk-body"></tbody>
       </table>
     </div>
+    <p class="lpc-risk-footnote" id="lpc-risk-footnote" style="display:none"></p>
   </div>
 
   <!-- FOOTER: data de actualização -->
@@ -212,7 +213,7 @@
   // calculado". Chart + tabelas só renderizam dados quando committed=true
   // (fica true após clique no botão Calcular). Qualquer mudança nas
   // selecções reinicia committed=false.
-  var state = { selected: [null, null, null], period: 'since', mode: 'pct', showBenchmark: false, committed: false };
+  var state = { selected: [null, null, null], period: 'since', mode: 'eur', showBenchmark: false, committed: false };
   var selectorState = { query: '', activeSlot: -1, highlightIdx: 0 };
   var chart = null;
 
@@ -1233,16 +1234,20 @@
         + pairs.map(function (p) { return '<td>' + r.render(p) + '</td>'; }).join('')
         + '</tr>';
     }).join('');
-
-    if (rebaseInfo) {
-      bodyHtml += '<tr><td colspan="' + (pairs.length + 1) + '" '
-        + 'style="padding-top:14px;font-size:12px;color:#5C6878;text-align:center;border:none">'
-        + 'Todas as métricas (incluindo Beta) calculadas sobre a janela '
-        + 'comum dos fundos seleccionados ('
-        + rebaseInfo.from + ' → ' + rebaseInfo.to + ').'
-        + '</td></tr>';
-    }
     body.innerHTML = bodyHtml;
+
+    var footnoteEl = document.getElementById('lpc-risk-footnote');
+    if (footnoteEl) {
+      if (rebaseInfo) {
+        footnoteEl.textContent = 'Todas as métricas (incluindo Beta) calculadas '
+          + 'sobre a janela comum dos fundos seleccionados ('
+          + rebaseInfo.from + ' → ' + rebaseInfo.to + ').';
+        footnoteEl.style.display = '';
+      } else {
+        footnoteEl.textContent = '';
+        footnoteEl.style.display = 'none';
+      }
+    }
   }
 
   // -----------------------------------------------------------

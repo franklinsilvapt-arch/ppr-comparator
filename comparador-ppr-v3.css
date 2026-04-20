@@ -760,7 +760,7 @@
   box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px rgba(16, 24, 40, 0.06);
 }
 #lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"]:checked {
-  background: var(--brand);
+  background: #3A4454;
 }
 #lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"]:checked::after {
   transform: translateX(16px);
@@ -874,7 +874,7 @@
 }
 #lf-pc-calc .lpc-table-wrap {
   border: 1px solid var(--border-secondary);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-md);
   overflow-x: auto;
   background: var(--bg-white);
   /* inertia touch-scroll em iOS Safari. overscroll-behavior-x:contain
@@ -918,21 +918,21 @@
   border-bottom: none;
 }
 #lf-pc-calc .lpc-table tbody th {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 20px;
-  letter-spacing: -0.1px;
-  color: var(--text-tertiary);
+  letter-spacing: -0.2px;
+  color: #3A4454;
   background: var(--bg-secondary);
   width: 170px;
   border-right: 1px solid var(--border-secondary);
   white-space: nowrap;
 }
 #lf-pc-calc .lpc-table tbody td {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 20px;
-  letter-spacing: -0.1px;
+  letter-spacing: -0.2px;
   color: var(--text-primary);
 }
 #lf-pc-calc .lpc-fund-col {
@@ -973,6 +973,16 @@
   line-height: 20px;
   letter-spacing: -0.1px;
   color: var(--text-primary);
+}
+
+/* Nota abaixo da tabela (janela comum). Figma: 11px Regular #4F5969. */
+#lf-pc-calc .lpc-risk-footnote {
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 16px;
+  color: #4F5969;
+  text-align: center;
+  margin-top: var(--spacing-2xl);
 }
 
 /* ---------- Risk pills (classe 1-7) ----------
