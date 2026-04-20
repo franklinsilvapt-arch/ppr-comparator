@@ -554,12 +554,14 @@
 #lf-pc-calc .lpc-chart-title-row {
   margin-bottom: var(--spacing-xl);
 }
+/* Figma 5515:19322 — "Rentabilidade acumulada": Body/Text lg/Medium
+   (Inter Medium 18/26 tracking -0.3, color text-primary #202432). */
 #lf-pc-calc .lpc-tabs-title {
   font-family: 'Inter', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
-  letter-spacing: -0.2px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 26px;
+  letter-spacing: -0.3px;
   color: var(--text-primary);
   margin: 0;
 }
