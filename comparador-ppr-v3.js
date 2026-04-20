@@ -1322,30 +1322,36 @@
     var exportBtn = chartMenuDropdown.querySelector('[data-action="export-png"]');
     if (exportBtn) {
       exportBtn.addEventListener('click', function () {
-        if (!chart) { closeChartMenu(); return; }
-        try {
-          // Chart.js exporta com fundo transparente. Compomos sobre um
-          // canvas off-screen com o mesmo branco do card para o PNG
-          // sair como é visto na calculadora.
-          var srcCanvas = chart.canvas;
-          var off = document.createElement('canvas');
-          off.width = srcCanvas.width;
-          off.height = srcCanvas.height;
-          var octx = off.getContext('2d');
-          octx.fillStyle = '#ffffff';
-          octx.fillRect(0, 0, off.width, off.height);
-          octx.drawImage(srcCanvas, 0, 0);
-          var url = off.toDataURL('image/png', 1);
+        closeChartMenu();
+        if (typeof html2canvas !== 'function') {
+          console.warn('html2canvas não carregado; export cancelado.');
+          return;
+        }
+        var card = root.querySelector('.lpc-chart-card');
+        if (!card) return;
+        // Esconde o próprio botão do kebab durante a captura (não faz
+        // sentido estar no PNG). Restaurado no finally.
+        var menuEl = root.querySelector('.lpc-chart-menu');
+        var prevVis = menuEl ? menuEl.style.visibility : null;
+        if (menuEl) menuEl.style.visibility = 'hidden';
+        html2canvas(card, {
+          backgroundColor: '#ffffff',
+          scale: 2,
+          useCORS: true,
+          logging: false
+        }).then(function (canvas) {
+          var url = canvas.toDataURL('image/png', 1);
           var a = document.createElement('a');
           a.href = url;
           a.download = 'rentabilidade-acumulada.png';
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
-        } catch (err) {
+        }).catch(function (err) {
           console.warn('Export PNG falhou:', err);
-        }
-        closeChartMenu();
+        }).finally(function () {
+          if (menuEl) menuEl.style.visibility = prevVis || '';
+        });
       });
     }
   }
