@@ -11,7 +11,7 @@
   <div class="lpc-card">
     <div class="lpc-section-label">
       <span>Escolhe até 3 PPR para comparar</span>
-      <span class="lpc-counter" id="lpc-counter">0 / 3 selecionados</span>
+      <span class="lpc-counter" id="lpc-counter">0/3 selecionados</span>
     </div>
     <div class="lpc-slots" id="lpc-slots">
       <div class="lpc-slot" data-slot="0">
@@ -420,7 +420,7 @@
       }
     });
     var count = selectedIds().length;
-    document.getElementById('lpc-counter').textContent = count + ' / ' + MAX_SELECT + ' selecionados';
+    document.getElementById('lpc-counter').textContent = count + '/' + MAX_SELECT + ' selecionados';
     renderDropdown();
   }
 

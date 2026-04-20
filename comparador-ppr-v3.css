@@ -241,7 +241,19 @@
 #lf-pc-calc .lpc-updated-check {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  line-height: 0;
+  vertical-align: middle;
   color: var(--green);
+}
+#lf-pc-calc .lpc-updated-check > svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 #lf-pc-calc .lpc-footer-updated.is-stale {
   color: var(--warning-dark);
@@ -578,7 +590,12 @@
 #lf-pc-calc .lpc-tab .lpc-info-icon--tab {
   margin: 0 0 0 6px;
   padding: 2px;
+  width: auto;
+  height: auto;
   vertical-align: middle;
+}
+#lf-pc-calc .lpc-tab .lpc-info-icon--tab::before {
+  content: none;
 }
 /* Toggle 1.000€ / %. Design Figma: pílula escura no estado activo
    sobre fundo cinza claro. */
@@ -1118,20 +1135,37 @@
 #lf-pc-calc .lpc-risk-bar.h6 { height: 10.5px; }
 #lf-pc-calc .lpc-risk-bar.h7 { height: 12px; }
 
-/* ---------- Info icon (tooltip trigger click+hover) ---------- */
+/* ---------- Info icon (tooltip trigger click+hover) ----------
+   Dimensões explícitas + SVG display:block evitam Safari a
+   reservar descender space (baseline default) e a inflar o box
+   com a line-height do pai. O tap target expande via ::before
+   em vez de padding+negative-margin (Safari não colapsa margem
+   negativa em inline-flex contra o gap do container flex, o que
+   fazia o ícone aparecer longe do texto em mobile/desktop). */
 #lf-pc-calc .lpc-info-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  width: 14px;
+  height: 14px;
   color: var(--color-grey-400);
   cursor: help;
   line-height: 0;
+  vertical-align: middle;
   transition: color 0.15s ease;
   position: relative;
-  /* aumenta a tap target sem mexer no layout visual */
-  padding: var(--spacing-xs);
-  margin: -4px;
+}
+#lf-pc-calc .lpc-info-icon::before {
+  content: '';
+  position: absolute;
+  inset: -6px;
+}
+#lf-pc-calc .lpc-info-icon > svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
 }
 #lf-pc-calc .lpc-info-icon:hover,
 #lf-pc-calc .lpc-info-icon.is-open {
