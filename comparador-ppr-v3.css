@@ -1452,15 +1452,28 @@
     padding: 0;
     align-self: flex-start;
   }
+  /* Toggle Percentagem/1.000€ full-width no mobile (Figma 5518:34102) */
+  #lf-pc-calc .lpc-mode-toggle {
+    display: flex;
+    width: 100%;
+  }
+  #lf-pc-calc .lpc-mode-toggle .lpc-tab {
+    flex: 1;
+  }
 
   /* ---------- Tables mobile ---------- */
   /* Footer "Desliza para ver todos os PPR →" abaixo de cada tabela
-     (Figma 5530:37018 / 5531:37413). */
+     (Figma 5530:37018 / 5531:37413). width:100% + white-space:nowrap
+     evita o texto partir palavra-a-palavra em coluna (bug reportado
+     quando o container herdava largura do .lpc-table-scroll). */
   #lf-pc-calc .lpc-swipe-hint {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: var(--spacing-sm);
     margin-top: var(--spacing-xl);
+    width: 100%;
+    white-space: nowrap;
     font-family: 'Inter', sans-serif;
     font-size: 13px;
     font-weight: 500;
@@ -1471,6 +1484,8 @@
   #lf-pc-calc .lpc-swipe-hint svg {
     display: block;
     flex-shrink: 0;
+    width: 16px;
+    height: 16px;
     color: var(--text-tertiary);
   }
   /* Pipes coloridos (laranja/azul/roxo) empilhados no canto superior
