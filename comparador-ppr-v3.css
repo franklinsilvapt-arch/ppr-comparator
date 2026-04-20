@@ -905,8 +905,8 @@
 #lf-pc-calc .lpc-fund-pipe {
   position: absolute;
   left: 0;
-  top: 6px;
-  bottom: 6px;
+  top: 0;
+  bottom: 0;
   width: 2px;
   border-radius: 1px;
 }
