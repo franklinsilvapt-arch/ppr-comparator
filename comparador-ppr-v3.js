@@ -18,6 +18,7 @@
         <div class="lpc-slot-label"><span class="lpc-slot-dot"></span>PPR 1</div>
         <div class="lpc-slot-wrap">
           <input type="text" class="lpc-slot-input" placeholder="Pesquisar..." autocomplete="off">
+          <span class="lpc-slot-chevron" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           <button type="button" class="lpc-slot-clear" aria-label="Remover">×</button>
         </div>
       </div>
@@ -25,6 +26,7 @@
         <div class="lpc-slot-label"><span class="lpc-slot-dot"></span>PPR 2</div>
         <div class="lpc-slot-wrap">
           <input type="text" class="lpc-slot-input" placeholder="Pesquisar..." autocomplete="off">
+          <span class="lpc-slot-chevron" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           <button type="button" class="lpc-slot-clear" aria-label="Remover">×</button>
         </div>
       </div>
@@ -32,6 +34,7 @@
         <div class="lpc-slot-label"><span class="lpc-slot-dot"></span>PPR 3</div>
         <div class="lpc-slot-wrap">
           <input type="text" class="lpc-slot-input" placeholder="Pesquisar..." autocomplete="off">
+          <span class="lpc-slot-chevron" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
           <button type="button" class="lpc-slot-clear" aria-label="Remover">×</button>
         </div>
       </div>
@@ -462,6 +465,10 @@
   function renderDropdown() {
     var dd = ensureDropdown();
     var slotIdx = selectorState.activeSlot;
+    // Sincroniza a class is-open dos slots (flip chevron via CSS).
+    root.querySelectorAll('.lpc-slot').forEach(function (s) {
+      s.classList.toggle('is-open', parseInt(s.dataset.slot, 10) === slotIdx);
+    });
     // Apenas o activeSlot<0 fecha a dropdown. O caso "slot preenchido"
     // permite ver a lista para substituir o fundo actual (o nome no
     // input é limpo em openDropdown e restaurado em blur se não houve
