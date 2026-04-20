@@ -1004,19 +1004,21 @@
 }
 #lf-pc-calc .lpc-fund-col {
   color: var(--text-primary);
-  position: relative;
   vertical-align: middle;
 }
+/* .lpc-fund-col-inner serve como contexto de posicionamento (position:
+   relative em <th> tem quirks em alguns browsers — usar um div normal
+   é mais robusto). O pipe fica absoluto com left negativo para
+   compensar o padding 12px da célula e ficar no canto esquerdo. */
 #lf-pc-calc .lpc-fund-col-inner {
+  position: relative;
   display: block;
 }
-/* Pipe colorido do header: absoluto ao canto esquerdo da célula,
-   Figma left:0 top:15 bottom:15 (~48px de altura num header de 78px). */
 #lf-pc-calc .lpc-fund-pipe {
   position: absolute;
-  left: 0;
-  top: 15px;
-  bottom: 15px;
+  left: -12px;
+  top: 3px;
+  bottom: 3px;
   width: 2px;
   border-radius: 1px;
 }
