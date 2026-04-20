@@ -1471,31 +1471,47 @@
   }
 
   /* ---------- Tables mobile ---------- */
-  /* Footer "Desliza para ver todos os PPR →" abaixo de cada tabela
-     (Figma 5530:37018 / 5531:37413). width:100% + white-space:nowrap
-     evita o texto partir palavra-a-palavra em coluna (bug reportado
-     quando o container herdava largura do .lpc-table-scroll). */
+  /* Footer "Desliza para ver todos os PPR →" (Figma 5530:37157).
+     Padding simetrico vertical 16px, texto alinhado a esquerda ao lado
+     do arrow (sem justify-content center). Inter Regular 12/18 -0.1
+     color #697386 (text-quaternary). */
   #lf-pc-calc .lpc-swipe-hint {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: var(--spacing-sm);
-    margin-top: var(--spacing-xl);
+    padding: var(--spacing-2xl) 0;
+    margin-top: 0;
     width: 100%;
     white-space: nowrap;
     font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 400;
     line-height: 18px;
     letter-spacing: -0.1px;
-    color: var(--text-tertiary);
+    color: var(--text-quaternary);
   }
   #lf-pc-calc .lpc-swipe-hint svg {
     display: block;
     flex-shrink: 0;
     width: 16px;
     height: 16px;
+    color: var(--text-quaternary);
+  }
+  /* Risk footnote mobile (Figma 5531:37678): banner full-width com bg
+     subtil, padding 12/16, border-bottom, Inter Regular 12/18 -0.1
+     color #4F5969 (text-tertiary). */
+  #lf-pc-calc .lpc-risk-footnote {
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-secondary);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    margin-top: var(--spacing-2xl);
+    margin-left: calc(-1 * var(--spacing-3xl));
+    margin-right: calc(-1 * var(--spacing-3xl));
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: -0.1px;
     color: var(--text-tertiary);
+    text-align: left;
   }
   /* Pipes coloridos (laranja/azul/roxo) empilhados no canto superior
      direito da tabela para sinalizar colunas ocultas por scroll. */
