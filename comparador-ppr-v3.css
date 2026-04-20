@@ -725,9 +725,9 @@
   text-overflow: ellipsis;
 }
 #lf-pc-calc .lpc-swatch {
-  width: 10px;
-  height: 10px;
-  border-radius: 3px;
+  width: 2px;
+  height: 14px;
+  border-radius: 1px;
   flex-shrink: 0;
 }
 #lf-pc-calc .lpc-return-value {
