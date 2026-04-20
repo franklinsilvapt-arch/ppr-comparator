@@ -1471,17 +1471,17 @@
   }
 
   /* ---------- Tables mobile ---------- */
-  /* Footer "Desliza para ver todos os PPR →" (Figma 5530:37157).
-     Padding simetrico vertical 16px, texto alinhado a esquerda ao lado
-     do arrow (sem justify-content center). Inter Regular 12/18 -0.1
-     color #697386 (text-quaternary). */
+  /* Footer "Desliza para ver todos os PPR →" (Figma 5530:37157):
+     bleed ate aos limites do card (negative horizontal+bottom margin),
+     border-top como separador do conteudo acima, padding 16px vertical
+     simetrico. Inter Regular 12/18 -0.1 color #697386. */
   #lf-pc-calc .lpc-swipe-hint {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
-    padding: var(--spacing-2xl) 0;
-    margin-top: 0;
-    width: 100%;
+    padding: var(--spacing-2xl) var(--spacing-3xl);
+    margin: 0 calc(-1 * var(--spacing-3xl)) calc(-1 * var(--spacing-4xl));
+    border-top: 1px solid var(--border-secondary);
     white-space: nowrap;
     font-family: 'Inter', sans-serif;
     font-size: 12px;
@@ -1498,15 +1498,16 @@
     color: var(--text-quaternary);
   }
   /* Risk footnote mobile (Figma 5531:37678): banner full-width com bg
-     subtil, padding 12/16, border-bottom, Inter Regular 12/18 -0.1
-     color #4F5969 (text-tertiary). */
+     subtil, padding 12/16, Inter Regular 12/18 -0.1 color #4F5969.
+     Sem border-bottom proprio - o separador fica a cargo do border-top
+     do swipe-hint que vem logo a seguir, evitando linha dupla. */
   #lf-pc-calc .lpc-risk-footnote {
     background: var(--bg-primary);
-    border-bottom: 1px solid var(--border-secondary);
     padding: var(--spacing-xl) var(--spacing-2xl);
     margin-top: var(--spacing-2xl);
     margin-left: calc(-1 * var(--spacing-3xl));
     margin-right: calc(-1 * var(--spacing-3xl));
+    margin-bottom: 0;
     font-size: 12px;
     line-height: 18px;
     letter-spacing: -0.1px;
@@ -1545,5 +1546,18 @@
   }
   #lf-pc-calc .lpc-table tbody th {
     width: 120px;
+  }
+  /* Ajusta os negative margins do swipe-hint / risk-footnote ao
+     padding reduzido do card neste breakpoint (padding 20px 14px). */
+  #lf-pc-calc .lpc-swipe-hint {
+    padding-left: 14px;
+    padding-right: 14px;
+    margin-left: -14px;
+    margin-right: -14px;
+    margin-bottom: -20px;
+  }
+  #lf-pc-calc .lpc-risk-footnote {
+    margin-left: -14px;
+    margin-right: -14px;
   }
 }
