@@ -720,6 +720,32 @@
     var labels = Array.from(allLabelsSet).sort();
     var isEur = state.mode === 'eur';
 
+    // Preenche nulos INTERNOS de um array (entre primeiro e ultimo nao-nulo)
+    // por interpolacao linear. Edge-nulls (antes do primeiro ponto ou depois
+    // do ultimo) ficam como estao - nao queremos extrapolar linhas para fora
+    // dos limites reais da serie. Objectivo: tooltip do Chart.js mostra
+    // sempre o swatch colorido de cada PPR mesmo em datas sem ponto proprio
+    // (ex: mistura de cotacoes diarias com semanais/mensais).
+    function interpolateInternalNulls(arr) {
+      var out = arr.slice();
+      var firstReal = -1, lastReal = -1;
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] != null) { if (firstReal === -1) firstReal = i; lastReal = i; }
+      }
+      if (firstReal === -1) return out;
+      for (var k = firstReal + 1; k < lastReal; k++) {
+        if (out[k] != null) continue;
+        var prev = -1, next = -1;
+        for (var p = k - 1; p >= firstReal; p--) { if (arr[p] != null) { prev = p; break; } }
+        for (var n = k + 1; n <= lastReal; n++) { if (arr[n] != null) { next = n; break; } }
+        if (prev !== -1 && next !== -1) {
+          var pv = arr[prev], nv = arr[next];
+          out[k] = pv + (nv - pv) * ((k - prev) / (next - prev));
+        }
+      }
+      return out;
+    }
+
     var datasets = pairs.map(function (p, i) {
       var s = seriesList[i];
       if (!s) return null;
@@ -729,6 +755,7 @@
         if (v == null) return null;
         return isEur ? +(BASE_EUR * (1 + v / 100)).toFixed(2) : +v.toFixed(2);
       });
+      data = interpolateInternalNulls(data);
       return {
         label: p.fund.name, data: data, spanGaps: true,
         borderColor: SERIES_COLORS[p.slot],
@@ -753,6 +780,7 @@
           if (v == null) return null;
           return isEur ? +(BASE_EUR * (1 + v / 100)).toFixed(2) : +v.toFixed(2);
         });
+        data = interpolateInternalNulls(data);
         datasets.push({
           label: t + ' · ' + b.name, data: data, spanGaps: true,
           borderColor: '#6B7280',
