@@ -162,12 +162,14 @@
 }
 
 /* ---------- Card shell ---------- */
+/* Figma 5517:31956: border 4px #F2F4F7 (border-tertiary-100), sem
+   box-shadow — o frame chunky grosso é a assinatura visual. */
 #lf-pc-calc .lpc-card,
 #lf-pc-calc .lpc-chart-card {
   background: var(--bg-white);
   border-radius: var(--radius-3xl);
-  box-shadow: var(--shadow-border);
-  border: 1px solid var(--border-secondary);
+  box-shadow: none;
+  border: 4px solid var(--border-tertiary);
   padding: var(--spacing-6xl);
 }
 
