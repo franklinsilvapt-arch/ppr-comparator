@@ -44,8 +44,10 @@
 
   <!-- CHART -->
   <div class="lpc-chart-card">
-    <div class="lpc-chart-periods-row">
+    <div class="lpc-chart-title-row">
       <div class="lpc-tabs-title">Rentabilidade acumulada</div>
+    </div>
+    <div class="lpc-chart-periods-row">
       <div class="lpc-tabs" id="lpc-period-tabs">
         <button class="lpc-tab is-active" data-period="since">Desde início</button>
         <button class="lpc-tab" data-period="ytd">YTD<span class="lpc-info-icon lpc-info-icon--tab" tabindex="0" aria-label="YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual."><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg><span class="lpc-tip-bubble">YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual.</span></span></button>
