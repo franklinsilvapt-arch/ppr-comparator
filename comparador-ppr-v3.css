@@ -1499,16 +1499,16 @@
     color: var(--text-quaternary);
   }
   /* Risk footnote mobile (Figma 5531:37678): banner full-width com bg
-     subtil, padding 12/16, Inter Regular 12/18 -0.1 color #4F5969.
-     Sem border-bottom proprio - o separador fica a cargo do border-top
-     do swipe-hint que vem logo a seguir, evitando linha dupla. */
+     #FCFCFD, border-bottom como separador para o swipe-hint, padding
+     12/16, Inter Regular 12/18 -0.1 color #4F5969. No Figma o card tem
+     gap:0 entre filhos - o footnote comeca imediatamente apos a tabela
+     sem margin-top. O hint abaixo tambem tem border-top (mesma cor, mesma
+     posicao) - visualmente colapsam numa linha unica. */
   #lf-pc-calc .lpc-risk-footnote {
     background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-secondary);
     padding: var(--spacing-xl) var(--spacing-2xl);
-    margin-top: var(--spacing-2xl);
-    margin-left: calc(-1 * var(--spacing-3xl));
-    margin-right: calc(-1 * var(--spacing-3xl));
-    margin-bottom: 0;
+    margin: 0 calc(-1 * var(--spacing-3xl)) 0;
     font-size: 12px;
     line-height: 18px;
     letter-spacing: -0.1px;
