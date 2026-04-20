@@ -762,9 +762,9 @@
               },
               // Quando PPRs têm granularidade diferente (diário vs semanal),
               // num determinado dia alguns podem não ter ponto - Chart.js
-              // omitia-os do tooltip mesmo com a linha visível via
-              // spanGaps. Listamos aqui os que faltam com '—' para o
-              // utilizador perceber que a linha está a ser interpolada.
+              // omitia-os do tooltip. Interpolamos linearmente entre os
+              // pontos não-nulos mais próximos para mostrar um valor
+              // coerente com a linha visível (que já está a ser span-gaped).
               afterBody: function (items) {
                 if (!items.length) return [];
                 var idx = items[0].dataIndex;
@@ -773,7 +773,31 @@
                 var extras = [];
                 datasets.forEach(function (ds, di) {
                   if (shown[di]) return;
-                  if (ds.data[idx] == null) extras.push(' ' + ds.label + ': —');
+                  if (ds.data[idx] != null) return;
+                  var prevIdx = -1, nextIdx = -1;
+                  for (var i = idx - 1; i >= 0; i--) {
+                    if (ds.data[i] != null) { prevIdx = i; break; }
+                  }
+                  for (var j = idx + 1; j < ds.data.length; j++) {
+                    if (ds.data[j] != null) { nextIdx = j; break; }
+                  }
+                  var val = null;
+                  if (prevIdx !== -1 && nextIdx !== -1) {
+                    var p = ds.data[prevIdx], n = ds.data[nextIdx];
+                    val = p + (n - p) * ((idx - prevIdx) / (nextIdx - prevIdx));
+                  } else if (prevIdx !== -1) {
+                    val = ds.data[prevIdx];
+                  } else if (nextIdx !== -1) {
+                    val = ds.data[nextIdx];
+                  }
+                  if (val == null) {
+                    extras.push(' ' + ds.label + ': —');
+                  } else {
+                    var txt = isEur
+                      ? fmtEurDec(val)
+                      : ((val >= 0 ? '+' : '') + val.toFixed(2).replace('.', ',') + '%');
+                    extras.push(' ' + ds.label + ': ' + txt);
+                  }
                 });
                 return extras;
               }
