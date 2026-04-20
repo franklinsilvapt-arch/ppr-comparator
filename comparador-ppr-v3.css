@@ -332,7 +332,7 @@
 }
 /* Pipe colorido por slot, alinhado com as cores das séries do gráfico. */
 #lf-pc-calc .lpc-slot-dot {
-  width: 1px;
+  width: 2px;
   height: 12px;
   background: var(--border-primary);
   flex-shrink: 0;
@@ -499,14 +499,17 @@
   gap: var(--spacing-2xl);
   margin-top: var(--spacing-xl);
 }
-/* Separador vertical entre o mode toggle e o "ETFs referência". */
+/* Separador vertical entre o mode toggle e o "ETFs referência".
+   NOTA: o label .lpc-benchmark-toggle tem gap interno 8px. O espaço
+   total entre divider→switch é margin-right + gap, por isso usamos
+   8px aqui para total = 16px (igual ao gap do modes-row à esquerda). */
 #lf-pc-calc .lpc-chart-modes-row .lpc-benchmark-toggle::before {
   content: '';
   display: inline-block;
   width: 1px;
   height: 24px;
   background: var(--border-secondary);
-  margin-right: var(--spacing-2xl);
+  margin-right: var(--spacing-md);
   flex-shrink: 0;
 }
 #lf-pc-calc .lpc-chart-hint {
@@ -873,8 +876,8 @@
   gap: var(--spacing-sm);
 }
 #lf-pc-calc .lpc-table-wrap {
-  border: 1px solid var(--border-secondary);
-  border-radius: var(--radius-md);
+  border: none;
+  border-radius: 0;
   overflow-x: auto;
   background: var(--bg-white);
   /* inertia touch-scroll em iOS Safari. overscroll-behavior-x:contain
@@ -893,7 +896,8 @@
 #lf-pc-calc .lpc-table-wrap::-webkit-scrollbar { display: none; }
 #lf-pc-calc .lpc-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 14px;
   min-width: 560px;
 }
@@ -901,9 +905,9 @@
 #lf-pc-calc .lpc-table td {
   padding: 12px 14px;
   text-align: left;
-  border-bottom: 1px solid var(--border-secondary);
   vertical-align: top;
 }
+/* Figma: thead sem fundo nem borders — fund cards flutuam livres. */
 #lf-pc-calc .lpc-table thead th {
   background: var(--bg-white);
   font-size: 12px;
@@ -911,11 +915,35 @@
   line-height: 18px;
   letter-spacing: -0.1px;
   color: var(--text-primary);
+  border: none;
+}
+/* tbody forma um rectângulo arredondado fechado (border só aqui). */
+#lf-pc-calc .lpc-table tbody th,
+#lf-pc-calc .lpc-table tbody td {
   border-bottom: 1px solid var(--border-secondary);
 }
-#lf-pc-calc .lpc-table tbody tr:last-child td,
-#lf-pc-calc .lpc-table tbody tr:last-child th {
-  border-bottom: none;
+#lf-pc-calc .lpc-table tbody tr:first-child th,
+#lf-pc-calc .lpc-table tbody tr:first-child td {
+  border-top: 1px solid var(--border-secondary);
+}
+#lf-pc-calc .lpc-table tbody tr th:first-child {
+  border-left: 1px solid var(--border-secondary);
+}
+#lf-pc-calc .lpc-table tbody tr td:last-child {
+  border-right: 1px solid var(--border-secondary);
+}
+/* Cantos arredondados do tbody (radius-md = 8px). */
+#lf-pc-calc .lpc-table tbody tr:first-child th:first-child {
+  border-top-left-radius: var(--radius-md);
+}
+#lf-pc-calc .lpc-table tbody tr:first-child td:last-child {
+  border-top-right-radius: var(--radius-md);
+}
+#lf-pc-calc .lpc-table tbody tr:last-child th:first-child {
+  border-bottom-left-radius: var(--radius-md);
+}
+#lf-pc-calc .lpc-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: var(--radius-md);
 }
 #lf-pc-calc .lpc-table tbody th {
   font-size: 14px;
