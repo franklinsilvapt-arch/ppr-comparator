@@ -323,6 +323,20 @@
   align-items: baseline;
   gap: var(--spacing-xl);
   flex-wrap: wrap;
+  /* Figma 5517:31956 — form interno tem largura fixa 624px dentro do card.
+     Centramos o header + slots + botao para os inputs ficarem mais estreitos
+     que o card (que mantem a largura maxima do container). */
+  max-width: 624px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+#lf-pc-calc .lpc-slots,
+#lf-pc-calc .lpc-calculate-row {
+  max-width: 624px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
 }
 #lf-pc-calc .lpc-counter {
   font-size: 12px;
