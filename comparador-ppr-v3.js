@@ -93,7 +93,7 @@
 
   <!-- RISK TABLE -->
   <div class="lpc-card">
-    <div class="lpc-section-title" style="margin-bottom: 24px;">Métrica de risco</div>
+    <div class="lpc-section-title" style="margin-bottom: 24px;">Métricas de risco</div>
     <div class="lpc-table-wrap">
       <table class="lpc-table" id="lpc-risk-table">
         <thead><tr id="lpc-risk-head"></tr></thead>
