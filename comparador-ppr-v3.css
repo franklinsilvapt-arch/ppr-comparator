@@ -488,18 +488,28 @@
 #lf-pc-calc .lpc-chart-modes-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
   margin-top: var(--spacing-xl);
+}
+/* Separador vertical entre o mode toggle e o "ETFs referência". */
+#lf-pc-calc .lpc-chart-modes-row .lpc-benchmark-toggle::before {
+  content: '';
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background: var(--border-secondary);
+  margin-right: var(--spacing-lg);
+  flex-shrink: 0;
 }
 #lf-pc-calc .lpc-chart-hint {
   font-size: 12px;
   line-height: 18px;
   color: var(--text-tertiary);
-  margin-top: var(--spacing-sm);
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
 }
-#lf-pc-calc .lpc-chart-hint:empty { display: none; }
+#lf-pc-calc .lpc-chart-hint:empty { display: none; margin: 0; }
 #lf-pc-calc .lpc-tabs {
   display: inline-flex;
   gap: var(--spacing-xs);
