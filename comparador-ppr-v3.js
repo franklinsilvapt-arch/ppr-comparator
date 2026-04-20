@@ -1371,6 +1371,21 @@
       state.committed = true;
       updateCalculateBtnState();
       renderAll();
+      // Scroll suave ate "Rentabilidade acumulada" - consistente com as
+      // restantes calculadoras do literaciafinanceira.pt. rAF garante que
+      // #lpc-results ja saiu do display:none antes de medir a posicao.
+      // Offset 80px para compensar navbar fixo do Webflow.
+      requestAnimationFrame(function () {
+        var target = document.querySelector('#lf-pc-calc .lpc-chart-card');
+        if (!target) return;
+        var rect = target.getBoundingClientRect();
+        var y = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 80;
+        try {
+          window.scrollTo({ top: y, behavior: 'smooth' });
+        } catch (e) {
+          window.scrollTo(0, y);
+        }
+      });
     });
   }
 
