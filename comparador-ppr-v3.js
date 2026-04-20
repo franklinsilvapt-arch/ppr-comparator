@@ -59,12 +59,24 @@
           <button class="lpc-tab is-active" data-mode="eur">1.000€</button>
           <button class="lpc-tab" data-mode="pct">%</button>
         </div>
+        <div class="lpc-chart-menu">
+          <button type="button" class="lpc-chart-menu-btn" id="lpc-chart-menu-btn" aria-label="Opções do gráfico" aria-haspopup="true" aria-expanded="false">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <circle cx="8" cy="3" r="1.4" fill="currentColor"/>
+              <circle cx="8" cy="8" r="1.4" fill="currentColor"/>
+              <circle cx="8" cy="13" r="1.4" fill="currentColor"/>
+            </svg>
+          </button>
+          <div class="lpc-chart-menu-dropdown" id="lpc-chart-menu-dropdown" hidden role="menu">
+            <button type="button" class="lpc-chart-menu-item" data-action="export-png" role="menuitem">Exportar imagem (PNG)</button>
+          </div>
+        </div>
       </div>
     </div>
     <div class="lpc-benchmark-row">
       <label class="lpc-benchmark-toggle" for="lpc-benchmark-checkbox">
         <input type="checkbox" id="lpc-benchmark-checkbox">
-        <span class="lpc-benchmark-text">sobrepor ETF de referência</span>
+        <span class="lpc-benchmark-text">ETFs referência</span>
         <span class="lpc-info-icon" tabindex="0" aria-label="Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
           <span class="lpc-tip-bubble">Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.</span>
@@ -1240,6 +1252,51 @@
       updateCalculateBtnState();
       renderAll();
     });
+  }
+
+  // Kebab menu: abre dropdown com "Exportar imagem". O export usa
+  // chart.toBase64Image() da Chart.js e dispara download via <a>.
+  var chartMenuBtn = document.getElementById('lpc-chart-menu-btn');
+  var chartMenuDropdown = document.getElementById('lpc-chart-menu-dropdown');
+  if (chartMenuBtn && chartMenuDropdown) {
+    function closeChartMenu() {
+      chartMenuDropdown.hidden = true;
+      chartMenuBtn.setAttribute('aria-expanded', 'false');
+    }
+    chartMenuBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var isOpen = !chartMenuDropdown.hidden;
+      if (isOpen) { closeChartMenu(); return; }
+      chartMenuDropdown.hidden = false;
+      chartMenuBtn.setAttribute('aria-expanded', 'true');
+    });
+    document.addEventListener('click', function (e) {
+      if (chartMenuDropdown.hidden) return;
+      if (e.target === chartMenuBtn || chartMenuBtn.contains(e.target)) return;
+      if (chartMenuDropdown.contains(e.target)) return;
+      closeChartMenu();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !chartMenuDropdown.hidden) closeChartMenu();
+    });
+    var exportBtn = chartMenuDropdown.querySelector('[data-action="export-png"]');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', function () {
+        if (!chart) { closeChartMenu(); return; }
+        try {
+          var url = chart.toBase64Image('image/png', 1);
+          var a = document.createElement('a');
+          a.href = url;
+          a.download = 'rentabilidade-acumulada.png';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } catch (err) {
+          console.warn('Export PNG falhou:', err);
+        }
+        closeChartMenu();
+      });
+    }
   }
 
   // Esconde botões de período (1y/3y/5y/10y) quando o fundo mais jovem

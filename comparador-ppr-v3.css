@@ -553,6 +553,57 @@
   color: #fff;
 }
 
+/* Kebab menu (exportar imagem) à direita dos tabs do chart */
+#lf-pc-calc .lpc-chart-menu {
+  position: relative;
+  margin-left: var(--spacing-sm);
+}
+#lf-pc-calc .lpc-chart-menu-btn {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: var(--radius-md);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: background 0.15s, color 0.15s;
+}
+#lf-pc-calc .lpc-chart-menu-btn:hover,
+#lf-pc-calc .lpc-chart-menu-btn[aria-expanded="true"] {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+#lf-pc-calc .lpc-chart-menu-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: #fff;
+  border: 1px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  min-width: 200px;
+  z-index: 5;
+  padding: 4px;
+}
+#lf-pc-calc .lpc-chart-menu-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+#lf-pc-calc .lpc-chart-menu-item:hover {
+  background: var(--bg-secondary);
+}
+
 /* Empty state do chart quando nada seleccionado */
 #lf-pc-calc .lpc-empty-chart {
   display: flex;
