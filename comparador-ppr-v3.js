@@ -44,36 +44,36 @@
 
   <!-- CHART -->
   <div class="lpc-chart-card">
-    <div class="lpc-tabs-header">
+    <div class="lpc-chart-title-row">
       <div class="lpc-tabs-title">Rentabilidade acumulada</div>
-      <div class="lpc-tabs-controls">
-        <div class="lpc-tabs" id="lpc-period-tabs">
-          <button class="lpc-tab is-active" data-period="since">Desde início</button>
-          <button class="lpc-tab" data-period="ytd">YTD<span class="lpc-info-icon lpc-info-icon--tab" tabindex="0" aria-label="YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual."><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg><span class="lpc-tip-bubble">YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual.</span></span></button>
-          <button class="lpc-tab" data-period="1y">1 ano</button>
-          <button class="lpc-tab" data-period="3y">3 anos</button>
-          <button class="lpc-tab" data-period="5y">5 anos</button>
-          <button class="lpc-tab" data-period="10y">10 anos</button>
-        </div>
-        <div class="lpc-tabs lpc-mode-toggle" id="lpc-mode-tabs">
-          <button class="lpc-tab is-active" data-mode="eur">1.000€</button>
-          <button class="lpc-tab" data-mode="pct">%</button>
-        </div>
-        <div class="lpc-chart-menu">
-          <button type="button" class="lpc-chart-menu-btn" id="lpc-chart-menu-btn" aria-label="Opções do gráfico" aria-haspopup="true" aria-expanded="false">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <circle cx="8" cy="3" r="1.4" fill="currentColor"/>
-              <circle cx="8" cy="8" r="1.4" fill="currentColor"/>
-              <circle cx="8" cy="13" r="1.4" fill="currentColor"/>
-            </svg>
-          </button>
-          <div class="lpc-chart-menu-dropdown" id="lpc-chart-menu-dropdown" hidden role="menu">
-            <button type="button" class="lpc-chart-menu-item" data-action="export-png" role="menuitem">Exportar imagem (PNG)</button>
-          </div>
+    </div>
+    <div class="lpc-chart-periods-row">
+      <div class="lpc-tabs" id="lpc-period-tabs">
+        <button class="lpc-tab is-active" data-period="since">Desde início</button>
+        <button class="lpc-tab" data-period="ytd">YTD<span class="lpc-info-icon lpc-info-icon--tab" tabindex="0" aria-label="YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual."><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg><span class="lpc-tip-bubble">YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual.</span></span></button>
+        <button class="lpc-tab" data-period="1y">1 ano</button>
+        <button class="lpc-tab" data-period="3y">3 anos</button>
+        <button class="lpc-tab" data-period="5y">5 anos</button>
+        <button class="lpc-tab" data-period="10y">10 anos</button>
+      </div>
+      <div class="lpc-chart-menu">
+        <button type="button" class="lpc-chart-menu-btn" id="lpc-chart-menu-btn" aria-label="Opções do gráfico" aria-haspopup="true" aria-expanded="false">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="3" r="1.4" fill="currentColor"/>
+            <circle cx="8" cy="8" r="1.4" fill="currentColor"/>
+            <circle cx="8" cy="13" r="1.4" fill="currentColor"/>
+          </svg>
+        </button>
+        <div class="lpc-chart-menu-dropdown" id="lpc-chart-menu-dropdown" hidden role="menu">
+          <button type="button" class="lpc-chart-menu-item" data-action="export-png" role="menuitem">Exportar imagem (PNG)</button>
         </div>
       </div>
     </div>
-    <div class="lpc-benchmark-row">
+    <div class="lpc-chart-modes-row">
+      <div class="lpc-tabs lpc-mode-toggle" id="lpc-mode-tabs">
+        <button class="lpc-tab is-active" data-mode="eur">1.000€</button>
+        <button class="lpc-tab" data-mode="pct">%</button>
+      </div>
       <label class="lpc-benchmark-toggle" for="lpc-benchmark-checkbox">
         <input type="checkbox" id="lpc-benchmark-checkbox">
         <span class="lpc-benchmark-text">ETFs referência</span>
@@ -83,6 +83,7 @@
         </span>
       </label>
     </div>
+    <div class="lpc-chart-hint" id="lpc-chart-hint"></div>
     <div class="lpc-chart-canvas-wrap">
       <canvas id="lpc-chart"></canvas>
     </div>
@@ -703,26 +704,30 @@
       });
     }
 
-    var noteEl = document.getElementById('lpc-chart-note');
-    if (noteEl) {
-      var baseTxt = isEur
+    // v3: baseTxt (hint genérico) fica acima do gráfico; estTxt + clipTxt
+    // (avisos específicos da selecção actual) ficam abaixo.
+    var hintEl = document.getElementById('lpc-chart-hint');
+    if (hintEl) {
+      hintEl.textContent = isEur
         ? 'Investimento simulado de ' + fmtNumPT(BASE_EUR) + '€ no início do período.'
         : 'Retorno acumulado em % desde o início do período.';
+    }
+    var noteEl = document.getElementById('lpc-chart-note');
+    if (noteEl) {
       var estTxt = estimated.length
-        ? ' Curva estimada (tracejada) para: ' + estimated.join(', ') + '.'
+        ? 'Curva estimada (tracejada) para: ' + estimated.join(', ') + '.'
         : '';
-      // Quando "Desde início" e algum fundo forçou o corte da janela
-      // comum, nomeia o(s) responsável(is) + data de início usada.
       var clipTxt = '';
       if (state.period === 'since' && hasEarlierFund && clippingFundNames.length && rebaseCutoff) {
         var MONTHS_PT = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
         var dm = /^(\d{4})-(\d{2})/.exec(rebaseCutoff);
         var prettyDate = dm ? (MONTHS_PT[parseInt(dm[2], 10) - 1] + '/' + dm[1]) : rebaseCutoff;
         var verb = clippingFundNames.length === 1 ? 'só tem' : 'só têm';
-        clipTxt = ' ' + clippingFundNames.join(' e ') + ' ' + verb
+        clipTxt = clippingFundNames.join(' e ') + ' ' + verb
           + ' dados desde ' + prettyDate + ' — gráfico ajustado para esse período.';
       }
-      noteEl.textContent = baseTxt + estTxt + clipTxt;
+      var parts = [estTxt, clipTxt].filter(Boolean);
+      noteEl.textContent = parts.join(' ');
     }
 
     if (chart) chart.destroy();
@@ -945,9 +950,13 @@
     head.innerHTML = '<th></th>' + pairs.map(function (p) {
       var color = SERIES_COLORS[p.slot];
       return '<th class="lpc-fund-col">'
+        + '<div class="lpc-fund-col-inner">'
         + '<span class="lpc-fund-pipe" style="background:' + color + '"></span>'
+        + '<div class="lpc-fund-col-text">'
         + '<span class="lpc-fund-manager" style="color:' + color + '">' + (p.fund.manager || '') + '</span>'
         + '<span class="lpc-fund-name">' + p.fund.name + '</span>'
+        + '</div>'
+        + '</div>'
         + '</th>';
     }).join('');
 
@@ -1109,9 +1118,13 @@
     head.innerHTML = '<th></th>' + pairs.map(function (p) {
       var color = SERIES_COLORS[p.slot];
       return '<th class="lpc-fund-col">'
+        + '<div class="lpc-fund-col-inner">'
         + '<span class="lpc-fund-pipe" style="background:' + color + '"></span>'
+        + '<div class="lpc-fund-col-text">'
         + '<span class="lpc-fund-manager" style="color:' + color + '">' + (p.fund.manager || '') + '</span>'
         + '<span class="lpc-fund-name">' + p.fund.name + '</span>'
+        + '</div>'
+        + '</div>'
         + '</th>';
     }).join('');
 

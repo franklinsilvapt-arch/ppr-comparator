@@ -465,15 +465,8 @@
 }
 
 /* ---------- Tabs (período e modo) ---------- */
-#lf-pc-calc .lpc-tabs-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 14px;
-  padding-bottom: var(--spacing-xl);
-  border-bottom: 1px solid var(--border-secondary);
-  margin-bottom: var(--spacing-4xl);
+#lf-pc-calc .lpc-chart-title-row {
+  margin-bottom: var(--spacing-xl);
 }
 #lf-pc-calc .lpc-tabs-title {
   font-family: 'Inter', sans-serif;
@@ -484,12 +477,30 @@
   color: var(--text-primary);
   margin: 0;
 }
-#lf-pc-calc .lpc-tabs-controls {
+#lf-pc-calc .lpc-chart-periods-row {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  justify-content: space-between;
   flex-wrap: wrap;
+  gap: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-secondary);
 }
+#lf-pc-calc .lpc-chart-modes-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+}
+#lf-pc-calc .lpc-chart-hint {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--text-tertiary);
+  margin-top: var(--spacing-sm);
+}
+#lf-pc-calc .lpc-chart-hint:empty { display: none; }
 #lf-pc-calc .lpc-tabs {
   display: inline-flex;
   gap: var(--spacing-xs);
@@ -898,17 +909,23 @@
   color: var(--text-primary);
 }
 #lf-pc-calc .lpc-fund-col {
-  position: relative;
-  padding-left: 12px;
   color: var(--text-primary);
 }
+#lf-pc-calc .lpc-fund-col-inner {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
 #lf-pc-calc .lpc-fund-pipe {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
   width: 2px;
+  flex-shrink: 0;
   border-radius: 1px;
+  align-self: stretch;
+}
+#lf-pc-calc .lpc-fund-col-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 #lf-pc-calc .lpc-fund-manager {
   display: block;
@@ -1076,20 +1093,18 @@
     font-size: 17px;
     line-height: 24px;
   }
-  #lf-pc-calc .lpc-tabs-header {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: var(--spacing-xl);
-  }
   /* scroll horizontal em tab bars sem scrollbar visível (poupa altura) */
-  #lf-pc-calc .lpc-tabs-controls {
-    width: 100%;
+  #lf-pc-calc .lpc-chart-periods-row,
+  #lf-pc-calc .lpc-chart-modes-row {
+    flex-wrap: nowrap;
+  }
+  #lf-pc-calc #lpc-period-tabs {
     overflow-x: auto;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  #lf-pc-calc .lpc-tabs-controls::-webkit-scrollbar { display: none; }
+  #lf-pc-calc #lpc-period-tabs::-webkit-scrollbar { display: none; }
   #lf-pc-calc .lpc-tabs {
     flex-wrap: nowrap;
   }
