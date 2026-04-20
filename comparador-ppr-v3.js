@@ -93,7 +93,7 @@
 
   <!-- RISK TABLE -->
   <div class="lpc-card">
-    <div class="lpc-section-title" style="margin-bottom: 24px;">Métricas de risco</div>
+    <div class="lpc-section-title" style="margin-bottom: 24px;">Métrica de risco</div>
     <div class="lpc-table-wrap">
       <table class="lpc-table" id="lpc-risk-table">
         <thead><tr id="lpc-risk-head"></tr></thead>
@@ -104,7 +104,12 @@
 
   <!-- FOOTER: data de actualização -->
   <div class="lpc-footer-updated" id="lpc-updated">
-    <span class="lpc-updated-dot"></span>
+    <span class="lpc-updated-check" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="9" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M6 10.5l2.8 2.8L14.5 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
     <span id="lpc-updated-text">A carregar dados...</span>
   </div>
 

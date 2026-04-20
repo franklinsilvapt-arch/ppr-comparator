@@ -236,12 +236,16 @@
   color: var(--color-grey-400);
   font-weight: 500;
 }
+#lf-pc-calc .lpc-updated-check {
+  display: inline-flex;
+  align-items: center;
+  color: var(--green);
+}
 #lf-pc-calc .lpc-footer-updated.is-stale {
   color: var(--warning-dark);
 }
-#lf-pc-calc .lpc-footer-updated.is-stale .lpc-updated-dot {
-  background: var(--warning);
-  box-shadow: 0 0 0 3px rgba(247, 144, 9, 0.22);
+#lf-pc-calc .lpc-footer-updated.is-stale .lpc-updated-check {
+  color: var(--warning);
 }
 
 /* ---------- Section label ---------- */
