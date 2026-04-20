@@ -807,6 +807,9 @@
   border-radius: 1px;
   flex-shrink: 0;
   align-self: stretch;
+  /* Pipe bate no topo de "B" de "Bankinter" e no fim da última linha
+     do nome, descontando o padding da line-box. */
+  margin: 3px 0;
 }
 #lf-pc-calc .lpc-return-value {
   font-size: 28px;
@@ -911,7 +914,7 @@
   letter-spacing: -0.1px;
   color: var(--text-tertiary);
   background: var(--bg-secondary);
-  width: 200px;
+  width: 170px;
   border-right: 1px solid var(--border-secondary);
   white-space: nowrap;
 }
@@ -935,6 +938,10 @@
   flex-shrink: 0;
   border-radius: 1px;
   align-self: stretch;
+  /* line-height 18/20 deixa ~3-4px de padding acima/abaixo do glifo
+     dentro da line-box. Compensa com margens verticais para o pipe
+     bater visualmente no texto (top de "Abanca" → fim do nome). */
+  margin: 3px 0 4px;
 }
 #lf-pc-calc .lpc-fund-col-text {
   display: flex;
