@@ -465,9 +465,6 @@
 }
 
 /* ---------- Tabs (período e modo) ---------- */
-#lf-pc-calc .lpc-chart-title-row {
-  margin-bottom: var(--spacing-xl);
-}
 #lf-pc-calc .lpc-tabs-title {
   font-family: 'Inter', sans-serif;
   font-size: 16px;
@@ -480,11 +477,13 @@
 #lf-pc-calc .lpc-chart-periods-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
   gap: var(--spacing-md);
   padding-bottom: var(--spacing-md);
   border-bottom: 1px solid var(--border-secondary);
+}
+#lf-pc-calc .lpc-chart-periods-row .lpc-chart-menu {
+  margin-left: auto;
 }
 #lf-pc-calc .lpc-chart-modes-row {
   display: flex;
