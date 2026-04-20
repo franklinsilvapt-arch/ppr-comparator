@@ -942,7 +942,7 @@
 }
 #lf-pc-calc .lpc-table th,
 #lf-pc-calc .lpc-table td {
-  padding: 12px 14px;
+  padding: 12px;
   text-align: left;
   vertical-align: top;
 }
@@ -1004,42 +1004,43 @@
 }
 #lf-pc-calc .lpc-fund-col {
   color: var(--text-primary);
+  position: relative;
+  vertical-align: middle;
 }
 #lf-pc-calc .lpc-fund-col-inner {
-  display: flex;
-  align-items: stretch;
-  gap: 10px;
+  display: block;
 }
+/* Pipe colorido do header: absoluto ao canto esquerdo da célula,
+   Figma left:0 top:15 bottom:15 (~48px de altura num header de 78px). */
 #lf-pc-calc .lpc-fund-pipe {
+  position: absolute;
+  left: 0;
+  top: 15px;
+  bottom: 15px;
   width: 2px;
-  flex-shrink: 0;
   border-radius: 1px;
-  align-self: stretch;
-  /* line-height 18/20 deixa ~3-4px de padding acima/abaixo do glifo
-     dentro da line-box. Compensa com margens verticais para o pipe
-     bater visualmente no texto (top de "Abanca" → fim do nome). */
-  margin: 3px 0 4px;
 }
 #lf-pc-calc .lpc-fund-col-text {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  gap: 2px;
 }
 #lf-pc-calc .lpc-fund-manager {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  letter-spacing: 0;
+  color: #697386;
+}
+#lf-pc-calc .lpc-fund-name {
   display: block;
   font-size: 12px;
   font-weight: 500;
   line-height: 18px;
   letter-spacing: -0.1px;
-  margin-bottom: 2px;
-}
-#lf-pc-calc .lpc-fund-name {
-  display: block;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 20px;
-  letter-spacing: -0.1px;
-  color: var(--text-primary);
+  color: #3A4454;
 }
 
 /* Nota abaixo da tabela (janela comum). Figma: 11px Regular #4F5969. */
