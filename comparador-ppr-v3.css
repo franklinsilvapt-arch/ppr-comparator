@@ -903,7 +903,7 @@
 #lf-pc-calc .lpc-benchmark-card-pipe {
   width: 2px;
   height: 18px;
-  background: var(--border-primary);
+  background: var(--color-grey-700);
   flex-shrink: 0;
 }
 #lf-pc-calc .lpc-benchmark-card-title {
