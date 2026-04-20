@@ -887,6 +887,26 @@
 #lf-pc-calc .lpc-benchmark-text {
   white-space: nowrap;
 }
+
+/* Labels mobile-only: "Visualização" e "Comparar com ETFs de referência".
+   No desktop o layout horizontal usa .lpc-benchmark-text inline — em mobile
+   esses labels ficam em bloco sobre o toggle respectivo (Figma 5518:34102). */
+#lf-pc-calc .lpc-mobile-label {
+  display: none;
+}
+#lf-pc-calc .lpc-benchmark-label-mobile {
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+#lf-pc-calc .lpc-benchmark-state {
+  display: none;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: -0.2px;
+  color: #3A4454;
+  margin-left: var(--spacing-md);
+}
 #lf-pc-calc .lpc-return-vs-bench {
   font-size: 11px;
   color: var(--text-tertiary);
@@ -1033,6 +1053,19 @@
   align-items: flex-start;
   gap: var(--spacing-sm);
 }
+/* Wrapper com posicionamento relativo para os pipes do swipe-hint mobile
+   (stacked no canto superior direito). No desktop .lpc-swipe-pipes é
+   display:none - os pipes so aparecem em mobile. */
+#lf-pc-calc .lpc-table-scroll {
+  position: relative;
+}
+#lf-pc-calc .lpc-swipe-pipes {
+  display: none;
+}
+#lf-pc-calc .lpc-swipe-hint {
+  display: none;
+}
+
 #lf-pc-calc .lpc-table-wrap {
   border: none;
   border-radius: 0;
@@ -1380,6 +1413,82 @@
   /* dropdown do selector: limitar altura para não empurrar layout */
   #lf-pc-calc .lpc-dropdown {
     max-height: 260px;
+  }
+
+  /* ---------- Chart modes-row em coluna (Figma 5518:34102) ----------
+     Visualização (label) + toggle Percentagem/1.000€ + label "Comparar
+     com ETFs" + switch com texto Ativo/Inativo ao lado. */
+  #lf-pc-calc .lpc-chart-modes-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-2xl);
+  }
+  #lf-pc-calc .lpc-mobile-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.2px;
+    color: #3A4454;
+    margin-bottom: -4px;
+  }
+  /* Esconder o separador vertical (só faz sentido em row layout) */
+  #lf-pc-calc .lpc-chart-modes-row .lpc-benchmark-toggle::before {
+    display: none;
+  }
+  /* Texto "ETFs referência" inline + info-icon dentro do toggle escondem-se
+     em mobile (substituídos pelo label acima). Mostra-se "Ativo"/"Inativo" */
+  #lf-pc-calc .lpc-benchmark-toggle .lpc-benchmark-text,
+  #lf-pc-calc .lpc-benchmark-toggle > .lpc-info-icon {
+    display: none;
+  }
+  #lf-pc-calc .lpc-benchmark-state {
+    display: inline;
+  }
+  #lf-pc-calc .lpc-benchmark-toggle {
+    padding: 0;
+    align-self: flex-start;
+  }
+
+  /* ---------- Tables mobile ---------- */
+  /* Footer "Desliza para ver todos os PPR →" abaixo de cada tabela
+     (Figma 5530:37018 / 5531:37413). */
+  #lf-pc-calc .lpc-swipe-hint {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-xl);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+    letter-spacing: -0.1px;
+    color: var(--text-tertiary);
+  }
+  #lf-pc-calc .lpc-swipe-hint svg {
+    display: block;
+    flex-shrink: 0;
+    color: var(--text-tertiary);
+  }
+  /* Pipes coloridos (laranja/azul/roxo) empilhados no canto superior
+     direito da tabela para sinalizar colunas ocultas por scroll. */
+  #lf-pc-calc .lpc-swipe-pipes {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    position: absolute;
+    top: var(--spacing-xl);
+    right: 0;
+    pointer-events: none;
+  }
+  #lf-pc-calc .lpc-swipe-pipe {
+    display: block;
+    width: 3px;
+    height: 14px;
+    border-radius: 2px;
   }
 }
 

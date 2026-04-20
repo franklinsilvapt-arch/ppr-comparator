@@ -91,10 +91,18 @@
       </div>
     </div>
     <div class="lpc-chart-modes-row">
+      <span class="lpc-mobile-label lpc-mode-label-mobile">Visualização</span>
       <div class="lpc-tabs lpc-mode-toggle" id="lpc-mode-tabs">
         <button class="lpc-tab" data-mode="pct">Percentagem</button>
         <button class="lpc-tab is-active" data-mode="eur">1.000€</button>
       </div>
+      <span class="lpc-mobile-label lpc-benchmark-label-mobile">
+        Comparar com ETFs de referência
+        <span class="lpc-info-icon" tabindex="0" aria-label="Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <span class="lpc-tip-bubble">Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.</span>
+        </span>
+      </span>
       <label class="lpc-benchmark-toggle" for="lpc-benchmark-checkbox">
         <input type="checkbox" id="lpc-benchmark-checkbox">
         <span class="lpc-benchmark-text">ETFs referência</span>
@@ -102,6 +110,7 @@
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
           <span class="lpc-tip-bubble">Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.</span>
         </span>
+        <span class="lpc-benchmark-state" id="lpc-benchmark-state">Inativo</span>
       </label>
     </div>
     <div class="lpc-chart-hint" id="lpc-chart-hint"></div>
@@ -123,24 +132,38 @@
   <!-- COMPARE TABLE -->
   <div class="lpc-card">
     <div class="lpc-section-title" style="margin-bottom: 24px;">Comparação detalhada</div>
-    <div class="lpc-table-wrap">
-      <table class="lpc-table" id="lpc-compare-table">
-        <thead><tr id="lpc-compare-head"></tr></thead>
-        <tbody id="lpc-compare-body"></tbody>
-      </table>
+    <div class="lpc-table-scroll">
+      <div class="lpc-table-wrap">
+        <table class="lpc-table" id="lpc-compare-table">
+          <thead><tr id="lpc-compare-head"></tr></thead>
+          <tbody id="lpc-compare-body"></tbody>
+        </table>
+      </div>
+      <div class="lpc-swipe-pipes" id="lpc-compare-pipes" aria-hidden="true"></div>
+    </div>
+    <div class="lpc-swipe-hint" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M9 4l4 4-4 4M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Desliza para ver todos os PPR
     </div>
   </div>
 
   <!-- RISK TABLE -->
   <div class="lpc-card">
     <div class="lpc-section-title" style="margin-bottom: 24px;">Métricas de risco</div>
-    <div class="lpc-table-wrap">
-      <table class="lpc-table" id="lpc-risk-table">
-        <thead><tr id="lpc-risk-head"></tr></thead>
-        <tbody id="lpc-risk-body"></tbody>
-      </table>
+    <div class="lpc-table-scroll">
+      <div class="lpc-table-wrap">
+        <table class="lpc-table" id="lpc-risk-table">
+          <thead><tr id="lpc-risk-head"></tr></thead>
+          <tbody id="lpc-risk-body"></tbody>
+        </table>
+      </div>
+      <div class="lpc-swipe-pipes" id="lpc-risk-pipes" aria-hidden="true"></div>
     </div>
     <p class="lpc-risk-footnote" id="lpc-risk-footnote" style="display:none"></p>
+    <div class="lpc-swipe-hint" aria-hidden="true">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M9 4l4 4-4 4M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Desliza para ver todos os PPR
+    </div>
   </div>
 
   <!-- FOOTER: data de actualização -->
@@ -1079,6 +1102,8 @@
         + pairs.map(function (p) { return '<td>' + r.render(p.fund) + '</td>'; }).join('')
         + '</tr>';
     }).join('');
+
+    renderSwipePipes('lpc-compare-pipes', pairs);
   }
 
   // -----------------------------------------------------------
@@ -1172,6 +1197,17 @@
       var95: var95,
       samplesPerYear: samplesPerYear
     };
+  }
+
+  // Renderiza os "swipe pipes" (pista visual em mobile de que ha mais
+   // colunas para scroll horizontal). Cada pipe = cor da serie de um fundo
+   // seleccionado (SERIES_COLORS). Figma 5530:37018 / 5531:37413.
+   function renderSwipePipes(containerId, pairs) {
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = pairs.map(function (p) {
+      return '<span class="lpc-swipe-pipe" style="background:' + SERIES_COLORS[p.slot] + '"></span>';
+    }).join('');
   }
 
   function renderRiskTable() {
@@ -1283,6 +1319,8 @@
         footnoteEl.style.display = 'none';
       }
     }
+
+    renderSwipePipes('lpc-risk-pipes', pairs);
   }
 
   // -----------------------------------------------------------
@@ -1311,6 +1349,8 @@
   if (benchCheckbox) {
     benchCheckbox.addEventListener('change', function () {
       state.showBenchmark = benchCheckbox.checked;
+      var stateEl = document.getElementById('lpc-benchmark-state');
+      if (stateEl) stateEl.textContent = benchCheckbox.checked ? 'Ativo' : 'Inativo';
       renderAll();
     });
   }
