@@ -547,27 +547,26 @@
   padding: 2px;
   vertical-align: middle;
 }
-/* Toggle €/% - visualmente distinto dos tabs de período.
-   Fundo orange suave + letra brand, com outline e peso 600. */
+/* Toggle 1.000€ / %. Design Figma: pílula escura no estado activo
+   sobre fundo cinza claro. */
 #lf-pc-calc .lpc-mode-toggle {
   display: inline-flex;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-primary);
+  background: var(--bg-tertiary);
   border-radius: var(--radius-full);
-  padding: 3px;
+  padding: 4px;
   gap: 0;
 }
 #lf-pc-calc .lpc-mode-toggle .lpc-tab {
   border-radius: var(--radius-full);
-  padding: 6px 14px;
+  padding: 8px 18px;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-tertiary);
 }
 #lf-pc-calc .lpc-mode-toggle .lpc-tab.is-active {
-  background: var(--brand);
+  background: var(--bg-primary-dark);
   color: #fff;
-  box-shadow: 0 1px 2px rgba(255, 90, 31, 0.25);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 #lf-pc-calc .lpc-mode-toggle .lpc-tab:hover {
   color: var(--text-primary);
@@ -719,17 +718,17 @@
   align-items: center;
   gap: var(--spacing-md);
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--text-secondary);
+  color: var(--text-primary);
   user-select: none;
   padding: 4px 0;
 }
 #lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  width: 32px;
-  height: 18px;
+  width: 44px;
+  height: 24px;
   border-radius: var(--radius-full);
   background: var(--border-primary);
   position: relative;
@@ -742,8 +741,8 @@
   position: absolute;
   top: 2px;
   left: 2px;
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: #FFFFFF;
   transition: transform 0.15s;
@@ -753,7 +752,7 @@
   background: var(--brand);
 }
 #lf-pc-calc .lpc-benchmark-toggle input[type="checkbox"]:checked::after {
-  transform: translateX(14px);
+  transform: translateX(20px);
 }
 #lf-pc-calc .lpc-benchmark-text {
   white-space: nowrap;
