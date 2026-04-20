@@ -228,7 +228,7 @@
   };
   function toDisplayName(name) {
     if (!name) return name;
-    return String(name).replace(/\p{L}+/gu, function (word) {
+    var out = String(name).replace(/\p{L}+/gu, function (word) {
       var upper = word.toUpperCase();
       // Case mista (ex: "Bankinter", "Ciclo", "de") -> preservar.
       if (word !== upper) return word;
@@ -238,6 +238,9 @@
       // Title Case.
       return word.charAt(0) + word.slice(1).toLowerCase();
     });
+    // Abreviação para poupar espaço nos cabeçalhos das tabelas e cartões.
+    out = out.replace(/\bCategoria\b/gi, 'Cat.');
+    return out;
   }
 
   function normalizeBackendFund(f) {
