@@ -814,7 +814,7 @@
 #lf-pc-calc .lpc-benchmark-card-pipe {
   width: 2px;
   height: 18px;
-  background: #2970FF;
+  background: var(--border-primary);
   flex-shrink: 0;
 }
 #lf-pc-calc .lpc-benchmark-card-title {
