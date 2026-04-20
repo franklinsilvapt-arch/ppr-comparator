@@ -573,9 +573,8 @@
   padding-bottom: var(--spacing-md);
   border-bottom: 1px solid var(--border-secondary);
 }
-#lf-pc-calc .lpc-chart-periods-row .lpc-chart-menu {
-  margin-left: auto;
-}
+/* .lpc-chart-menu ja tem margin-left:auto e flex-shrink:0 na regra
+   geral (linha ~682) — suficiente para empurrar para a direita. */
 #lf-pc-calc .lpc-chart-modes-row {
   display: flex;
   align-items: center;
@@ -676,21 +675,35 @@
   color: #F9FAFB;
 }
 
-/* Kebab menu (exportar imagem) à direita dos tabs do chart */
+/* Kebab menu (exportar imagem) à direita dos tabs do chart.
+   flex-shrink:0 + dimensoes explicitas no botao: Safari renderizava
+   o hover background a esticar toda a linha quando o menu fazia wrap
+   para baixo (margin-left:auto + flex-wrap:wrap edge case). Agora o
+   botao tem tamanho fixo 32x32 e encosta mesmo no canto direito. */
 #lf-pc-calc .lpc-chart-menu {
   position: relative;
-  margin-left: var(--spacing-sm);
+  margin-left: auto;
+  flex-shrink: 0;
 }
 #lf-pc-calc .lpc-chart-menu-btn {
   background: transparent;
   border: none;
-  padding: 6px;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
   border-radius: var(--radius-md);
   color: var(--text-tertiary);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   transition: background 0.15s, color 0.15s;
+}
+#lf-pc-calc .lpc-chart-menu-btn > svg {
+  display: block;
+  width: 16px;
+  height: 16px;
 }
 #lf-pc-calc .lpc-chart-menu-btn:hover,
 #lf-pc-calc .lpc-chart-menu-btn[aria-expanded="true"] {
@@ -982,13 +995,16 @@
   color: var(--color-error-600);
 }
 
-/* ---------- Tables (compare + risk) ---------- */
+/* ---------- Tables (compare + risk) ----------
+   Figma 5515:18736 ("Comparação detalhada") e 5515:18813 ("Métrica de
+   risco") — Body/Text lg/Medium: Inter Medium 18/26 tracking -0.3,
+   color text-primary #202432. Mesmo token que o titulo do chart. */
 #lf-pc-calc .lpc-section-title {
   font-family: 'Inter', sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 500;
-  line-height: 30px;
-  letter-spacing: -0.4px;
+  line-height: 26px;
+  letter-spacing: -0.3px;
   color: var(--text-primary);
   margin: 0 0 var(--spacing-md) 0;
 }
