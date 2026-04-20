@@ -446,6 +446,15 @@
       if (dd.parentNode) dd.parentNode.removeChild(dd);
       wrap.appendChild(dd);
     }
+    // Enquanto a fetch inicial não retorna, USING_MOCK ainda é true
+    // (só contém os 3 placeholders). Mostrar estado de loading em vez
+    // de resultados vazios ou fake matches.
+    if (USING_MOCK && !LOAD_ERROR) {
+      dd.innerHTML = '<div class="lpc-option-empty">A carregar dados...</div>';
+      dd.classList.add('is-open');
+      requestAnimationFrame(function () { requestAnimationFrame(__sendHeight); });
+      return;
+    }
     var matches = filterFunds(selectorState.query);
     if (selectorState.highlightIdx >= matches.length) selectorState.highlightIdx = 0;
     if (!matches.length) {
@@ -1491,12 +1500,22 @@
 
   async function init() {
     if (typeof Chart === 'undefined') { setTimeout(init, 50); return; }
-    try { await loadData(); } catch (e) {
-      if (console && console.warn) console.warn('loadData failed:', e);
-    }
+    // Wire slots e primeiro render ANTES da fetch - em Safari no Mac
+    // (cold CDN) o fetch de latest.json pode demorar 2-4s e antes
+    // desta alteração os listeners dos inputs só eram anexados depois.
+    // O utilizador escrevia nos inputs e nada aparecia. Agora a UI é
+    // interactiva desde o primeiro paint; a dropdown mostra "A carregar
+    // dados..." enquanto USING_MOCK estiver a true.
     try { wireSlots(); } catch (e) {
       if (console && console.warn) console.warn('wireSlots failed:', e);
     }
+    try { renderAll(); } catch (e) {
+      if (console && console.warn) console.warn('renderAll failed:', e);
+    }
+    try { await loadData(); } catch (e) {
+      if (console && console.warn) console.warn('loadData failed:', e);
+    }
+    // Re-render com os dados reais (ou fallback mock se fetch falhou).
     try { renderAll(); } catch (e) {
       if (console && console.warn) console.warn('renderAll failed:', e);
     }
