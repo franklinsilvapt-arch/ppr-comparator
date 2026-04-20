@@ -1300,7 +1300,18 @@
       exportBtn.addEventListener('click', function () {
         if (!chart) { closeChartMenu(); return; }
         try {
-          var url = chart.toBase64Image('image/png', 1);
+          // Chart.js exporta com fundo transparente. Compomos sobre um
+          // canvas off-screen com o mesmo branco do card para o PNG
+          // sair como é visto na calculadora.
+          var srcCanvas = chart.canvas;
+          var off = document.createElement('canvas');
+          off.width = srcCanvas.width;
+          off.height = srcCanvas.height;
+          var octx = off.getContext('2d');
+          octx.fillStyle = '#ffffff';
+          octx.fillRect(0, 0, off.width, off.height);
+          octx.drawImage(srcCanvas, 0, 0);
+          var url = off.toDataURL('image/png', 1);
           var a = document.createElement('a');
           a.href = url;
           a.download = 'rentabilidade-acumulada.png';
