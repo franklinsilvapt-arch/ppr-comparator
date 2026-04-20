@@ -712,21 +712,19 @@
   border: 1px solid var(--border-tertiary);
 }
 #lf-pc-calc .lpc-return-name {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   line-height: 18px;
   letter-spacing: -0.1px;
-  color: var(--text-tertiary);
-  margin-bottom: var(--spacing-sm);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--spacing-sm);
-  overflow: hidden;
 }
 #lf-pc-calc .lpc-return-name-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  display: block;
+  word-break: break-word;
 }
 #lf-pc-calc .lpc-swatch {
   width: 2px;
@@ -735,10 +733,10 @@
   flex-shrink: 0;
 }
 #lf-pc-calc .lpc-return-value {
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 28px;
-  letter-spacing: -0.3px;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 34px;
+  letter-spacing: -0.5px;
   color: var(--text-primary);
 }
 #lf-pc-calc .lpc-return-value.pos,
