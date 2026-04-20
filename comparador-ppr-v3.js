@@ -1371,20 +1371,33 @@
       state.committed = true;
       updateCalculateBtnState();
       renderAll();
-      // Scroll suave ate "Rentabilidade acumulada" - consistente com as
-      // restantes calculadoras do literaciafinanceira.pt. rAF garante que
-      // #lpc-results ja saiu do display:none antes de medir a posicao.
-      // Offset 80px para compensar navbar fixo do Webflow.
+      // Scroll suave custom (duracao controlada) ate "Rentabilidade
+      // acumulada". rAF garante que #lpc-results saiu de display:none
+      // antes de medir a posicao. Offset 80px para navbar fixo do Webflow.
+      // Duracao 1100ms + easeInOutCubic imita a cadencia das restantes
+      // calculadoras do literaciafinanceira.pt (a API nativa scrollTo
+      // com behavior:smooth varia por browser, daqui a anim custom).
       requestAnimationFrame(function () {
         var target = document.querySelector('#lf-pc-calc .lpc-chart-card');
         if (!target) return;
         var rect = target.getBoundingClientRect();
-        var y = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 80;
-        try {
-          window.scrollTo({ top: y, behavior: 'smooth' });
-        } catch (e) {
-          window.scrollTo(0, y);
+        var endY = rect.top + (window.pageYOffset || document.documentElement.scrollTop) - 80;
+        var startY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        var distance = endY - startY;
+        if (Math.abs(distance) < 2) return;
+        var duration = 1100;
+        var t0 = null;
+        function easeInOutCubic(t) {
+          return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
         }
+        function step(ts) {
+          if (t0 === null) t0 = ts;
+          var elapsed = ts - t0;
+          var p = Math.min(elapsed / duration, 1);
+          window.scrollTo(0, startY + distance * easeInOutCubic(p));
+          if (p < 1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
       });
     });
   }
