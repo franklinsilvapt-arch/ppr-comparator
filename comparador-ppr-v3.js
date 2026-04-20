@@ -88,8 +88,14 @@
       <canvas id="lpc-chart"></canvas>
     </div>
     <div id="lpc-chart-note" class="lpc-chart-note"></div>
-    <div id="lpc-benchmark-note" class="lpc-chart-note" style="display:none"></div>
     <div class="lpc-returns-strip" id="lpc-returns-strip"></div>
+    <div id="lpc-benchmark-note" class="lpc-benchmark-card" style="display:none">
+      <div class="lpc-benchmark-card-head">
+        <span class="lpc-benchmark-card-pipe"></span>
+        <span class="lpc-benchmark-card-title">ETFs de referência</span>
+      </div>
+      <p class="lpc-benchmark-card-body" id="lpc-benchmark-note-text"></p>
+    </div>
     <div id="lpc-risk-warning"></div>
   </div>
 
@@ -901,21 +907,22 @@
     // Nota do benchmark - mostra quando o toggle está on: explica o(s)
     // ETF(s) ou avisa que foram escondidos do chart por excesso de riscos.
     var benchNoteEl = document.getElementById('lpc-benchmark-note');
-    if (benchNoteEl) {
+    var benchNoteText = document.getElementById('lpc-benchmark-note-text');
+    if (benchNoteEl && benchNoteText) {
       if (benchmarksHiddenMixed) {
         benchNoteEl.style.display = '';
-        benchNoteEl.textContent =
+        benchNoteText.textContent =
           'Seleccionaste PPR de ' + distinctTickers.length + ' níveis de risco diferentes - '
           + 'ETFs de referência escondidos no gráfico para não saturar. '
           + 'A diferença de rentabilidade vs cada ETF continua visível em cada cartão abaixo.';
       } else if (benchmarksVisible && distinctTickers.length) {
         benchNoteEl.style.display = '';
         var names = distinctTickers.map(function (t) { return t; }).join(' + ');
-        benchNoteEl.textContent = 'Referência (linha cinza): ' + names
-          + '. ETFs não são PPR - sem benefício fiscal, mas com liquidez imediata.';
+        benchNoteText.textContent = names
+          + '. ETFs não são PPR, sem benefício fiscal, mas com liquidez imediata.';
       } else {
         benchNoteEl.style.display = 'none';
-        benchNoteEl.textContent = '';
+        benchNoteText.textContent = '';
       }
     }
 

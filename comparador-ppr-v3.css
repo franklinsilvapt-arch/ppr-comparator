@@ -792,6 +792,46 @@
 /* Quando vazio (0 PPRs seleccionados) colapsa para não deixar margem
    residual que varia a altura total do comparador vs estado 1+ PPRs. */
 #lf-pc-calc .lpc-returns-strip:empty { margin-top: 0; }
+
+/* Card "ETFs de referência" — Figma 5515:18732. Aparece debaixo dos
+   returns-strip quando o toggle ETFs referência está ON. */
+#lf-pc-calc .lpc-benchmark-card {
+  background: #FCFCFD;
+  border: 1px solid var(--border-secondary);
+  border-radius: var(--radius-2xl);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: var(--spacing-2xl);
+}
+#lf-pc-calc .lpc-benchmark-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#lf-pc-calc .lpc-benchmark-card-pipe {
+  width: 2px;
+  height: 18px;
+  background: #2970FF;
+  flex-shrink: 0;
+}
+#lf-pc-calc .lpc-benchmark-card-title {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  color: #3A4454;
+}
+#lf-pc-calc .lpc-benchmark-card-body {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: -0.1px;
+  color: #4F5969;
+  padding-left: 10px;
+  margin: 0;
+}
 #lf-pc-calc .lpc-return-cell {
   background: var(--bg-secondary);
   padding: 14px 16px;
