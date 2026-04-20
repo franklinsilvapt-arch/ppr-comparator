@@ -1401,6 +1401,15 @@
   #lf-pc-calc .lpc-table tbody th {
     width: 140px;
   }
+  /* Primeira coluna sticky em mobile: o utilizador faz scroll horizontal
+     nos PPRs mas vê sempre o nome da métrica à esquerda. Requer
+     border-collapse:separate na tabela (já é o caso). */
+  #lf-pc-calc .lpc-table thead tr th:first-child,
+  #lf-pc-calc .lpc-table tbody tr th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+  }
   /* nos cartões de rentabilidade, número principal ligeiramente menor */
   #lf-pc-calc .lpc-return-value {
     font-size: 18px;
