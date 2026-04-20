@@ -895,7 +895,7 @@
   vertical-align: top;
 }
 #lf-pc-calc .lpc-table thead th {
-  background: var(--bg-secondary);
+  background: var(--bg-tertiary);
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
