@@ -774,11 +774,12 @@
 #lf-pc-calc .lpc-return-vs-bench {
   font-size: 11px;
   color: var(--text-tertiary);
-  margin-top: var(--spacing-xs);
-  font-weight: 500;
+  margin-top: -4px;
+  font-weight: 400;
+  line-height: 16px;
 }
 #lf-pc-calc .lpc-return-vs-bench .pos { color: var(--green-text); }
-#lf-pc-calc .lpc-return-vs-bench .neg { color: var(--error); }
+#lf-pc-calc .lpc-return-vs-bench .neg { color: var(--color-error-600); }
 
 /* ---------- Returns strip ---------- */
 #lf-pc-calc .lpc-returns-strip {
@@ -833,21 +834,23 @@
   margin: 0;
 }
 #lf-pc-calc .lpc-return-cell {
-  background: var(--bg-secondary);
-  padding: 14px 16px;
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--border-tertiary);
+  background: #FCFCFD;
+  padding: 12px 16px;
+  border-radius: var(--radius-2xl);
+  border: 1px solid var(--border-secondary);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 #lf-pc-calc .lpc-return-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 18px;
   letter-spacing: -0.1px;
-  color: var(--text-primary);
-  margin-bottom: var(--spacing-md);
+  color: #3A4454;
   display: flex;
-  align-items: stretch;
-  gap: var(--spacing-sm);
+  align-items: flex-start;
+  gap: var(--spacing-md);
 }
 #lf-pc-calc .lpc-return-name-text {
   display: block;
@@ -857,18 +860,14 @@
 }
 #lf-pc-calc .lpc-swatch {
   width: 2px;
-  border-radius: 1px;
+  height: 18px;
   flex-shrink: 0;
-  align-self: stretch;
-  /* Pipe bate no topo de "B" de "Bankinter" e no fim da última linha
-     do nome, descontando o padding da line-box. */
-  margin: 3px 0;
 }
 #lf-pc-calc .lpc-return-value {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 34px;
-  letter-spacing: -0.5px;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  letter-spacing: -0.6px;
   color: var(--text-primary);
 }
 #lf-pc-calc .lpc-return-value.pos,
@@ -877,13 +876,13 @@
 }
 #lf-pc-calc .lpc-return-value.neg,
 #lf-pc-calc .lpc-return-value .neg {
-  color: var(--color-error-700);
+  color: var(--color-error-600);
 }
 #lf-pc-calc .lpc-return-sub {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   line-height: 18px;
-  margin-top: var(--spacing-xxs);
+  margin-top: -4px;
   letter-spacing: -0.1px;
   color: var(--text-tertiary);
 }
@@ -891,7 +890,7 @@
   color: var(--green-text);
 }
 #lf-pc-calc .lpc-return-sub.neg {
-  color: var(--color-error-700);
+  color: var(--color-error-600);
 }
 
 /* ---------- Tables (compare + risk) ---------- */
