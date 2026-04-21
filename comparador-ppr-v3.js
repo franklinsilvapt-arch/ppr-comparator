@@ -87,7 +87,8 @@
           </svg>
         </button>
         <div class="lpc-chart-menu-dropdown" id="lpc-chart-menu-dropdown" hidden role="menu">
-          <button type="button" class="lpc-chart-menu-item" data-action="export-png" role="menuitem"><span class="lpc-chart-menu-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="2.5" width="15" height="15" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 14V9.5M10 14V6.5M14 14V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>Descarregar gráfico</button>
+          <button type="button" class="lpc-chart-menu-item" data-action="export-png" role="menuitem"><span class="lpc-chart-menu-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="2.5" width="15" height="15" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 14V9.5M10 14V6.5M14 14V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="lpc-chart-menu-label">Descarregar gráfico</span></button>
+          <button type="button" class="lpc-chart-menu-item" data-action="share-link" role="menuitem"><span class="lpc-chart-menu-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M8.5 11.5L11.5 8.5M7.5 6H6a3.5 3.5 0 0 0 0 7h1.5M12.5 14H14a3.5 3.5 0 0 0 0-7h-1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span><span class="lpc-chart-menu-label">Partilhar resultados</span></button>
         </div>
       </div>
     </div>
@@ -1456,6 +1457,65 @@
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !chartMenuDropdown.hidden) closeChartMenu();
     });
+    var shareBtn = chartMenuDropdown.querySelector('[data-action="share-link"]');
+    if (shareBtn) {
+      // Guarda o label original para restaurar após feedback "Link copiado!".
+      var shareLabelEl = shareBtn.querySelector('.lpc-chart-menu-label');
+      var shareLabelOriginal = shareLabelEl ? shareLabelEl.textContent : 'Partilhar resultados';
+      var shareFeedbackTimer = null;
+      shareBtn.addEventListener('click', function () {
+        // Link aponta para a página onde o comparador está embebido.
+        // Quando v3 corre directamente no Webflow, window.location.href já
+        // é literaciafinanceira.pt/comparador-ppr. Em legado iframe fica
+        // o URL do próprio embed (fallback aceitável).
+        var base = window.location.href.split('?')[0].split('#')[0];
+        var params = [];
+        var ids = selectedIds();
+        if (ids.length) params.push('ids=' + encodeURIComponent(ids.join(',')));
+        if (state.period && state.period !== 'since') params.push('period=' + encodeURIComponent(state.period));
+        if (state.mode && state.mode !== 'eur') params.push('mode=' + encodeURIComponent(state.mode));
+        if (state.showBenchmark) params.push('bench=1');
+        var url = params.length ? base + '?' + params.join('&') : base;
+        function showFeedback(msg) {
+          if (!shareLabelEl) return;
+          shareLabelEl.textContent = msg;
+          if (shareFeedbackTimer) clearTimeout(shareFeedbackTimer);
+          shareFeedbackTimer = setTimeout(function () {
+            shareLabelEl.textContent = shareLabelOriginal;
+            shareFeedbackTimer = null;
+          }, 1600);
+        }
+        function fallbackCopy(text) {
+          // Safari iOS e navegadores antigos sem clipboard API — usa
+          // textarea temporário + execCommand('copy').
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'fixed';
+            ta.style.top = '-1000px';
+            ta.style.left = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            ta.setSelectionRange(0, text.length);
+            var ok = document.execCommand('copy');
+            document.body.removeChild(ta);
+            return ok;
+          } catch (e) { return false; }
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(function () {
+            showFeedback('Link copiado!');
+          }).catch(function () {
+            var ok = fallbackCopy(url);
+            showFeedback(ok ? 'Link copiado!' : 'Copia manualmente');
+          });
+        } else {
+          var ok = fallbackCopy(url);
+          showFeedback(ok ? 'Link copiado!' : 'Copia manualmente');
+        }
+      });
+    }
     var exportBtn = chartMenuDropdown.querySelector('[data-action="export-png"]');
     if (exportBtn) {
       exportBtn.addEventListener('click', function () {
@@ -1689,6 +1749,51 @@
     updateBadge();
   }
 
+  // Parse de URL params (gerados pelo botão "Partilhar resultados").
+  // Formato: ?ids=id1,id2,id3&period=since&mode=eur&bench=1
+  // Ids inválidos são ignorados silenciosamente. Se houver pelo menos um
+  // id válido, faz commit automático para renderizar os resultados sem
+  // obrigar o utilizador a clicar em "Calcular" de novo.
+  function applyUrlParams() {
+    if (!window.location || !window.location.search) return;
+    var sp;
+    try { sp = new URLSearchParams(window.location.search); } catch (e) { return; }
+    var idsParam = sp.get('ids');
+    if (!idsParam) return;
+    var validIds = idsParam.split(',')
+      .map(function (s) { return s.trim(); })
+      .filter(function (s) { return !!s; })
+      .filter(function (id) {
+        return FUNDS && FUNDS.some(function (f) { return f.id === id; });
+      })
+      .slice(0, 3);
+    if (!validIds.length) return;
+    state.selected = [validIds[0] || null, validIds[1] || null, validIds[2] || null];
+    var period = sp.get('period');
+    if (period && ['since', 'ytd', '1y', '3y', '5y', '10y'].indexOf(period) !== -1) {
+      state.period = period;
+    }
+    var mode = sp.get('mode');
+    if (mode === 'pct' || mode === 'eur') state.mode = mode;
+    if (sp.get('bench') === '1') state.showBenchmark = true;
+    state.committed = true;
+    // Sincroniza UI: tabs active + checkbox do benchmark.
+    var periodBtns = root.querySelectorAll('#lpc-period-tabs .lpc-tab');
+    periodBtns.forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.period === state.period);
+    });
+    var modeBtns = root.querySelectorAll('#lpc-mode-tabs .lpc-tab');
+    modeBtns.forEach(function (b) {
+      b.classList.toggle('is-active', b.dataset.mode === state.mode);
+    });
+    var cb = document.getElementById('lpc-benchmark-checkbox');
+    if (cb) {
+      cb.checked = state.showBenchmark;
+      var stEl = document.getElementById('lpc-benchmark-state');
+      if (stEl) stEl.textContent = state.showBenchmark ? 'Ativo' : 'Inativo';
+    }
+  }
+
   // Tooltip positioning - calculado em JS para escapar a containing
   // blocks com overflow (ex: .lpc-table-wrap com overflow-x:auto) que
   // antes cortavam a bolha em Chrome. Também uniformiza comportamento
@@ -1827,6 +1932,13 @@
     }
     try { await loadData(); } catch (e) {
       if (console && console.warn) console.warn('loadData failed:', e);
+    }
+    // Aplica selecção vinda por URL (gerada pelo botão "Partilhar
+    // resultados"). Precisa de correr DEPOIS de loadData para validar
+    // os ids contra FUNDS — ids inválidos (fundo escondido/retirado do
+    // CMVM) são silenciosamente ignorados.
+    try { applyUrlParams(); } catch (e) {
+      if (console && console.warn) console.warn('applyUrlParams failed:', e);
     }
     // Re-render com os dados reais (ou fallback mock se fetch falhou).
     try { renderAll(); } catch (e) {
