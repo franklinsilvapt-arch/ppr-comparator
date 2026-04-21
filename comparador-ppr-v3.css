@@ -380,9 +380,12 @@
 #lf-pc-calc .lpc-calculate-btn:active:not(:disabled) {
   background: var(--color-brand-700);
 }
-/* Disabled mantém cor brand - UX: CTA visualmente sempre activo, o
-   estado "sem selecção" resolve-se via empty state nos resultados. */
+/* Disabled state - Figma 5496:9260: background #E9ECF1 (border-secondary)
+   + texto #96A0B0 (grey-400). O utilizador ve que o botao nao esta
+   accionavel enquanto nao seleccionar um PPR. */
 #lf-pc-calc .lpc-calculate-btn:disabled {
+  background: var(--border-secondary);
+  color: var(--color-grey-400);
   cursor: not-allowed;
 }
 /* is-dirty: há selecção que ainda não foi calculada. Ligeiro pulse
