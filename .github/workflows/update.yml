@@ -34,12 +34,20 @@ jobs:
         run: python main.py
 
       - name: Commit updated data
+        # Rebase+retry para lidar com race: se houver push para main durante
+        # o run, `git push` falha com fetch-first. Tentamos 3x com pull --rebase.
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add data/latest.json data/raw/*.csv || true
-          git diff --staged --quiet || git commit -m "chore: weekly PPR data update [skip ci]"
-          git push
+          git diff --staged --quiet && echo "Sem alteracoes em data/latest.json" && exit 0
+          git commit -m "chore: weekly PPR data update [skip ci]"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "push tentativa $i falhou, retry em 5s..."
+            sleep 5
+          done
+          echo "push falhou apos 3 tentativas" && exit 1
 
       # Opcional: deploy para Vercel em vez de GitHub Pages
       # - name: Deploy to Vercel

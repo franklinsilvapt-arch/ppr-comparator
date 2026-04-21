@@ -8,15 +8,20 @@ Mapeamento PPR risk_class → ETF:
   risk_class 5   → V80A  (Vanguard LifeStrategy 80% Equity)
   risk_class 6-7 → IWDA  (iShares Core MSCI World UCITS ETF Acc)
 
-Fonte: Yahoo Finance (Amsterdam listing, sufixo .AS).
+Fonte actual: Yahoo Finance (Amsterdam listing, sufixo .AS).
 A Investing.com foi descartada porque bloqueia o IP range dos runners do
 GitHub Actions (403) e matava o update semanal.
+
+Histórico pré-Yahoo: `data/bench_seed/{ticker}.csv` (opcional). Usado
+apenas para dates < primeira observação Yahoo. Actualmente só o V40A tem
+seed relevante (2020-12-10 → 2021-02-17, ~2 meses que o Yahoo não cobre).
 """
 from pathlib import Path
 import pandas as pd
 import yfinance as yf
 
 DATA_DIR = Path(__file__).parent.parent / "data" / "raw"
+SEED_DIR = Path(__file__).parent.parent / "data" / "bench_seed"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 BENCHMARKS = {
@@ -43,8 +48,22 @@ def risk_to_ticker(risk_class) -> str | None:
     return None
 
 
+def _load_seed(ticker: str) -> pd.Series | None:
+    """Carrega histórico pré-Yahoo de data/bench_seed/{ticker}.csv se existir."""
+    p = SEED_DIR / f"{ticker}.csv"
+    if not p.exists():
+        return None
+    df = pd.read_csv(p, index_col=0, parse_dates=True)
+    col = "Close" if "Close" in df.columns else df.columns[0]
+    s = df[col].dropna()
+    s.index = pd.to_datetime(s.index).tz_localize(None)
+    return s.sort_index()
+
+
 def run() -> dict[str, pd.Series]:
-    """Descarrega cotações diárias dos 5 ETFs via Yahoo. Retorna {ticker: Close Series}."""
+    """Descarrega cotações diárias dos 5 ETFs via Yahoo. Para dates < primeira
+    observação Yahoo, completa com seed de data/bench_seed/ (Investing legacy).
+    Yahoo sempre ganha no overlap — só se puxa seed para o tail anterior."""
     results: dict[str, pd.Series] = {}
     for ticker, info in BENCHMARKS.items():
         y_ticker = info["yahoo"]
@@ -52,13 +71,28 @@ def run() -> dict[str, pd.Series]:
         try:
             hist = yf.Ticker(y_ticker).history(period="max", auto_adjust=False)
             if hist.empty:
-                print(f"[bench]   sem dados")
+                print(f"[bench]   sem dados Yahoo")
                 continue
-            s = hist["Close"].dropna()
-            s.index = pd.to_datetime(s.index).tz_localize(None)
-            s = s.sort_index()
+            yahoo_s = hist["Close"].dropna()
+            yahoo_s.index = pd.to_datetime(yahoo_s.index).tz_localize(None)
+            yahoo_s = yahoo_s.sort_index()
+
+            seed_s = _load_seed(ticker)
+            if seed_s is not None and not seed_s.empty:
+                yahoo_start = yahoo_s.index[0]
+                seed_tail = seed_s[seed_s.index < yahoo_start]
+                if len(seed_tail) > 0:
+                    merged = pd.concat([seed_tail, yahoo_s]).sort_index()
+                    merged = merged[~merged.index.duplicated(keep="last")]
+                    print(f"[bench]   seed: +{len(seed_tail)} obs pre-{yahoo_start.date()} (Investing legacy)")
+                    s = merged
+                else:
+                    s = yahoo_s
+            else:
+                s = yahoo_s
+
             results[ticker] = s
-            hist[["Close"]].to_csv(DATA_DIR / f"{ticker}.csv")
+            s.to_frame("Close").to_csv(DATA_DIR / f"{ticker}.csv")
             print(f"[bench]   {len(s)} obs ({s.index[0].date()} a {s.index[-1].date()})")
         except Exception as e:
             print(f"[bench] ERROR {ticker}: {e}")
