@@ -228,7 +228,7 @@
 /* Footer discreto com a data de actualização - no fim do comparador.
    Estilo subtil, sem pill de fundo, para não competir com o disclaimer. */
 /* Figma 5515:18875: gap 6px, pt 12px, sem pb/margin-bottom, texto 12/18
-   Inter Regular -0.1 color #4F5969, icon 16x16 verde. */
+   Inter Regular -0.1 color #4F5969 (text-tertiary), icon 16x16 verde. */
 #lf-pc-calc .lpc-footer-updated {
   display: flex;
   align-items: center;
@@ -239,7 +239,7 @@
   font-size: 12px;
   line-height: 18px;
   letter-spacing: -0.1px;
-  color: #4F5969;
+  color: var(--text-tertiary);
   font-weight: 400;
 }
 #lf-pc-calc .lpc-updated-check {
