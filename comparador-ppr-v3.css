@@ -658,6 +658,15 @@
   width: auto;
   height: auto;
   vertical-align: middle;
+  /* Icon herda a cor do tab (SVG usa stroke:currentColor).
+     Default #697386, active #155EEF via .lpc-tab.is-active.
+     Figma 224:1444 (design system tabs). */
+  color: inherit;
+}
+#lf-pc-calc .lpc-tab:hover .lpc-info-icon--tab,
+#lf-pc-calc .lpc-tab .lpc-info-icon--tab:hover,
+#lf-pc-calc .lpc-tab .lpc-info-icon--tab.is-open {
+  color: inherit;
 }
 #lf-pc-calc .lpc-tab .lpc-info-icon--tab::before {
   content: none;
