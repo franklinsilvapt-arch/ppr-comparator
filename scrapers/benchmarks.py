@@ -2,28 +2,29 @@
 Scraper para ETFs benchmark usados como referência por nível de risco.
 
 Mapeamento PPR risk_class → ETF:
-  risk_class 2   → V20A  (Vanguard LifeStrategy 20% Equity, Amsterdam)
-  risk_class 3   → V40A  (Vanguard LifeStrategy 40% Equity, Milan)
-  risk_class 4   → V60A  (Vanguard LifeStrategy 60% Equity, Amsterdam)
-  risk_class 5   → V80A  (Vanguard LifeStrategy 80% Equity, Amsterdam)
+  risk_class 1-2 → V20A  (Vanguard LifeStrategy 20% Equity)
+  risk_class 3   → V40A  (Vanguard LifeStrategy 40% Equity)
+  risk_class 4   → V60A  (Vanguard LifeStrategy 60% Equity)
+  risk_class 5   → V80A  (Vanguard LifeStrategy 80% Equity)
   risk_class 6-7 → IWDA  (iShares Core MSCI World UCITS ETF Acc)
 
-Usa scrapers/investing.py como transport (API Investing.com via curl_cffi).
+Fonte: Yahoo Finance (Amsterdam listing, sufixo .AS).
+A Investing.com foi descartada porque bloqueia o IP range dos runners do
+GitHub Actions (403) e matava o update semanal.
 """
 from pathlib import Path
 import pandas as pd
-
-from scrapers import investing
+import yfinance as yf
 
 DATA_DIR = Path(__file__).parent.parent / "data" / "raw"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 BENCHMARKS = {
-    "V20A": {"pair_id": 1188907, "name": "Vanguard LifeStrategy 20% Equity (EUR)", "risk": [1, 2]},
-    "V40A": {"pair_id": 1168631, "name": "Vanguard LifeStrategy 40% Equity (EUR)", "risk": [3]},
-    "V60A": {"pair_id": 1188924, "name": "Vanguard LifeStrategy 60% Equity (EUR)", "risk": [4]},
-    "V80A": {"pair_id": 1188906, "name": "Vanguard LifeStrategy 80% Equity (EUR)", "risk": [5]},
-    "IWDA": {"pair_id": 47285,   "name": "iShares Core MSCI World (EUR)",          "risk": [6, 7]},
+    "V20A": {"yahoo": "V20A.AS", "name": "Vanguard LifeStrategy 20% Equity (EUR)", "risk": [1, 2]},
+    "V40A": {"yahoo": "V40A.AS", "name": "Vanguard LifeStrategy 40% Equity (EUR)", "risk": [3]},
+    "V60A": {"yahoo": "V60A.AS", "name": "Vanguard LifeStrategy 60% Equity (EUR)", "risk": [4]},
+    "V80A": {"yahoo": "V80A.AS", "name": "Vanguard LifeStrategy 80% Equity (EUR)", "risk": [5]},
+    "IWDA": {"yahoo": "IWDA.AS", "name": "iShares Core MSCI World (EUR)",          "risk": [6, 7]},
 }
 
 
@@ -43,18 +44,21 @@ def risk_to_ticker(risk_class) -> str | None:
 
 
 def run() -> dict[str, pd.Series]:
-    """Descarrega cotações diárias dos 5 ETFs. Retorna {ticker: Close Series}."""
+    """Descarrega cotações diárias dos 5 ETFs via Yahoo. Retorna {ticker: Close Series}."""
     results: dict[str, pd.Series] = {}
     for ticker, info in BENCHMARKS.items():
-        print(f"[bench] {ticker} ({info['name']}) pair_id={info['pair_id']}...")
+        y_ticker = info["yahoo"]
+        print(f"[bench] {ticker} ({info['name']}) yahoo={y_ticker}...")
         try:
-            df = investing.fetch_history(info["pair_id"], start="2010-01-01")
-            if df.empty:
+            hist = yf.Ticker(y_ticker).history(period="max", auto_adjust=False)
+            if hist.empty:
                 print(f"[bench]   sem dados")
                 continue
-            s = df["Close"].dropna().sort_index()
+            s = hist["Close"].dropna()
+            s.index = pd.to_datetime(s.index).tz_localize(None)
+            s = s.sort_index()
             results[ticker] = s
-            df.to_csv(DATA_DIR / f"{ticker}.csv")
+            hist[["Close"]].to_csv(DATA_DIR / f"{ticker}.csv")
             print(f"[bench]   {len(s)} obs ({s.index[0].date()} a {s.index[-1].date()})")
         except Exception as e:
             print(f"[bench] ERROR {ticker}: {e}")
