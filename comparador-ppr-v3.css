@@ -945,12 +945,13 @@
 }
 #lf-pc-calc .lpc-benchmark-card-head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
 }
 #lf-pc-calc .lpc-benchmark-card-pipe {
   width: 2px;
-  height: 18px;
+  height: 12px;
+  margin-top: 3px;
   background: var(--color-grey-700);
   flex-shrink: 0;
 }
@@ -997,7 +998,8 @@
 }
 #lf-pc-calc .lpc-swatch {
   width: 2px;
-  height: 18px;
+  height: 12px;
+  margin-top: 3px;
   flex-shrink: 0;
 }
 #lf-pc-calc .lpc-return-value {
