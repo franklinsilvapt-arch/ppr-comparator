@@ -985,8 +985,8 @@
 }
 #lf-pc-calc .lpc-benchmark-card-pipe {
   width: 2px;
-  height: 12px;
-  margin-top: 3px;
+  height: 10px;
+  margin-top: 4px;
   background: var(--color-grey-700);
   flex-shrink: 0;
 }
@@ -1033,16 +1033,20 @@
 }
 #lf-pc-calc .lpc-swatch {
   width: 2px;
-  height: 12px;
-  margin-top: 3px;
+  height: 10px;
+  margin-top: 4px;
   flex-shrink: 0;
 }
+/* margin-top:auto empurra valor+% para o fundo do card. Em linhas onde
+   um card tem titulo 1 linha e outro tem 2, os numeros alinham pela
+   base — gap titulo→valor passa a ser "auto" (o que restar no card). */
 #lf-pc-calc .lpc-return-value {
   font-size: 24px;
   font-weight: 500;
   line-height: 32px;
   letter-spacing: -0.6px;
   color: var(--text-primary);
+  margin-top: auto;
 }
 #lf-pc-calc .lpc-return-value.pos,
 #lf-pc-calc .lpc-return-value .pos {
