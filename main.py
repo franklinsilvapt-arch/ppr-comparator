@@ -109,7 +109,12 @@ def main():
             if inc:
                 prices = prices[prices.index >= pd.Timestamp(inc)]
             if not prices.empty:
-                latest_dates.append(prices.index[-1])
+                # Só fundos visíveis contam para data_as_of. Hidden funds
+                # (ex: BIZ Europa descontinuado em 2025-11) ficariam com
+                # latest date antigo e puxariam o rodapé "Atualizado a..."
+                # para uma data enganadora.
+                if not bool(f.get("hidden")):
+                    latest_dates.append(prices.index[-1])
                 entry["returns"] = calc_metrics.calc_returns(prices)
                 entry["risk"] = calc_metrics.calc_risk(prices, benchmark)
                 entry["series"] = {
