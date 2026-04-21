@@ -454,8 +454,8 @@
   border-color: var(--border-hover);
 }
 #lf-pc-calc .lpc-slot-input:focus {
-  border-color: #3A4454;
-  box-shadow: 0 0 0 4px rgba(58, 68, 84, 0.08);
+  border-color: #84ADFF;
+  box-shadow: 0 0 0 4px #D1E0FF;
 }
 #lf-pc-calc .lpc-slot.is-filled .lpc-slot-input {
   padding-left: 14px;
@@ -570,7 +570,7 @@
 
 /* ---------- Tabs (período e modo) ---------- */
 #lf-pc-calc .lpc-chart-title-row {
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: 24px;
 }
 /* Figma 5515:19322 — "Rentabilidade acumulada": Body/Text lg/Medium
    (Inter Medium 18/26 tracking -0.3, color text-primary #202432). */
@@ -620,7 +620,7 @@
   letter-spacing: -0.1px;
   color: #4F5969;
   margin-top: var(--spacing-xl);
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: 16px;
 }
 #lf-pc-calc .lpc-chart-hint:empty { display: none; margin: 0; }
 #lf-pc-calc .lpc-tabs {
