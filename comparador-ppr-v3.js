@@ -87,7 +87,7 @@
           </svg>
         </button>
         <div class="lpc-chart-menu-dropdown" id="lpc-chart-menu-dropdown" hidden role="menu">
-          <button type="button" class="lpc-chart-menu-item" data-action="export-png" role="menuitem">Exportar imagem (PNG)</button>
+          <button type="button" class="lpc-chart-menu-item" data-action="export-png" role="menuitem"><span class="lpc-chart-menu-icon" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2.5" y="2.5" width="15" height="15" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M6 14V9.5M10 14V6.5M14 14V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>Descarregar gráfico</button>
         </div>
       </div>
     </div>

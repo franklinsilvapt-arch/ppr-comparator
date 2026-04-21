@@ -750,7 +750,9 @@
   padding: 4px;
 }
 #lf-pc-calc .lpc-chart-menu-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
   width: 100%;
   padding: 8px 12px;
   background: transparent;
@@ -762,6 +764,20 @@
   color: var(--text-primary);
   cursor: pointer;
   border-radius: var(--radius-sm);
+}
+#lf-pc-calc .lpc-chart-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+#lf-pc-calc .lpc-chart-menu-icon > svg {
+  display: block;
+  width: 18px;
+  height: 18px;
 }
 #lf-pc-calc .lpc-chart-menu-item:hover {
   background: var(--bg-secondary);
