@@ -5,6 +5,9 @@ on:
     - cron: "0 8 * * 1"   # segundas às 08:00 UTC
   workflow_dispatch:        # permite correr manualmente
 
+permissions:
+  contents: write            # necessário para git push no passo 'Commit updated data'
+
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -21,6 +24,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
+      - name: Scrape CMVM universe
+        # universe.py carrega data/raw/cmvm_ppr_list.json; data/raw/ está no
+        # .gitignore logo não vem no checkout — tem de ser re-gerado a cada run.
+        run: python -m scrapers.cmvm
 
       - name: Run pipeline
         run: python main.py
