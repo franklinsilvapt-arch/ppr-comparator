@@ -231,8 +231,9 @@
   var BENCHMARK = null;  // {labels, data, ticker, name} do JSON backend
   var BENCHMARKS_BY_TICKER = {};  // {V20A: {labels, data, ticker, name, risk}, ...}
 
-  // Paleta (design system): azul primário, laranja acento, verde acento.
-  var SERIES_COLORS = ['#155EEF', '#FD8D2B', '#12B76A', '#8E44AD', '#B42318', '#0D9488'];
+  // Paleta (design system): laranja, azul, roxo — alinhada com os dots dos
+  // slots de input (.lpc-slot-dot no CSS: #FF5A1F/#2970FF/#875BF7).
+  var SERIES_COLORS = ['#FF5A1F', '#2970FF', '#875BF7', '#8E44AD', '#B42318', '#0D9488'];
   var BASE_EUR = 1000;
   var MAX_SELECT = 3;
   var PREFERRED_DEFAULTS = ['invest-ar', 'casa-inv-sg-founders', 'sgf-dr-financas'];
