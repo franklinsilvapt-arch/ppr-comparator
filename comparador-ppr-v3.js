@@ -1122,7 +1122,7 @@
           var v = formatPct(f.returns.ann);
           if (f.returns.ann == null) return v;
           var yrs = f.returns.ann_years;
-          if (yrs) v += ' <span style="color:#96A0B0;font-weight:500;font-size:11px">(' + yrs.toLocaleString('pt-PT').replace('.', ',') + 'a)</span>';
+          if (yrs) v += ' <span style="color:#697386;font-weight:500">(' + yrs.toLocaleString('pt-PT').replace('.', ',') + 'a)</span>';
           return v;
         } }
     ];
