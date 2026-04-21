@@ -899,6 +899,13 @@
 }
 #lf-pc-calc .lpc-benchmark-text {
   white-space: nowrap;
+  color: #697386;
+  transition: color 0.15s ease;
+}
+/* Active state (toggle on): texto passa de #697386 (quaternary) para
+   #3A4454 (secondary-700). Figma 5515:18720. */
+#lf-pc-calc #lpc-benchmark-checkbox:checked ~ .lpc-benchmark-text {
+  color: #3A4454;
 }
 
 /* Labels mobile-only: "Visualização" e "Comparar com ETFs de referência".
