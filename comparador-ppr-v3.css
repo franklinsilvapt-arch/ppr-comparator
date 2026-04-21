@@ -264,14 +264,16 @@
 }
 
 /* ---------- Empty state (mostrado antes de carregar "Calcular") ----------
-   Card branco com padding grande, ícone cinzento num quadrado soft e
-   texto centrado. Replica o padrão das restantes calculadoras do
-   literaciafinanceira.pt (ex: calculadora de juros compostos). */
+   Espelho do design da calculadora de juros compostos em
+   literaciafinanceira.pt (.table-results_wrapper.is-placeholcer):
+   card branco com border 4px #F2F4F7, radius 20px, padding 48px all,
+   SVG 48x48 (squircle fill #F2F4F7 + line-art stroke #CED5DF),
+   texto 14/20 Inter #697386 max-width 288px, semibold no "Calcular". */
 #lf-pc-calc .lpc-empty-state {
   background: var(--bg-white);
   border-radius: var(--radius-3xl);
   border: 4px solid var(--border-tertiary);
-  padding: 64px var(--spacing-6xl);
+  padding: 48px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -285,28 +287,26 @@
   justify-content: center;
   width: 48px;
   height: 48px;
-  border-radius: var(--radius-md);
-  background: var(--bg-tertiary);
-  color: var(--color-grey-400);
   flex-shrink: 0;
 }
 #lf-pc-calc .lpc-empty-state-icon > svg {
   display: block;
-  width: 24px;
-  height: 24px;
+  width: 48px;
+  height: 48px;
 }
 #lf-pc-calc .lpc-empty-state-text {
   margin: 0;
+  font-family: 'Inter', sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
-  letter-spacing: -0.1px;
+  letter-spacing: -0.2px;
   color: var(--text-quaternary);
-  max-width: 360px;
+  max-width: 288px;
 }
 #lf-pc-calc .lpc-empty-state-text strong {
   font-weight: 600;
-  color: var(--text-secondary);
+  color: inherit;
 }
 
 /* ---------- Section label (Figma: "Escolhe até 3 PPR para comparar") ---------- */
