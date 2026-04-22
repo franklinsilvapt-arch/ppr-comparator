@@ -62,28 +62,55 @@ def main():
 
     all_prices = {**yahoo_data, **investing_data, **sgf_data, **oxy_data, **ft_data}
 
-    # Fallback: se um fundo não veio de nenhum scraper mas tem CSV em
-    # data/history_cache/, usa esse histórico (evita perder fundos quando
-    # a fonte primária falha — ex: Investing.com a bloquear o runner).
-    # Regra do projecto: nunca apagar PPR da lista por falha de fetch.
+    # history_cache: duas funções.
+    # (a) Fallback puro: se nenhum scraper devolveu dados, usa o cache
+    #     (regra: nunca apagar PPR da lista por falha de fetch).
+    # (b) Merge de tail: se o scraper devolveu dados mas o cache tem
+    #     histórico MAIS LONGO (dates < primeira obs do scraper), usa o
+    #     cache para o tail pré-fetch. Preserva histórico legacy do
+    #     Investing.com para fundos migrados para Yahoo (Yahoo só dá
+    #     ~2022+ para estes PPRs, Investing tinha 2010+).
     CACHE_DIR = DATA_DIR / "history_cache"
     if CACHE_DIR.exists():
         for f in funds:
             fid = f["id"]
-            if fid in all_prices:
-                continue
             cache_path = CACHE_DIR / f"{fid}.csv"
             if not cache_path.exists():
                 continue
             try:
-                df = pd.read_csv(cache_path, index_col=0, parse_dates=True)
-                if not df.empty:
-                    all_prices[fid] = df
+                cache_df = pd.read_csv(cache_path, index_col=0, parse_dates=True)
+                if cache_df.empty:
+                    continue
+                # Normaliza índice para comparação consistente
+                cache_df.index = pd.to_datetime(cache_df.index).tz_localize(None)
+                cache_df = cache_df.sort_index()
+
+                if fid not in all_prices:
+                    # (a) Fallback puro
+                    all_prices[fid] = cache_df
                     src = f.get("source", "?")
-                    last = df.index[-1].date()
+                    last = cache_df.index[-1].date()
                     print(f"[WARN] {fid}: fetch {src} falhou, a usar history_cache (last={last})")
+                else:
+                    # (b) Merge de tail
+                    fresh_df = all_prices[fid].copy()
+                    fresh_df.index = pd.to_datetime(fresh_df.index).tz_localize(None)
+                    fresh_df = fresh_df.sort_index()
+                    fresh_start = fresh_df.index[0]
+                    cache_tail = cache_df[cache_df.index < fresh_start]
+                    if len(cache_tail) > 0:
+                        # Usa coluna Close se existir, senão primeira coluna
+                        col = "Close" if "Close" in cache_tail.columns else cache_tail.columns[0]
+                        fresh_col = "Close" if "Close" in fresh_df.columns else fresh_df.columns[0]
+                        merged = pd.concat([
+                            cache_tail[[col]].rename(columns={col: "Close"}),
+                            fresh_df[[fresh_col]].rename(columns={fresh_col: "Close"}),
+                        ]).sort_index()
+                        merged = merged[~merged.index.duplicated(keep="last")]
+                        all_prices[fid] = merged
+                        print(f"[cache-merge] {fid}: +{len(cache_tail)} obs pre-{fresh_start.date()} (legacy)")
             except Exception as e:
-                print(f"[WARN] {fid}: cache read falhou: {e}")
+                print(f"[WARN] {fid}: cache read/merge falhou: {e}")
 
     print(f"\nTotal fundos com dados: {len(all_prices)}/{len(funds)}")
 

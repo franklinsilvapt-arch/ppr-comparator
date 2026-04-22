@@ -30,8 +30,8 @@ MANUAL_OVERRIDES = [
         "id": "invest-ar",
         "isin": "PTYINVIM0007",
         "min_subs": 50,
-        "source": "investing",
-        "investing_pair_id": 1011177,
+        "source": "yahoo",
+        "yahoo_ticker": "0P000011IR.F",
     },
     # --- Plataforma IMGA (hospeda ABANCA + IMGA) ---
     # ISINs ABANCA obtidos via search FT (IMGA não os expõe no HTML).
@@ -136,13 +136,13 @@ MANUAL_OVERRIDES = [
      "isin": "PTSFFAHM0013", "min_subs": 25},
     {"match": "santander poupança prudente",   "site_url": "https://www.santander.pt/poupanca-reforma/poupanca-prudente-fpr"},
     {"match": "santander poupança valorização","site_url": "https://www.santander.pt/poupanca-reforma/poupanca-valorizacao-fpr",
-     "investing_pair_id": 1185153, "source": "investing"},
-    # --- Optimize Ativo via Investing (FT não indexa) ---
+     "yahoo_ticker": "0P0000138F.F", "source": "yahoo"},
+    # --- Optimize Ativo via Yahoo (Investing bloqueia GH Actions) ---
     {"match": "optimize ppr/oicvm ativo",
-     "investing_pair_id": 1165559, "source": "investing"},
-    # --- GNB Global Equities via Investing ---
+     "yahoo_ticker": "0P0000UP12.F", "source": "yahoo"},
+    # --- GNB Global Equities via Yahoo ---
     {"match": "gnb ppr/oicvm global equities",
-     "investing_pair_id": 1239690, "source": "investing"},
+     "yahoo_ticker": "0P0001XKBK.F", "source": "yahoo"},
     # --- Smart Invest (Banco Invest, 1 URL cobre os 3) ---
     {"match": "smart invest ppr",              "site_url": "https://www.bancoinvest.pt/poupanca-e-investimento/pprs/smart-invest",
      "min_subs": 50},
@@ -317,8 +317,9 @@ MANUAL_OVERRIDES.extend([
         # Founders: €250.000 para novas subscrições (primeiros 2630 investidores
         # já encerrados em 2021). Valores do IFI Save & Grow (11-02-2026).
         "min_subs": 250000,
-        # ISIN resolve no FT — fonte primaria (Investing bloqueia GH Actions).
-        "source": "ft",
+        # Yahoo (Investing bloqueia GH Actions; FT tem so 69 obs).
+        "source": "yahoo",
+        "yahoo_ticker": "0P0001LAO7.F",
     },
     {
         "match": "save & grow ppr/oicvm - categoria 02",
@@ -328,7 +329,8 @@ MANUAL_OVERRIDES.extend([
         "isin": "PTCUUAHM0005",
         "tec": 1.66,
         "min_subs": 1000,   # IFI: 1.000 EUR inicial; 100 EUR subsequentes
-        "source": "ft",
+        "source": "yahoo",
+        "yahoo_ticker": "0P0001LAO6.F",
     },
 ])
 
