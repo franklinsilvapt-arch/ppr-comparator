@@ -61,6 +61,30 @@ def main():
     ft_data = ft.run(funds, already_fetched=fetched_so_far)
 
     all_prices = {**yahoo_data, **investing_data, **sgf_data, **oxy_data, **ft_data}
+
+    # Fallback: se um fundo não veio de nenhum scraper mas tem CSV em
+    # data/history_cache/, usa esse histórico (evita perder fundos quando
+    # a fonte primária falha — ex: Investing.com a bloquear o runner).
+    # Regra do projecto: nunca apagar PPR da lista por falha de fetch.
+    CACHE_DIR = DATA_DIR / "history_cache"
+    if CACHE_DIR.exists():
+        for f in funds:
+            fid = f["id"]
+            if fid in all_prices:
+                continue
+            cache_path = CACHE_DIR / f"{fid}.csv"
+            if not cache_path.exists():
+                continue
+            try:
+                df = pd.read_csv(cache_path, index_col=0, parse_dates=True)
+                if not df.empty:
+                    all_prices[fid] = df
+                    src = f.get("source", "?")
+                    last = df.index[-1].date()
+                    print(f"[WARN] {fid}: fetch {src} falhou, a usar history_cache (last={last})")
+            except Exception as e:
+                print(f"[WARN] {fid}: cache read falhou: {e}")
+
     print(f"\nTotal fundos com dados: {len(all_prices)}/{len(funds)}")
 
     # 2. Benchmark
