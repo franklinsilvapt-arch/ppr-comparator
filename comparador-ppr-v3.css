@@ -1506,28 +1506,38 @@
      'Investimento simulado...' + label 'Comparar com ETFs' + switch
      com texto Ativo/Inativo. Hint e reposicionado via JS
      (positionChartHint) para ficar entre mode-toggle e benchmark-label. */
+  /* Figma 5518:34272 (chart) + 5531:37192 (toggle group 1).
+     Dois grupos de filtros separados por border-bottom no primeiro.
+     Spacings explicitos via margin por elemento (gap:0) para match 1:1. */
   #lf-pc-calc .lpc-chart-modes-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 6px;                               /* label -> toggle */
-    margin-top: var(--spacing-4xl);
-    margin-bottom: var(--spacing-4xl);      /* espaco para o chart abaixo */
+    gap: 0;
+    margin-top: var(--spacing-4xl);        /* 24px para titulo/tabs acima */
+    margin-bottom: var(--spacing-2xl);     /* 16px para chart canvas abaixo */
   }
   /* Em desktop o periods-row tem border-bottom como separador para a
-     modes-row ao lado. Em mobile o gap de 24px ja separa visualmente;
-     a linha pode aparecer sub-pixel num sitio estranho (feedback 23-Abr). */
+     modes-row ao lado. Em mobile nao e necessario (layout em coluna). */
   #lf-pc-calc .lpc-chart-periods-row {
     border-bottom: none;
     padding-bottom: 0;
   }
-  /* 24px entre filtro Visualizacao (hint = ultima linha) e label
-     'Comparar com ETFs'. Gap default 6px + margin-top 18px = 24px. */
-  #lf-pc-calc .lpc-chart-modes-row .lpc-benchmark-label-mobile {
-    margin-top: 18px;
+  /* Grupo 1: Visualizacao -> mode-toggle (6px) -> hint (12px) -> borda 1px */
+  #lf-pc-calc .lpc-chart-modes-row .lpc-mode-label-mobile {
+    margin-bottom: 6px;
   }
-  /* Hint no modes-row em mobile: sem margins proprias, usa so o gap. */
+  #lf-pc-calc .lpc-chart-modes-row .lpc-mode-toggle {
+    margin-bottom: 12px;
+  }
   #lf-pc-calc .lpc-chart-modes-row > .lpc-chart-hint {
     margin: 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-secondary);
+  }
+  /* Grupo 2: padding-top 12px + label (6px para toggle abaixo) */
+  #lf-pc-calc .lpc-chart-modes-row .lpc-benchmark-label-mobile {
+    margin-top: 12px;
+    margin-bottom: 6px;
   }
   #lf-pc-calc .lpc-mobile-label {
     display: flex;
