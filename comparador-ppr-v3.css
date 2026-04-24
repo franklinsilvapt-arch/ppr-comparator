@@ -1433,6 +1433,18 @@
   #lf-pc-calc .lpc-chart-modes-row {
     flex-wrap: nowrap;
   }
+  /* Kebab (lpc-chart-menu) em mobile: sai do periods-row e ancora ao
+     canto superior direito do chart-card, alinhado com o titulo.
+     Mantem a tab bar livre para scroll horizontal sem o botao a tapar. */
+  #lf-pc-calc .lpc-chart-card {
+    position: relative;
+  }
+  #lf-pc-calc .lpc-chart-periods-row > .lpc-chart-menu {
+    position: absolute;
+    top: calc(var(--spacing-4xl) - 3px);
+    right: var(--spacing-3xl);
+    margin-left: 0;
+  }
   #lf-pc-calc #lpc-period-tabs {
     overflow-x: auto;
     flex-wrap: nowrap;
