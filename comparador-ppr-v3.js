@@ -87,9 +87,9 @@
           </svg>
         </button>
         <div class="lpc-chart-menu-dropdown" id="lpc-chart-menu-dropdown" hidden role="menu">
-          <button type="button" class="lpc-chart-menu-item" data-action="export-png" role="menuitem"><span class="lpc-chart-menu-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3.33 13.33V7.33M8 13.33V2.67M12.67 13.33V8.67" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"/></svg></span><span class="lpc-chart-menu-label">Descarregar gráfico</span></button>
+          <button type="button" class="lpc-chart-menu-item" data-action="export-png" role="menuitem"><span class="lpc-chart-menu-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.33"/><path d="M5.33 9v3M8 5.33v6.67M10.67 7.33v4.67" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"/></svg></span><span class="lpc-chart-menu-label">Descarregar gráfico</span></button>
           <div class="lpc-chart-menu-divider" role="separator" aria-hidden="true"></div>
-          <button type="button" class="lpc-chart-menu-item" data-action="share-link" role="menuitem"><span class="lpc-chart-menu-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 10V2M8 2L5 5M8 2l3 3M3.33 10v2a1.33 1.33 0 0 0 1.34 1.33h6.66A1.33 1.33 0 0 0 12.67 12v-2" stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lpc-chart-menu-label">Partilhar resultados</span></button>
+          <button type="button" class="lpc-chart-menu-item" data-action="share-link" role="menuitem"><span class="lpc-chart-menu-icon" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 10.67V2M8 2L5 5M8 2l3 3M2.67 10.67v1.33a1.33 1.33 0 0 0 1.33 1.33h8a1.33 1.33 0 0 0 1.33-1.33v-1.33" stroke="currentColor" stroke-width="1.33" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="lpc-chart-menu-label">Partilhar resultados</span></button>
         </div>
       </div>
     </div>

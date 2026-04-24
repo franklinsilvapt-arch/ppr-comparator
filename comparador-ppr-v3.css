@@ -783,9 +783,12 @@
   font-weight: 500;
   line-height: 20px;
   letter-spacing: -0.2px;
-  color: var(--text-secondary);
+  color: #3a4454;                      /* Figma text-secondary-700 */
   cursor: pointer;
   border-radius: var(--radius-xl);
+}
+#lf-pc-calc .lpc-chart-menu-label {
+  color: #3a4454;                      /* explicito para evitar herdancas do Webflow */
 }
 #lf-pc-calc .lpc-chart-menu-icon {
   display: inline-flex;
@@ -793,16 +796,18 @@
   justify-content: center;
   width: 16px;
   height: 16px;
-  color: var(--text-secondary);
+  color: #3a4454;
   flex-shrink: 0;
+  transition: color 0.15s ease;
 }
 #lf-pc-calc .lpc-chart-menu-icon > svg {
   display: block;
   width: 16px;
   height: 16px;
 }
-#lf-pc-calc .lpc-chart-menu-item:hover {
-  background: var(--bg-secondary);
+/* Hover: so o icon muda de cor (brand orange). Sem background change. */
+#lf-pc-calc .lpc-chart-menu-item:hover .lpc-chart-menu-icon {
+  color: var(--color-brand-500);
 }
 #lf-pc-calc .lpc-chart-menu-divider {
   height: 1px;
