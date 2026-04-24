@@ -1306,7 +1306,7 @@
   width: 14px;
   height: 14px;
   color: var(--color-grey-400);
-  cursor: help;
+  cursor: pointer;
   line-height: 0;
   vertical-align: middle;
   transition: color 0.15s ease;
@@ -1316,7 +1316,7 @@
   content: '';
   position: absolute;
   inset: -6px;
-  cursor: help;
+  cursor: pointer;
 }
 #lf-pc-calc .lpc-info-icon > svg {
   display: block;
