@@ -160,6 +160,14 @@
   margin: 0 auto;
   padding: 0;
 }
+/* .lpc-results envolve chart-card + compare + risk + footer. Precisa de
+   ser flex-column para o gap de 24px se propagar — sem isto, os cards
+   ficavam colados verticalmente (feedback mobile 23-Abr). */
+#lf-pc-calc .lpc-results {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4xl);
+}
 
 /* ---------- Card shell ---------- */
 /* Figma 5517:31956: border 4px #F2F4F7 (border-tertiary-100), sem
@@ -234,7 +242,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
-  margin-top: var(--spacing-6xl);
+  /* 16px + 24px gap do .lpc-results = 40px total antes do footer
+     (igual ao margin-top original de var(--spacing-6xl)). */
+  margin-top: var(--spacing-2xl);
   margin-bottom: 0;
   font-size: 12px;
   line-height: 18px;
