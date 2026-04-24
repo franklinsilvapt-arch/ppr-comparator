@@ -1239,6 +1239,8 @@
 #lf-pc-calc .lpc-fund-col {
   color: var(--text-primary);
   vertical-align: middle;
+  width: 140px;
+  min-width: 140px;
 }
 /* .lpc-fund-col-inner serve como contexto de posicionamento (position:
    relative em <th> tem quirks em alguns browsers — usar um div normal
