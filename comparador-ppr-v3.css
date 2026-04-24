@@ -1544,12 +1544,6 @@
     margin-top: var(--spacing-4xl);        /* 24px para titulo/tabs acima */
     margin-bottom: var(--spacing-2xl);     /* 16px para chart canvas abaixo */
   }
-  /* Em desktop o periods-row tem border-bottom como separador para a
-     modes-row ao lado. Em mobile nao e necessario (layout em coluna). */
-  #lf-pc-calc .lpc-chart-periods-row {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
   /* Grupo 1: Visualizacao -> mode-toggle (6px) -> hint (12px) -> borda 1px */
   #lf-pc-calc .lpc-chart-modes-row .lpc-mode-label-mobile {
     margin-bottom: 6px;
