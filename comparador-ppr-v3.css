@@ -1511,6 +1511,14 @@
     align-items: stretch;
     gap: 6px;                               /* label -> toggle */
     margin-top: var(--spacing-4xl);
+    margin-bottom: var(--spacing-4xl);      /* espaco para o chart abaixo */
+  }
+  /* Em desktop o periods-row tem border-bottom como separador para a
+     modes-row ao lado. Em mobile o gap de 24px ja separa visualmente;
+     a linha pode aparecer sub-pixel num sitio estranho (feedback 23-Abr). */
+  #lf-pc-calc .lpc-chart-periods-row {
+    border-bottom: none;
+    padding-bottom: 0;
   }
   /* 24px entre filtro Visualizacao (hint = ultima linha) e label
      'Comparar com ETFs'. Gap default 6px + margin-top 18px = 24px. */
