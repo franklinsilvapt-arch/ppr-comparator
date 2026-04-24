@@ -158,7 +158,7 @@
   gap: var(--spacing-4xl);
   max-width: 842px;
   margin: 0 auto;
-  padding: 0;
+  padding: 0 0 48px;
 }
 /* .lpc-results envolve chart-card + compare + risk + footer. Precisa de
    ser flex-column para o gap de 24px se propagar — sem isto, os cards
