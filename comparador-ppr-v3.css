@@ -1578,6 +1578,34 @@
   }
 
   /* ---------- Tables mobile ---------- */
+  /* Cards das tabelas (Comparacao detalhada, Metricas de risco) em mobile
+     (Figma 5530:37018): padding fica so no title e swipe-hint footer; a
+     tabela ocupa largura total do card. Negative margin no table-scroll
+     cancela o padding horizontal do card. overflow:hidden no card faz a
+     tabela clipar no border-radius (ja existente 20px). */
+  #lf-pc-calc .lpc-card:has(.lpc-table-scroll) {
+    overflow: hidden;
+  }
+  #lf-pc-calc .lpc-table-scroll {
+    margin-left: calc(-1 * var(--spacing-3xl));
+    margin-right: calc(-1 * var(--spacing-3xl));
+  }
+  /* Remove border-radius das pontas do tbody (antes arredondava 8px em
+     cada canto — agora o card clipa com o seu proprio border-radius). */
+  #lf-pc-calc .lpc-table tbody tr:first-child th:first-child,
+  #lf-pc-calc .lpc-table tbody tr:first-child td:last-child,
+  #lf-pc-calc .lpc-table tbody tr:last-child th:first-child,
+  #lf-pc-calc .lpc-table tbody tr:last-child td:last-child {
+    border-radius: 0;
+  }
+  /* Remove border-left/right nas colunas outer — o border de 4px do card
+     ja serve de contorno e evita uma linha 1px encostada ao border. */
+  #lf-pc-calc .lpc-table tbody tr th:first-child {
+    border-left: none;
+  }
+  #lf-pc-calc .lpc-table tbody tr td:last-child {
+    border-right: none;
+  }
   /* Footer "Desliza para ver todos os PPR →" (Figma 5530:37157):
      bleed ate aos limites do card (negative horizontal+bottom margin),
      border-top como separador do conteudo acima, padding 16px vertical
