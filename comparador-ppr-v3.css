@@ -1606,6 +1606,11 @@
   #lf-pc-calc .lpc-table tbody tr td:last-child {
     border-right: none;
   }
+  /* Footer 'Atualizado a...' em mobile: o gap de 24px do .lpc-results
+     ja separa do cartao acima — remove-se o margin-top extra. */
+  #lf-pc-calc .lpc-footer-updated {
+    margin-top: 0;
+  }
   /* Footer "Desliza para ver todos os PPR →" (Figma 5530:37157):
      bleed ate aos limites do card (negative horizontal+bottom margin),
      border-top como separador do conteudo acima, padding 16px vertical
