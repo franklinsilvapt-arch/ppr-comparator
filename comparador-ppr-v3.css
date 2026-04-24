@@ -1316,6 +1316,7 @@
   content: '';
   position: absolute;
   inset: -6px;
+  cursor: help;
 }
 #lf-pc-calc .lpc-info-icon > svg {
   display: block;

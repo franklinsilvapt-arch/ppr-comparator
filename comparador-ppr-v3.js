@@ -72,7 +72,7 @@
     <div class="lpc-chart-periods-row">
       <div class="lpc-tabs" id="lpc-period-tabs">
         <button class="lpc-tab is-active" data-period="since">Desde início</button>
-        <button class="lpc-tab" data-period="ytd">YTD<span class="lpc-info-icon lpc-info-icon--tab" tabindex="0" aria-label="YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual."><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg><span class="lpc-tip-bubble">YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual.</span></span></button>
+        <button class="lpc-tab" data-period="ytd">YTD<span class="lpc-info-icon lpc-info-icon--tab" tabindex="0" aria-label="YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual."><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M6.5 6.4a1.5 1.5 0 1 1 2 1.4.75.75 0 0 0-.5.7V9" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"></path><circle cx="8" cy="11.2" r="0.75" fill="currentColor"></circle></svg><span class="lpc-tip-bubble">YTD (Year-to-Date): rentabilidade desde 1 de janeiro do ano atual.</span></span></button>
         <button class="lpc-tab" data-period="1y">1 ano</button>
         <button class="lpc-tab" data-period="3y">3 anos</button>
         <button class="lpc-tab" data-period="5y">5 anos</button>
@@ -101,7 +101,7 @@
       <span class="lpc-mobile-label lpc-benchmark-label-mobile">
         Comparar com ETFs de referência
         <span class="lpc-info-icon" tabindex="0" aria-label="Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M6.5 6.4a1.5 1.5 0 1 1 2 1.4.75.75 0 0 0-.5.7V9" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"></path><circle cx="8" cy="11.2" r="0.75" fill="currentColor"></circle></svg>
           <span class="lpc-tip-bubble">Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.</span>
         </span>
       </span>
@@ -109,7 +109,7 @@
         <input type="checkbox" id="lpc-benchmark-checkbox">
         <span class="lpc-benchmark-text">ETFs referência</span>
         <span class="lpc-info-icon" tabindex="0" aria-label="Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.">
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle><path d="M6.5 6.4a1.5 1.5 0 1 1 2 1.4.75.75 0 0 0-.5.7V9" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"></path><circle cx="8" cy="11.2" r="0.75" fill="currentColor"></circle></svg>
           <span class="lpc-tip-bubble">Sobrepõe ao gráfico o ETF de referência consoante o nível de risco de cada PPR seleccionado: risco 1-2 → LifeStrategy 20; risco 3 → LifeStrategy 40; risco 4 → LifeStrategy 60; risco 5 → LifeStrategy 80; risco 6-7 → iShares MSCI World. Os ETFs não são PPRs (sem benefício fiscal), servem apenas como referência de mercado.</span>
         </span>
         <span class="lpc-benchmark-state" id="lpc-benchmark-state">Inativo</span>
@@ -319,9 +319,12 @@
   }
 
   var NA = '<span style="color:#96A0B0">-</span>';
+  // Ícone de ajuda: circulo + ponto de interrogação (era "!", passa a "?"
+  // para coerencia com literaciafinanceira.pt/calculadora-juros-compostos).
   var INFO_SVG = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">'
     + '<circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.33"></circle>'
-    + '<path d="M8 7v4M8 5.5v.01" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>'
+    + '<path d="M6.5 6.4a1.5 1.5 0 1 1 2 1.4.75.75 0 0 0-.5.7V9" stroke="currentColor" stroke-width="1.33" stroke-linecap="round"></path>'
+    + '<circle cx="8" cy="11.2" r="0.75" fill="currentColor"></circle>'
     + '</svg>';
 
   function escapeHtml(s) {
