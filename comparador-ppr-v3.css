@@ -1649,6 +1649,13 @@
     color: var(--text-tertiary);
     text-align: left;
   }
+  /* No cartao 'Metricas de risco' o footnote ja tem border-bottom a servir
+     de separador para o swipe-hint. A border-top extra do swipe-hint criava
+     linha dupla (feedback 23-Abr). Remove-se so neste cartao (o cartao
+     'Comparacao detalhada' nao tem footnote e mantem o border-top). */
+  #lf-pc-calc .lpc-card:has(.lpc-risk-footnote) .lpc-swipe-hint {
+    border-top: none;
+  }
   /* Pipes coloridos laranja/azul/roxo no top-right: removidos por feedback
      23-Abr — sobrepunham-se ao header do fundo e o 'Desliza para ver todos
      os PPR' no footer ja sinaliza o scroll horizontal. */
