@@ -1419,6 +1419,15 @@
     font-size: 17px;
     line-height: 24px;
   }
+  /* Em mobile o counter 'X/3 selecionados' quebra para a linha abaixo.
+     Ajustes do feedback: gap 2px entre titulo e counter, counter 14px. */
+  #lf-pc-calc .lpc-section-label {
+    gap: 2px;
+  }
+  #lf-pc-calc .lpc-counter {
+    font-size: 14px;
+    line-height: 20px;
+  }
   /* scroll horizontal em tab bars sem scrollbar visível (poupa altura) */
   #lf-pc-calc .lpc-chart-periods-row,
   #lf-pc-calc .lpc-chart-modes-row {
