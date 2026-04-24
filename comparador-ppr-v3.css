@@ -1621,22 +1621,11 @@
     color: var(--text-tertiary);
     text-align: left;
   }
-  /* Pipes coloridos (laranja/azul/roxo) empilhados no canto superior
-     direito da tabela para sinalizar colunas ocultas por scroll. */
+  /* Pipes coloridos laranja/azul/roxo no top-right: removidos por feedback
+     23-Abr — sobrepunham-se ao header do fundo e o 'Desliza para ver todos
+     os PPR' no footer ja sinaliza o scroll horizontal. */
   #lf-pc-calc .lpc-swipe-pipes {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    position: absolute;
-    top: var(--spacing-xl);
-    right: 0;
-    pointer-events: none;
-  }
-  #lf-pc-calc .lpc-swipe-pipe {
-    display: block;
-    width: 3px;
-    height: 14px;
-    border-radius: 2px;
+    display: none;
   }
 }
 
