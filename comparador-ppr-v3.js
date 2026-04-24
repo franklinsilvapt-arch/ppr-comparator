@@ -1531,11 +1531,11 @@
         }
         var card = root.querySelector('.lpc-chart-card');
         if (!card) return;
-        // Esconde o próprio botão do kebab durante a captura (não faz
-        // sentido estar no PNG). Restaurado no finally.
-        var menuEl = root.querySelector('.lpc-chart-menu');
-        var prevVis = menuEl ? menuEl.style.visibility : null;
-        if (menuEl) menuEl.style.visibility = 'hidden';
+        // PNG partilhado mostra so o essencial: titulo, chart, nota
+        // opcional e returns-strip. Esconde filtros (tabs, toggles,
+        // hint 'Investimento simulado...') e o proprio kebab via classe
+        // 'is-exporting' no card. Restaurada no finally.
+        card.classList.add('is-exporting');
         html2canvas(card, {
           backgroundColor: '#ffffff',
           scale: 2,
@@ -1552,7 +1552,7 @@
         }).catch(function (err) {
           console.warn('Export PNG falhou:', err);
         }).finally(function () {
-          if (menuEl) menuEl.style.visibility = prevVis || '';
+          card.classList.remove('is-exporting');
         });
       });
     }

@@ -877,6 +877,16 @@
   width: 100%;
   height: 360px;
 }
+/* Estado 'is-exporting' (adicionado pelo handler Descarregar gráfico):
+   esconde os filtros (tabs de periodo, toggles de modo, hint e kebab)
+   para o PNG mostrar apenas titulo + chart + nota + returns-strip.
+   Feedback Raquel 23-Abr: PNG estava a parecer screenshot da UI. */
+#lf-pc-calc .lpc-chart-card.is-exporting .lpc-chart-periods-row,
+#lf-pc-calc .lpc-chart-card.is-exporting .lpc-chart-modes-row,
+#lf-pc-calc .lpc-chart-card.is-exporting .lpc-chart-hint,
+#lf-pc-calc .lpc-chart-card.is-exporting .lpc-chart-menu {
+  display: none !important;
+}
 #lf-pc-calc .lpc-chart-canvas-wrap canvas {
   width: 100% !important;
   height: 100% !important;
