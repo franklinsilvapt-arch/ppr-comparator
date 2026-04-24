@@ -995,6 +995,13 @@
   gap: var(--spacing-xl);
   margin-top: var(--spacing-3xl);
 }
+/* Em viewports estreitos (≤699px, inclui tablets pequenos e mobile) os
+   cartões de rentabilidade vão a full width (1 por linha). */
+@media (max-width: 699px) {
+  #lf-pc-calc .lpc-returns-strip {
+    grid-template-columns: 1fr;
+  }
+}
 /* Quando vazio (0 PPRs seleccionados) colapsa para não deixar margem
    residual que varia a altura total do comparador vs estado 1+ PPRs. */
 #lf-pc-calc .lpc-returns-strip:empty { margin-top: 0; }
