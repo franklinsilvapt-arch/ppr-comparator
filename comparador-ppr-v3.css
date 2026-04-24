@@ -969,7 +969,6 @@
   letter-spacing: -0.2px;
   color: #697386;                    /* inactive — match desktop .lpc-benchmark-text */
   transition: color 0.15s ease;
-  margin-left: var(--spacing-md);
 }
 /* Active state: desktop usa .lpc-benchmark-text; mobile usa .lpc-benchmark-state.
    Mesma logica de cor: inactivo #697386 -> activo #3A4454 (Figma 5515:18720). */
