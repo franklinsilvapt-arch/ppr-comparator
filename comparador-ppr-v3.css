@@ -370,7 +370,7 @@
 /* v3: botão Calcular. Gate explícito entre seleccionar PPRs e ver
    resultados. Full-width dentro do card do seletor, cor brand. */
 #lf-pc-calc .lpc-calculate-row {
-  margin-top: var(--spacing-6xl);
+  margin-top: var(--spacing-5xl);  /* 32px (Figma) */
 }
 #lf-pc-calc .lpc-calculate-btn {
   width: 100%;
