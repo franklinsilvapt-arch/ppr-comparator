@@ -1920,8 +1920,36 @@
   window.addEventListener('scroll', __repositionOpenTips, { passive: true });
   window.addEventListener('resize', __repositionOpenTips);
 
+  // Em mobile o hint 'Investimento simulado...' deve ficar por baixo do
+  // toggle de Visualizacao (entre mode-toggle e o label 'Comparar com
+  // ETFs'). Em desktop, continua fora da modes-row na sua posicao original.
+  // Alternativa seria duplicar no HTML; preferimos mover com JS e reagir a
+  // resize para coerencia visual em rotacao/split-view.
+  function positionChartHint() {
+    var hint = document.getElementById('lpc-chart-hint');
+    if (!hint) return;
+    var modesRow = document.querySelector('#lf-pc-calc .lpc-chart-modes-row');
+    var card = document.querySelector('#lf-pc-calc .lpc-chart-card');
+    if (!modesRow || !card) return;
+    var benchLabel = modesRow.querySelector('.lpc-benchmark-label-mobile');
+    var isMobile = window.matchMedia('(max-width: 640px)').matches;
+    if (isMobile) {
+      if (hint.parentNode !== modesRow && benchLabel) {
+        modesRow.insertBefore(hint, benchLabel);
+      }
+    } else {
+      if (hint.parentNode === modesRow) {
+        card.insertBefore(hint, modesRow.nextSibling);
+      }
+    }
+  }
+  window.addEventListener('resize', positionChartHint);
+
   async function init() {
     if (typeof Chart === 'undefined') { setTimeout(init, 50); return; }
+    try { positionChartHint(); } catch (e) {
+      if (console && console.warn) console.warn('positionChartHint failed:', e);
+    }
     // Wire slots e primeiro render ANTES da fetch - em Safari no Mac
     // (cold CDN) o fetch de latest.json pode demorar 2-4s e antes
     // desta alteração os listeners dos inputs só eram anexados depois.

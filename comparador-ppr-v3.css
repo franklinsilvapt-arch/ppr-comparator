@@ -1492,25 +1492,36 @@
   }
 
   /* ---------- Chart modes-row em coluna (Figma 5518:34102) ----------
-     Visualização (label) + toggle Percentagem/1.000€ + label "Comparar
-     com ETFs" + switch com texto Ativo/Inativo ao lado. */
+     Visualização (label) + toggle Percentagem/1.000€ + hint
+     'Investimento simulado...' + label 'Comparar com ETFs' + switch
+     com texto Ativo/Inativo. Hint e reposicionado via JS
+     (positionChartHint) para ficar entre mode-toggle e benchmark-label. */
   #lf-pc-calc .lpc-chart-modes-row {
     flex-direction: column;
     align-items: stretch;
-    gap: var(--spacing-2xl);
+    gap: 6px;                               /* label -> toggle */
     margin-top: var(--spacing-4xl);
+  }
+  /* 24px entre filtro Visualizacao (hint = ultima linha) e label
+     'Comparar com ETFs'. Gap default 6px + margin-top 18px = 24px. */
+  #lf-pc-calc .lpc-chart-modes-row .lpc-benchmark-label-mobile {
+    margin-top: 18px;
+  }
+  /* Hint no modes-row em mobile: sem margins proprias, usa so o gap. */
+  #lf-pc-calc .lpc-chart-modes-row > .lpc-chart-hint {
+    margin: 0;
   }
   #lf-pc-calc .lpc-mobile-label {
     display: flex;
     align-items: center;
     gap: var(--spacing-sm);
     font-family: 'Inter', sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
-    line-height: 20px;
-    letter-spacing: -0.2px;
-    color: #3A4454;
-    margin-bottom: -4px;
+    line-height: 18px;
+    letter-spacing: -0.1px;
+    color: var(--text-quaternary);         /* #697386 */
+    margin-bottom: 0;
   }
   /* Esconder o separador vertical (só faz sentido em row layout) */
   #lf-pc-calc .lpc-chart-modes-row .lpc-benchmark-toggle::before {
