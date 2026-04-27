@@ -428,7 +428,7 @@
   background: var(--border-primary);
   flex-shrink: 0;
 }
-#lf-pc-calc .lpc-slot[data-slot="0"] .lpc-slot-dot { background: #FD8D2B; }
+#lf-pc-calc .lpc-slot[data-slot="0"] .lpc-slot-dot { background: var(--colors--accent-orange-base, #FD8D2B); }
 #lf-pc-calc .lpc-slot[data-slot="1"] .lpc-slot-dot { background: #2970FF; }
 #lf-pc-calc .lpc-slot[data-slot="2"] .lpc-slot-dot { background: #875BF7; }
 #lf-pc-calc .lpc-slot-wrap {

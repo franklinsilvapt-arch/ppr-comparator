@@ -232,8 +232,10 @@
   var BENCHMARK = null;  // {labels, data, ticker, name} do JSON backend
   var BENCHMARKS_BY_TICKER = {};  // {V20A: {labels, data, ticker, name, risk}, ...}
 
-  // Paleta (design system): laranja, azul, roxo — alinhada com os dots dos
-  // slots de input (.lpc-slot-dot no CSS: #FD8D2B/#2970FF/#875BF7).
+  // Paleta (design system): accent-orange-base, blue, purple — alinhada
+  // com os dots dos slots (.lpc-slot-dot no CSS). Hardcoded porque
+  // Chart.js nao resolve CSS custom properties em runtime.
+  // #FD8D2B = --colors--accent-orange-base (NAO confundir com brand #FF5A1F).
   var SERIES_COLORS = ['#FD8D2B', '#2970FF', '#875BF7', '#8E44AD', '#B42318', '#0D9488'];
   var BASE_EUR = 1000;
   var MAX_SELECT = 3;
