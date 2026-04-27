@@ -611,7 +611,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--spacing-2xl);
-  margin-top: var(--spacing-4xl);
+  margin-top: 24px;
 }
 /* Separador vertical entre o mode toggle e o "ETFs referência".
    NOTA: o label .lpc-benchmark-toggle tem gap interno 8px. O espaço
