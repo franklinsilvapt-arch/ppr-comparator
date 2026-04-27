@@ -233,8 +233,8 @@
   var BENCHMARKS_BY_TICKER = {};  // {V20A: {labels, data, ticker, name, risk}, ...}
 
   // Paleta (design system): laranja, azul, roxo — alinhada com os dots dos
-  // slots de input (.lpc-slot-dot no CSS: #FF5A1F/#2970FF/#875BF7).
-  var SERIES_COLORS = ['#FF5A1F', '#2970FF', '#875BF7', '#8E44AD', '#B42318', '#0D9488'];
+  // slots de input (.lpc-slot-dot no CSS: #FD8D2B/#2970FF/#875BF7).
+  var SERIES_COLORS = ['#FD8D2B', '#2970FF', '#875BF7', '#8E44AD', '#B42318', '#0D9488'];
   var BASE_EUR = 1000;
   var MAX_SELECT = 3;
   var PREFERRED_DEFAULTS = ['invest-ar', 'casa-inv-sg-founders', 'sgf-dr-financas'];
@@ -1127,7 +1127,7 @@
           var v = formatPct(f.returns.ann);
           if (f.returns.ann == null) return v;
           var yrs = f.returns.ann_years;
-          if (yrs) v += ' <span style="color:#697386;font-weight:500">(' + yrs.toLocaleString('pt-PT').replace('.', ',') + 'a)</span>';
+          if (yrs) v += ' <span style="color:#697386;font-weight:400">(' + yrs.toLocaleString('pt-PT').replace('.', ',') + 'a)</span>';
           return v;
         } }
     ];
