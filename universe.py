@@ -32,6 +32,7 @@ MANUAL_OVERRIDES = [
         "min_subs": 50,
         "source": "yahoo",
         "yahoo_ticker": "0P000011IR.F",
+        "benchmark_ticker_override": "V40A",
     },
     # --- Plataforma IMGA (hospeda ABANCA + IMGA) ---
     # ISINs ABANCA obtidos via search FT (IMGA não os expõe no HTML).
