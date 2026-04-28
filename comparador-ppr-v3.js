@@ -694,9 +694,18 @@
         if (s.labels[0] >= cutoff) return;
         var idx = s.labels.findIndex(function (l) { return l >= cutoff; });
         if (idx > 0) {
+          // Rebase composto: (1 + new) = (1 + v) / (1 + base). Subtrair
+          // o base directamente seria errado porque dataPct está
+          // normalizado contra o anchor original (price na 1ª obs do
+          // periodo), nao contra price[idx]. Em "since" com anchor
+          // muito mais antigo que cutoff, a subtracao inflaciona o
+          // resultado em comparacao com periodos curtos.
           var base = s.dataPct[idx];
+          var baseFactor = 1 + base / 100;
           s.labels = s.labels.slice(idx);
-          s.dataPct = s.dataPct.slice(idx).map(function (v) { return +(v - base).toFixed(2); });
+          s.dataPct = s.dataPct.slice(idx).map(function (v) {
+            return +(((1 + v / 100) / baseFactor - 1) * 100).toFixed(2);
+          });
         }
       });
     }
@@ -1284,9 +1293,15 @@
           if (s.labels[0] >= cutoff) return;
           var idx = s.labels.findIndex(function (l) { return l >= cutoff; });
           if (idx > 0) {
+            // Rebase composto (ver chart). Subtracao directa preservaria
+            // returns dia-a-dia (ok para vol/beta), mas distorce o nivel
+            // acumulado — usar o mesmo metodo do chart para coerencia.
             var base = s.dataPct[idx];
+            var baseFactor = 1 + base / 100;
             s.labels = s.labels.slice(idx);
-            s.dataPct = s.dataPct.slice(idx).map(function (v) { return +(v - base).toFixed(4); });
+            s.dataPct = s.dataPct.slice(idx).map(function (v) {
+              return +(((1 + v / 100) / baseFactor - 1) * 100).toFixed(4);
+            });
           }
         });
         rebasedRisk = rebased.map(function (s) {
