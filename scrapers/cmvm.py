@@ -45,10 +45,19 @@ CMVM_PAGE = "https://investidor.cmvm.pt/pinvestidor/PPRList"
 # Estes valores foram capturados via DevTools. moduleVersion / apiVersion
 # / OutSystems-Request-Token podem mudar quando a CMVM faz redeploy.
 # Se começar a falhar, voltar a copiar o cURL do request DataActionGetPPRs.
-MODULE_VERSION = "LFbypQlBH03EnErbeERS3g"
-API_VERSION = "EZF5sU_aIF7FskAry+x05w"
-OS_REQUEST_TOKEN = "2860846940243845"
+# Última recaptura: 15-Jul-2026 (redeploy quebrou o run de 13/Jul).
+MODULE_VERSION = "8ujtX5WEwGO88FPP9JTdjQ"
+API_VERSION = "6aGkSbrBCH7kns4ai4YbaA"
+OS_REQUEST_TOKEN = "6182376737813365"
 CSRF_TOKEN = "T6C+9iB49TLra4jEsMeSckDMNhQ="
+
+# Discriminador introduzido no redeploy de Jul/2026. A API devolve 200 com
+# lista vazia para o valor errado, sem qualquer erro:
+#   1 = fundos poupança-reforma  <- o nosso universo
+#   2 = fundos de investimento (não-PPR)
+#   3 = fundos imobiliários
+#   0 = nenhum (é o que a página envia no load inicial, devolve vazio)
+FUND_COMPARATOR_TYPE_ID = 1
 
 
 def _build_body(max_records: int = 1000) -> dict:
@@ -82,8 +91,17 @@ def _build_body(max_records: int = 1000) -> dict:
                     "REND_5Y": "0", "HAS_REND_5Y": False, "REND_10Y": "0", "HAS_REND_10Y": False,
                     "ISRR": "0", "HAS_ISRR": False, "TAXA_TEC": "0", "HAS_TAXA_TEC": False,
                     "PPRRiskClassId": 0,
+                    "FundComparatorTypeId": FUND_COMPARATOR_TYPE_ID,
                     "CreatedOn": "1900-01-01T00:00:00", "ModifiedOn": "1900-01-01T00:00:00",
                     "IsSynced": False,
+                },
+                # Introduzidos no redeploy de Jul/2026: sem FetchDecryptInputs
+                # a API responde 200 com data:{} em vez de erro.
+                "Request": "",
+                "_requestInDataFetchStatus": 1,
+                "FetchDecryptInputs": {
+                    "FundComparatorTypeId": FUND_COMPARATOR_TYPE_ID,
+                    "DataFetchStatus": 1,
                 },
             }
         },

@@ -111,10 +111,14 @@ MANUAL_OVERRIDES = [
     {"match": "sixty degrees ações globais ppr",      "site_url": "https://sixty-degrees.com/fund/sixty-degrees-acoes-globais-ppr-oicvm/"},
     {"match": "sixty degrees medina ppr",             "site_url": "https://sixty-degrees.com/fund/sixty-degrees-medina-ppr-oiavm-flexivel/"},
     # --- BPI — 4 fundos com ISINs do FT tearsheet ---
-    {"match": "bpi reforma global equities",   "isin": "PTYPIEHM0024"},
-    {"match": "bpi reforma investimento",      "isin": "PTYPIQLM0008"},
-    {"match": "bpi reforma obrigações",        "isin": "PTYPIRLM0007"},
-    {"match": "bpi reforma valorização",       "isin": "PTYPJDLM0002"},
+    # O BPI rebrandeou "Reforma" -> "Smart" (visível na CMVM em Jul/2026); os
+    # ISINs não mudaram. Mapeamento confirmado por risk_class + TEC, que batem
+    # 1:1 e são únicos — não pelo nome, que induz em erro: "Investimento" virou
+    # "Moderado" e "Valorização" virou "Dinâmico", e não o contrário.
+    {"match": "bpi smart ações",       "isin": "PTYPIEHM0024"},  # ex-Reforma Global Equities, risco 5 / tec 2.09
+    {"match": "bpi smart moderado",    "isin": "PTYPIQLM0008"},  # ex-Reforma Investimento,    risco 3 / tec 2.05
+    {"match": "bpi smart obrigações",  "isin": "PTYPIRLM0007"},  # ex-Reforma Obrigações,      risco 3 / tec 1.13
+    {"match": "bpi smart dinâmico",    "isin": "PTYPJDLM0002"},  # ex-Reforma Valorização,     risco 4 / tec 2.24
     # --- Caixa / CGD ---
     # ISIN correcto do Caixa ALG é PTCXGUHM0006 (o extractor CGD apanha
     # PTIXAEHM0006 que é outro fundo referenciado na página).
