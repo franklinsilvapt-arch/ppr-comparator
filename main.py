@@ -6,6 +6,7 @@ Orchestrator principal. Corre:
 4. Escreve data/latest.json para consumo do embed Webflow
 """
 import json
+import os
 import sys
 import pandas as pd
 from datetime import datetime, timezone
@@ -33,6 +34,51 @@ def load_benchmark() -> pd.Series | None:
     except Exception as e:
         print(f"[benchmark] falha: {e}")
         return None
+
+
+class OutputRegression(Exception):
+    """O pipeline produziu menos fundos do que o latest.json já publicado."""
+
+
+# Uma gestora pode sair do universo entre semanas, mas uma queda de mais de
+# 20% num run significa quase sempre fonte partida, não mercado.
+MIN_FUND_RATIO = 0.8
+
+
+def _guard_no_regression(output_funds: list[dict]) -> None:
+    """Recusa publicar um universo vazio ou muito menor que o anterior.
+
+    data/raw/ é gitignored: no runner, um fetch falhado regenera o universo
+    do zero e o resultado seria commitado por cima do último bom. Em Jul/2026
+    isto apagou 159 fundos do site com o job a reportar sucesso.
+    """
+    if not output_funds:
+        raise OutputRegression(
+            "0 fundos calculados — latest.json não foi tocado. "
+            "Verifica os scrapers antes de voltar a correr."
+        )
+
+    if not OUTPUT.exists():
+        return
+
+    try:
+        previous = json.loads(OUTPUT.read_text(encoding="utf-8")).get("funds", [])
+    except (json.JSONDecodeError, OSError) as e:
+        print(f"[guard] aviso: latest.json anterior ilegível ({e}); guarda ignorada")
+        return
+
+    if previous and len(output_funds) < len(previous) * MIN_FUND_RATIO:
+        if os.environ.get("PPR_ALLOW_SHRINK") == "1":
+            print(
+                f"[guard] {len(output_funds)} fundos vs {len(previous)} publicados; "
+                "PPR_ALLOW_SHRINK=1 — a publicar mesmo assim"
+            )
+            return
+        raise OutputRegression(
+            f"{len(output_funds)} fundos vs {len(previous)} publicados "
+            f"(mínimo {MIN_FUND_RATIO:.0%}) — latest.json não foi tocado. "
+            "Se a queda for legítima, corre com PPR_ALLOW_SHRINK=1."
+        )
 
 
 def main():
@@ -240,6 +286,8 @@ def main():
         "benchmarks": etf_payloads,
         "funds": output_funds,
     }
+
+    _guard_no_regression(output_funds)
 
     DATA_DIR.mkdir(exist_ok=True)
     # allow_nan=False garante que Infinity/NaN fazem falhar aqui em vez

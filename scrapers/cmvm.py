@@ -14,10 +14,27 @@ investimento, exclui adesões coletivas / seguros).
 """
 import requests
 import json
+import sys
 from pathlib import Path
 
 DATA_DIR = Path(__file__).parent.parent / "data" / "raw"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+
+class CMVMError(Exception):
+    """Falha que deve abortar o pipeline em vez de esvaziar o universo."""
+
+
+class CMVMTokensExpired(CMVMError):
+    pass
+
+
+class CMVMEmptyUniverse(CMVMError):
+    pass
+
+
+class CMVMFetchFailed(CMVMError):
+    pass
 
 CMVM_API = (
     "https://investidor.cmvm.pt/pinvestidor/screenservices/"
@@ -119,26 +136,46 @@ def run() -> list[dict]:
         data = fetch_ppr_list()
     except requests.HTTPError as e:
         sc = e.response.status_code if e.response is not None else "?"
-        print(f"[cmvm] ERROR HTTP {sc}: {e}")
         if sc in (401, 403, 419):
-            print(
-                "[cmvm] CSRF/Request token provavelmente expiraram.\n"
+            raise CMVMTokensExpired(
+                f"HTTP {sc} — CSRF/Request token provavelmente expiraram.\n"
                 "       1) Abre https://investidor.cmvm.pt/pinvestidor/PPRList\n"
                 "       2) DevTools > Network > XHR > DataActionGetPPRs\n"
                 "       3) Copia os novos valores para MODULE_VERSION,\n"
                 "          API_VERSION, OS_REQUEST_TOKEN, CSRF_TOKEN em\n"
                 "          scrapers/cmvm.py"
-            )
-        return []
+            ) from e
+        raise CMVMFetchFailed(f"HTTP {sc}: {e}") from e
     except Exception as e:
-        print(f"[cmvm] ERROR: {e}")
-        return []
+        raise CMVMFetchFailed(str(e)) from e
+
+    # A CMVM responde 200 com data:{} quando faz redeploy do OutSystems — os
+    # tokens capturados deixam de servir sem que haja HTTPError para apanhar.
+    version = data.get("versionInfo") or {}
+    if version.get("hasModuleVersionChanged") or version.get("hasApiVersionChanged"):
+        raise CMVMTokensExpired(
+            "CMVM fez redeploy: MODULE_VERSION/API_VERSION estão desactualizados.\n"
+            "       1) Abre https://investidor.cmvm.pt/pinvestidor/PPRList\n"
+            "       2) DevTools > Network > XHR > DataActionGetPPRs\n"
+            "       3) Copia os novos valores para MODULE_VERSION,\n"
+            "          API_VERSION, OS_REQUEST_TOKEN, CSRF_TOKEN em\n"
+            "          scrapers/cmvm.py"
+        )
 
     items = data.get("data", {}).get("PPRList", {}).get("List", [])
     print(f"[cmvm] total PPR devolvidos: {len(items)}")
 
     fundos = filter_fundos_investimento(items)
     print(f"[cmvm] fundos de investimento (filtrado): {len(fundos)}")
+
+    # Nunca escrever lista vazia: data/raw/ é gitignored, logo o ficheiro em
+    # cache é a única cópia que o runner tem. Sobrepô-lo com [] esvazia o
+    # universo e o pipeline publica um latest.json sem fundos.
+    if not fundos:
+        raise CMVMEmptyUniverse(
+            f"CMVM devolveu {len(items)} PPR e 0 fundos após filtro; "
+            "cmvm_ppr_list.json não foi tocado."
+        )
 
     (DATA_DIR / "cmvm_ppr_list.json").write_text(
         json.dumps(fundos, indent=2, ensure_ascii=False),
@@ -148,4 +185,8 @@ def run() -> list[dict]:
 
 
 if __name__ == "__main__":
-    run()
+    try:
+        run()
+    except CMVMError as e:
+        print(f"[cmvm] ERROR: {e}")
+        sys.exit(1)
