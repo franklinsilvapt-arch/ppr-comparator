@@ -92,7 +92,12 @@ def main():
             if inc:
                 prices = prices[prices.index >= pd.Timestamp(inc)]
         if prices is not None and not prices.empty:
-            latest_dates.append(prices.index[-1])
+            # Só fundos visíveis contam para data_as_of — igual a main.py:213.
+            # Sem isto, um fundo hidden com cache antiga (ex: BIZ Europa
+            # Valorização, hidden desde Nov-2025) puxa o mínimo global para
+            # trás e este script diverge do main.py.
+            if not bool(f.get("hidden")):
+                latest_dates.append(prices.index[-1])
             entry["returns"] = calc_metrics.calc_returns(prices)
             entry["risk"] = calc_metrics.calc_risk(prices, bench)
             entry["series"] = {

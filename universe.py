@@ -68,12 +68,9 @@ MANUAL_OVERRIDES = [
     {"match": "bankinter 25 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-25"},
     {"match": "bankinter 50 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-50"},
     {"match": "bankinter 75 ppr",      "site_url": "https://www.bankinter.pt/fundos/bankinter-ppr-75"},
-    # Bankinter 100: constituído 30/05/2025. Sem histórico público diário
-    # ainda (IFI 2026-02: "sem informação por não existirem dados
-    # suficientes relativos a um ano civil completo"). FT sem símbolo
-    # para os ISINs novos. O frontend filtra data_origin==historical,
-    # por isso fica automaticamente escondido até FT arranjar símbolo —
-    # quando arranjar, reaparece sem intervenção manual.
+    # Bankinter 100: constituído 30/05/2025. O FT continua sem símbolo para
+    # estes ISINs, mas o Yahoo passou a ter (ver bloco de tickers ao fundo):
+    # Cat. A desde 2025-06-18, B e C desde 2025-10-27.
     {"match": "bankinter 100 ppr",     "site_url": "https://www.bankinter.pt/fundos/investir-em-fundos",
      "risk_class": 6},
     # Bankinter Obrigações — várias famílias partilham ISIN por família
@@ -281,6 +278,33 @@ MANUAL_OVERRIDES.extend([
     {"match": "bankinter 25 ppr / oicvm - categoria a", "inception": "2019-11-15"},
     {"match": "bankinter 50 ppr / oicvm - categoria a", "inception": "2019-11-15"},
     {"match": "bankinter 75 ppr / oicvm - categoria a", "inception": "2019-11-15"},
+])
+
+# --- Fontes de cotações via Yahoo (Jul/2026) ---
+# Estes fundos tinham ISIN mas ficavam sem série: yahoo.py só procura ticker
+# para quem já tem source="yahoo" (`if f.get("source") != "yahoo": continue`),
+# e o FT não tem símbolo para nenhum deles. Resultado: data_origin ficava
+# "cmvm" e o frontend, que filtra data_origin=="historical", nunca os mostrava.
+# Tickers resolvidos por ISIN via search do Yahoo e verificados um a um.
+MANUAL_OVERRIDES.extend([
+    # Bankinter 100 — constituído 30/05/2025; já tem histórico (o comentário
+    # antigo dizia que não existia, o que deixou de ser verdade).
+    {"match": "bankinter 100 ppr / oicvm - categoria a",
+     "yahoo_ticker": "0P0001VSG8.F", "source": "yahoo"},
+    {"match": "bankinter 100 ppr / oicvm - categoria b",
+     "yahoo_ticker": "0P0001VSG9.F", "source": "yahoo"},
+    {"match": "bankinter 100 ppr / oicvm - categoria c",
+     "yahoo_ticker": "0P0001VSGA.F", "source": "yahoo"},
+    # IMGA Investimento — ISINs por categoria (imga.pt/fim/ppr/imga-investimento-pproicvm/).
+    {"match": "imga investimento ppr/oicvm - categoria a",
+     "isin": "PTYIOFIE0007", "yahoo_ticker": "0P00005TOU.F", "source": "yahoo"},
+    {"match": "imga investimento ppr/oicvm - categoria r",
+     "isin": "PTIG1BHM0005", "yahoo_ticker": "0P0001MDT2.F", "source": "yahoo"},
+    # Sixty Degrees Medina — série esparsa (~mensal), arranca em 2025-11.
+    {"match": "sixty degrees medina ppr",
+     "yahoo_ticker": "0P0001Y21T.F", "source": "yahoo"},
+    {"match": "santander poupança prudente",
+     "yahoo_ticker": "0P00001384.F", "source": "yahoo"},
 ])
 
 # benchmark ETF override: a classificação de risco SRRI da CMVM (risk_class)

@@ -65,7 +65,18 @@ def calc_returns(prices: pd.Series) -> dict:
     year_start = pd.Timestamp(last_date.year, 1, 1)
 
     ytd = cumulative_return(prices, year_start)
-    r_1y = cumulative_return(prices, last_date - pd.DateOffset(years=1))
+    # Mesma guarda de cobertura que annualized_window_return (3y/5y/10y): sem
+    # 1 ano de histórico, cumulative_return agarrava a 1ª cotação existente e
+    # devolvia o desde-início rotulado como "1 ano" — número enganador para
+    # fundos novos. O "since" mostra a mesma informação honestamente.
+    # YTD fica de fora de propósito: "no ano até à data" é convencionalmente
+    # desde a constituição quando o fundo nasceu a meio do ano.
+    _1y_start = last_date - pd.DateOffset(years=1)
+    r_1y = (
+        None
+        if prices.index[0] > _1y_start + pd.Timedelta(days=30)
+        else cumulative_return(prices, _1y_start)
+    )
     r_3y = annualized_window_return(prices, 3)
     r_5y = annualized_window_return(prices, 5)
     r_10y = annualized_window_return(prices, 10)
