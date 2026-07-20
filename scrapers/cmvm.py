@@ -45,11 +45,23 @@ CMVM_PAGE = "https://investidor.cmvm.pt/pinvestidor/PPRList"
 # Estes valores foram capturados via DevTools. moduleVersion / apiVersion
 # / OutSystems-Request-Token podem mudar quando a CMVM faz redeploy.
 # Se começar a falhar, voltar a copiar o cURL do request DataActionGetPPRs.
-# Última recaptura: 15-Jul-2026 (redeploy quebrou o run de 13/Jul).
-MODULE_VERSION = "8ujtX5WEwGO88FPP9JTdjQ"
+# Última recaptura: 20-Jul-2026 (redeploy quebrou o run #19 de 20/Jul).
+#
+# NOTA: MODULE_VERSION é agora obtido em runtime via _fetch_module_version()
+# (endpoint moduleservices/moduleversioninfo), pelo que o valor abaixo é só
+# fallback caso esse endpoint falhe. API_VERSION/tokens continuam manuais.
+MODULE_VERSION = "o72jvC+HDYeJbfpZHw0oqA"
 API_VERSION = "6aGkSbrBCH7kns4ai4YbaA"
 OS_REQUEST_TOKEN = "6182376737813365"
 CSRF_TOKEN = "T6C+9iB49TLra4jEsMeSckDMNhQ="
+
+# OutSystems expõe a versão do módulo publicada neste endpoint público. Ao
+# lê-la em runtime, o scraper sobrevive a um redeploy da CMVM sem precisar de
+# recaptura manual (foi o que partiu os runs de 13/Jul e 20/Jul). O apiVersion
+# não é exposto aqui, mas na prática só o moduleVersion muda no redeploy.
+MODULE_VERSION_URL = (
+    "https://investidor.cmvm.pt/pinvestidor/moduleservices/moduleversioninfo"
+)
 
 # Discriminador introduzido no redeploy de Jul/2026. A API devolve 200 com
 # lista vazia para o valor errado, sem qualquer erro:
@@ -60,10 +72,27 @@ CSRF_TOKEN = "T6C+9iB49TLra4jEsMeSckDMNhQ="
 FUND_COMPARATOR_TYPE_ID = 1
 
 
-def _build_body(max_records: int = 1000) -> dict:
+def _fetch_module_version() -> str:
+    """Lê o moduleVersion publicado da CMVM. Devolve o fallback se falhar."""
+    try:
+        r = requests.get(
+            MODULE_VERSION_URL,
+            headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
+            timeout=30,
+        )
+        r.raise_for_status()
+        token = (r.json() or {}).get("versionToken")
+        if token:
+            return token
+    except Exception as e:
+        print(f"[cmvm] aviso: moduleversioninfo falhou ({e}); uso fallback")
+    return MODULE_VERSION
+
+
+def _build_body(max_records: int = 1000, module_version: str | None = None) -> dict:
     return {
         "versionInfo": {
-            "moduleVersion": MODULE_VERSION,
+            "moduleVersion": module_version or MODULE_VERSION,
             "apiVersion": API_VERSION,
         },
         "viewName": "Comparator.PPRList",
@@ -116,6 +145,7 @@ def _build_body(max_records: int = 1000) -> dict:
 
 
 def fetch_ppr_list(max_records: int = 1000) -> dict:
+    module_version = _fetch_module_version()
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json; charset=UTF-8",
@@ -133,7 +163,7 @@ def fetch_ppr_list(max_records: int = 1000) -> dict:
         CMVM_API,
         headers=headers,
         cookies=cookies,
-        json=_build_body(max_records),
+        json=_build_body(max_records, module_version=module_version),
         timeout=30,
     )
     r.raise_for_status()
