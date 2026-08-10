@@ -117,9 +117,56 @@ def main():
     #     Investing.com para fundos migrados para Yahoo (Yahoo só dá
     #     ~2022+ para estes PPRs, Investing tinha 2010+).
     CACHE_DIR = DATA_DIR / "history_cache"
+
+    # (c) Encadeamento de classe de UP extinta -> classe sucessora.
+    #     Quando uma gestora extingue uma categoria e cria outra sobre o MESMO
+    #     fundo (caso BPI Smart, 03/07/2026 — ver _BPI_SMART_LEGACY em
+    #     universe.py), a série nova arranca num NAV de lançamento próprio
+    #     (5,00) sem relação com o da antiga (7,54). Concatenar em bruto
+    #     inventaria um crash; encadeia-se por retornos, reescalando a série
+    #     nova para continuar do último valor da legada.
+    for f in funds:
+        legacy_id = f.get("chain_legacy_id")
+        if not legacy_id or f["id"] not in all_prices:
+            continue
+        legacy_path = CACHE_DIR / f"{legacy_id}.csv"
+        if not legacy_path.exists():
+            print(f"[chain] {f['id']}: legado {legacy_id}.csv não existe, ignorado")
+            continue
+        try:
+            legacy = pd.read_csv(legacy_path, index_col=0, parse_dates=True)
+            legacy = legacy[legacy.columns[0]].dropna().sort_index()
+            legacy.index = pd.to_datetime(legacy.index).tz_localize(None)
+
+            fresh = all_prices[f["id"]]
+            col = "Close" if "Close" in fresh.columns else fresh.columns[0]
+            fresh = fresh[col].dropna().sort_index()
+            fresh.index = pd.to_datetime(fresh.index).tz_localize(None)
+
+            cut = pd.Timestamp(f["chain_at"])
+            # Corta o período de "seeding" da categoria nova (NAV constante no
+            # valor de lançamento antes de estar viva) e o legado a partir do
+            # corte, para não haver dupla contagem.
+            fresh = fresh[fresh.index >= cut]
+            legacy = legacy[legacy.index < cut]
+            if fresh.empty or legacy.empty:
+                print(f"[chain] {f['id']}: sem sobreposição utilizável, ignorado")
+                continue
+
+            scaled = fresh / float(fresh.iloc[0]) * float(legacy.iloc[-1])
+            merged = pd.concat([legacy, scaled]).sort_index()
+            merged = merged[~merged.index.duplicated(keep="last")]
+            all_prices[f["id"]] = pd.DataFrame({"Close": merged})
+            print(f"[chain] {f['id']}: +{len(legacy)} obs legadas ({legacy.index[0].date()}"
+                  f" -> {legacy.index[-1].date()}) encadeadas em {cut.date()}")
+        except Exception as e:
+            print(f"[WARN] {f['id']}: encadeamento falhou: {e}")
+
     if CACHE_DIR.exists():
         for f in funds:
             fid = f["id"]
+            if f.get("chain_legacy_id"):
+                continue  # já tratado pelo encadeamento acima
             cache_path = CACHE_DIR / f"{fid}.csv"
             if not cache_path.exists():
                 continue

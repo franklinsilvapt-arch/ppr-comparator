@@ -309,25 +309,84 @@ _BPI_SMART_CAT_ISINS = [
     ("bpi smart obrigações ppr/oicvm de obrigações", {"m": "PTBG2VHM0005", "p": "PTBG2UHM0006", "r": "PTBG2THM0009"}),
     ("bpi smart dinâmico ppr/oicvm",                 {"m": "PTBG2YHM0002", "p": "PTBG2XHM0003", "r": "PTBG2WHM0004"}),
 ]
-# As Categorias M das 4 famílias arrancaram a 5,00 em 2026-05-05 e o FT publica
-# 65 observações todas exactamente a 5,00 — é o valor de lançamento, não NAV
-# viva (P e R das mesmas famílias variam normalmente). Ficam hidden para não
-# aparecerem no comparador como 0,00% desde o início; continuam no latest.json.
-# Rever quando a série começar a mexer.
-_BPI_SMART_CAT_HIDDEN = {"m"}
+
+# Encadeamento da série legada na Categoria R (Ago/2026).
+#
+# Os IFI de 03/07/2026 mostram que NÃO houve fundo novo: as datas de
+# constituição batem 1:1 com os antigos BPI Reforma —
+#   Obrigações 1991.11.28 = ex-Reforma Obrigações
+#   Moderado   1991.12.02 = ex-Reforma Investimento
+#   Dinâmico   2005.06.22 = ex-Reforma Valorização
+#   Ações      2019.11.07 = ex-Reforma Global Equities
+# (confirma, por via independente, o mapeamento por risco+TEC que já cá estava).
+# O que aconteceu foi: a política de investimento foi alterada a 03/07/2026, as
+# categorias antigas foram extintas e criaram-se as novas M/P/R.
+#
+# A série legada termina a 01/07 e a Categoria R arranca a 02/07 — encaixe
+# perfeito, sem sobreposição real (as novas categorias estiveram seeded a 5,00
+# desde 05/05 sem NAV viva). Encadeia-se por retornos, reescalando a série nova
+# para continuar do último valor legado: concatenar em bruto daria uma queda
+# falsa de 7,54 para 5,00. Ver _chain_legacy_series() em main.py.
+#
+# Só a Categoria R é encadeada: é a sucessora de retalho (mínimo 1€,
+# comercializada em balcões/BEST/Banco Invest, segundo o IFI). A P arrancou
+# mais tarde e em datas diferentes por família, e não tenho IFI dela.
+_BPI_SMART_LEGACY = {
+    "bpi smart ações ppr/oicvm":                    ("bpi-smart-acoes-ppr-oicvm-fundo-de-investimento-aberto-de-ac-331", 1.903, 5),
+    "bpi smart moderado ppr/oicvm":                 ("bpi-smart-moderado-ppr-oicvm-fundo-de-investimento-aberto-de-332", 1.929, 3),
+    "bpi smart obrigações ppr/oicvm de obrigações": ("bpi-smart-obrigacoes-ppr-oicvm-fundo-de-investimento-aberto--333", 1.133, 3),
+    "bpi smart dinâmico ppr/oicvm":                 ("bpi-smart-dinamico-ppr-oicvm-fundo-de-investimento-aberto-de-334", 1.846, 4),
+}
+BPI_SMART_CHAIN_AT = "2026-07-02"
+# Categorias sem NAV viva: o FT publica-as com valor constante a 5,00 desde
+# 05/05/2026. Todas as M, mais a P do Moderado, nunca variaram — são valor de
+# lançamento, não performance. Ficam hidden para não aparecerem no comparador
+# como 0,00% desde o início; continuam no latest.json. As restantes P
+# arrancaram em Julho (Ações 20/07, Dinâmico 17/07, Obrigações 27/07).
+# Rever quando as séries começarem a mexer.
+_BPI_SMART_CAT_HIDDEN = {
+    ("bpi smart ações ppr/oicvm", "m"),
+    ("bpi smart moderado ppr/oicvm", "m"),
+    ("bpi smart moderado ppr/oicvm", "p"),
+    ("bpi smart obrigações ppr/oicvm de obrigações", "m"),
+    ("bpi smart dinâmico ppr/oicvm", "m"),
+}
+
+# Data em que cada Categoria P deixou o valor de lançamento e passou a ter NAV
+# viva. Sem isto a série arranca a 05/05 com 2 a 3 meses de linha reta a 5,00,
+# que não é performance. (A R arranca a 02/07 nas quatro famílias e é tratada
+# pelo encadeamento; a P do Moderado nunca mexeu e fica hidden.)
+_BPI_SMART_P_INCEPTION = {
+    "bpi smart ações ppr/oicvm": "2026-07-20",
+    "bpi smart dinâmico ppr/oicvm": "2026-07-17",
+    "bpi smart obrigações ppr/oicvm de obrigações": "2026-07-27",
+}
 
 for _fam, _isins in _BPI_SMART_CAT_ISINS:
     for _cat, _isin in _isins.items():
         # source/yahoo_ticker limpos: o override de família acima marcou toda a
         # família como yahoo (para a base e a Categoria A). Estas categorias têm
         # ISIN próprio no FT, e ft.py salta quem tem source="yahoo".
-        MANUAL_OVERRIDES.append({
+        _ov = {
             "match": f"{_fam} - categoria {_cat}",
             "isin": _isin,
             "yahoo_ticker": None,
             "source": "cmvm",
-            "hidden": _cat in _BPI_SMART_CAT_HIDDEN,
-        })
+            "hidden": (_fam, _cat) in _BPI_SMART_CAT_HIDDEN,
+        }
+        if _cat == "p" and _fam in _BPI_SMART_P_INCEPTION:
+            _ov["inception"] = _BPI_SMART_P_INCEPTION[_fam]
+        if _cat == "r" and _fam in _BPI_SMART_LEGACY:
+            _legacy_id, _tec, _risk = _BPI_SMART_LEGACY[_fam]
+            # TEC e ISR dos IFI de 03/07/2026; mínimo de subscrição 1€.
+            _ov.update({
+                "tec": _tec,
+                "risk_class": _risk,
+                "min_subs": 1,
+                "chain_legacy_id": _legacy_id,
+                "chain_at": BPI_SMART_CHAIN_AT,
+            })
+        MANUAL_OVERRIDES.append(_ov)
 
 MANUAL_OVERRIDES.extend([
     # Bankinter 100 — constituído 30/05/2025; já tem histórico (o comentário
@@ -500,10 +559,11 @@ EXTRA_FUNDS = [
     # 01/06/2026 (goldensgf.pt). Cotações vêm do mesmo Excel dos restantes SGF.
     # TEC = comissão de gestão fixa + depósito (0,08%/ano), a mesma convenção
     # dos restantes fundos SGF acima (ex: sgf-stoik 1,08 = 1% + 0,08%, valores
-    # do Doc-Informativo dele). Classe I: 1% fixa; II e III: 0% fixa.
-    # ATENÇÃO: a TEC exclui, por definição, a comissão de gestão variável, que
-    # nas classes II e III é 15% e 10% das mais-valias. A TEC de 0,08% delas
-    # não representa o custo real — ver `notes`.
+    # do Doc-Informativo dele). Classe I: 1% fixa => 1,08.
+    # As classes II e III ficam SEM tec: têm 0% de gestão fixa, logo a TEC
+    # daria 0,08% e apareceriam como as mais baratas do comparador, quando na
+    # prática cobram 15% e 10% das mais-valias em comissão variável (que a TEC
+    # exclui por definição). Sem número é mais honesto do que um enganador.
     # Sem ISIN: nem o Doc-Informativo, nem o Regulamento de Gestão, nem o DPPI
     # publicam ISIN para este fundo (os outros SGF trazem-no no Doc-Informativo).
     # risk_class 6 (ISR do documento informativo) => benchmark IWDA por
