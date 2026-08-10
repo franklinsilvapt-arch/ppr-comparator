@@ -14,6 +14,7 @@ investimento, exclui adesões coletivas / seguros).
 """
 import requests
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -45,22 +46,35 @@ CMVM_PAGE = "https://investidor.cmvm.pt/pinvestidor/PPRList"
 # Estes valores foram capturados via DevTools. moduleVersion / apiVersion
 # / OutSystems-Request-Token podem mudar quando a CMVM faz redeploy.
 # Se começar a falhar, voltar a copiar o cURL do request DataActionGetPPRs.
-# Última recaptura: 20-Jul-2026 (redeploy quebrou o run #19 de 20/Jul).
+# Última recaptura: 10-Ago-2026 (redeploy quebrou o run #22 de 10/Ago).
 #
-# NOTA: MODULE_VERSION é agora obtido em runtime via _fetch_module_version()
-# (endpoint moduleservices/moduleversioninfo), pelo que o valor abaixo é só
-# fallback caso esse endpoint falhe. API_VERSION/tokens continuam manuais.
-MODULE_VERSION = "o72jvC+HDYeJbfpZHw0oqA"
-API_VERSION = "6aGkSbrBCH7kns4ai4YbaA"
+# NOTA: MODULE_VERSION e API_VERSION são obtidos em runtime (ver
+# _fetch_module_version / _fetch_api_version), pelo que os valores abaixo são
+# só fallback caso esses endpoints falhem. Os tokens continuam manuais.
+MODULE_VERSION = "TfgSfoRJblv6ciwNXYA6zw"
+API_VERSION = "jUVVdUlZgP6xJE2Qifuqcg"
 OS_REQUEST_TOKEN = "6182376737813365"
 CSRF_TOKEN = "T6C+9iB49TLra4jEsMeSckDMNhQ="
 
 # OutSystems expõe a versão do módulo publicada neste endpoint público. Ao
 # lê-la em runtime, o scraper sobrevive a um redeploy da CMVM sem precisar de
-# recaptura manual (foi o que partiu os runs de 13/Jul e 20/Jul). O apiVersion
-# não é exposto aqui, mas na prática só o moduleVersion muda no redeploy.
+# recaptura manual (foi o que partiu os runs de 13/Jul e 20/Jul).
 MODULE_VERSION_URL = (
     "https://investidor.cmvm.pt/pinvestidor/moduleservices/moduleversioninfo"
+)
+
+# O apiVersion não vem no moduleversioninfo: está embebido no bundle do ecrã,
+# como 3º argumento de controller.callDataAction("DataActionGetPPRs", ...).
+# O URL desse bundle (com o hash de cache) vem no manifest do moduleinfo.
+# Foi só o apiVersion que mudou no redeploy de 10/Ago (o moduleVersion já era
+# automático mas sozinho não chegou), daí passar também este a runtime.
+MODULE_INFO_URL = (
+    "https://investidor.cmvm.pt/pinvestidor/moduleservices/moduleinfo"
+)
+SCREEN_BUNDLE_NAME = "PInvestidor.Comparator.PPRList.mvc.js"
+CMVM_ORIGIN = "https://investidor.cmvm.pt"
+_API_VERSION_RE = re.compile(
+    r'callDataAction\(\s*"DataActionGetPPRs"\s*,\s*"[^"]+"\s*,\s*"([^"]+)"'
 )
 
 # Discriminador introduzido no redeploy de Jul/2026. A API devolve 200 com
@@ -89,11 +103,45 @@ def _fetch_module_version() -> str:
     return MODULE_VERSION
 
 
-def _build_body(max_records: int = 1000, module_version: str | None = None) -> dict:
+def _fetch_api_version() -> str:
+    """Extrai o apiVersion do bundle JS do ecrã. Fallback se falhar."""
+    headers = {"User-Agent": "Mozilla/5.0"}
+    try:
+        r = requests.get(
+            MODULE_INFO_URL,
+            headers={**headers, "Accept": "application/json"},
+            timeout=30,
+        )
+        r.raise_for_status()
+        url_versions = ((r.json() or {}).get("manifest") or {}).get("urlVersions") or {}
+        path = next(
+            (p for p in url_versions if p.endswith("/" + SCREEN_BUNDLE_NAME)), None
+        )
+        if not path:
+            raise CMVMFetchFailed(f"{SCREEN_BUNDLE_NAME} não está no manifest")
+
+        bundle = requests.get(
+            CMVM_ORIGIN + path + url_versions[path], headers=headers, timeout=60
+        )
+        bundle.raise_for_status()
+        m = _API_VERSION_RE.search(bundle.text)
+        if m:
+            return m.group(1)
+        raise CMVMFetchFailed("callDataAction(DataActionGetPPRs) não encontrado")
+    except Exception as e:
+        print(f"[cmvm] aviso: apiVersion automático falhou ({e}); uso fallback")
+    return API_VERSION
+
+
+def _build_body(
+    max_records: int = 1000,
+    module_version: str | None = None,
+    api_version: str | None = None,
+) -> dict:
     return {
         "versionInfo": {
             "moduleVersion": module_version or MODULE_VERSION,
-            "apiVersion": API_VERSION,
+            "apiVersion": api_version or API_VERSION,
         },
         "viewName": "Comparator.PPRList",
         "screenData": {
@@ -146,6 +194,7 @@ def _build_body(max_records: int = 1000, module_version: str | None = None) -> d
 
 def fetch_ppr_list(max_records: int = 1000) -> dict:
     module_version = _fetch_module_version()
+    api_version = _fetch_api_version()
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json; charset=UTF-8",
@@ -163,7 +212,9 @@ def fetch_ppr_list(max_records: int = 1000) -> dict:
         CMVM_API,
         headers=headers,
         cookies=cookies,
-        json=_build_body(max_records, module_version=module_version),
+        json=_build_body(
+            max_records, module_version=module_version, api_version=api_version
+        ),
         timeout=30,
     )
     r.raise_for_status()
