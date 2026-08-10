@@ -359,27 +359,39 @@ MANUAL_OVERRIDES.extend([
     # categorias arrancaram a 23/03/2026; o Yahoo só publica desde 13/04.
     # Comissão de gestão 1%/ano (Founders) e 1,5%/ano (R); sem TEC publicada,
     # por isso não se preenche `tec`. ISR 5 (a ficha dá o mesmo às duas
-    # categorias) => benchmark V80A.
+    # categorias), mas o benchmark vai a IWDA em vez do V80A que o ISR 5
+    # implicaria: o fundo pode ir até 100% em ações, logo o LifeStrategy 80
+    # subrepresenta a exposição accionista.
     {"match": "sixty degrees ações globais ppr / oicvm - categoria f",
      "isin": "PTSTYAHM0006", "yahoo_ticker": "0P0002D4QJ.F", "source": "yahoo",
-     "risk_class": 5, "min_subs": 50000, "inception": "2026-03-23"},
+     "risk_class": 5, "benchmark_ticker_override": "IWDA",
+     "min_subs": 50000, "inception": "2026-03-23"},
     {"match": "sixty degrees ações globais ppr / oicvm - categoria r",
      "isin": "PTSTYBHM0005", "yahoo_ticker": "0P0002D4QK.F", "source": "yahoo",
-     "risk_class": 5, "min_subs": 25, "inception": "2026-03-23"},
+     "risk_class": 5, "benchmark_ticker_override": "IWDA",
+     "min_subs": 25, "inception": "2026-03-23"},
+    # Bankinter Luso Euro Opportunities — ISIN, TEC e risco do IFI de
+    # 17/04/2026 (data de constituição). Sem símbolo FT; o Yahoo tem-o e
+    # publica desde 07/05. Min. subscrição 500€ (reforços 25€).
+    {"match": "bankinter luso euro opportunities",
+     "isin": "PTBKCPHM0003", "yahoo_ticker": "0P0002P71D.F", "source": "yahoo",
+     "risk_class": 4, "tec": 2.32, "min_subs": 500, "inception": "2026-04-17"},
     # Caixa Ações Soberania Europeia — ISIN das 3 categorias do IFI de
     # 15/05/2026; fundo constituído a 04/05/2026, ISR 6. min_subs = limite
     # inferior do saldo de subscrições líquidas que aloca cada categoria.
     # Só a Categoria A tem cotação no Yahoo; B e C não existem em nenhuma
-    # fonte testada (FT nem Yahoo) e ficam sem série histórica.
+    # fonte testada (FT nem Yahoo). Ficam hidden por decisão: expõe-se apenas
+    # a Categoria A, que é a única comercializada no CaixaDirecta On-line.
+    # Os ISIN ficam registados; para as repor basta tirar o hidden.
     {"match": "caixa ações soberania europeia ppr/oicvm - categoria a",
      "isin": "PTIXAJHM0001", "yahoo_ticker": "0P0002PNJY.F", "source": "yahoo",
      "risk_class": 6, "min_subs": 100, "inception": "2026-05-04"},
     {"match": "caixa ações soberania europeia ppr/oicvm - categoria b",
      "isin": "PTIXAKHM0008", "risk_class": 6, "min_subs": 500001,
-     "inception": "2026-05-04"},
+     "inception": "2026-05-04", "hidden": True},
     {"match": "caixa ações soberania europeia ppr/oicvm - categoria c",
      "isin": "PTIXALHM0007", "risk_class": 6, "min_subs": 1000001,
-     "inception": "2026-05-04"},
+     "inception": "2026-05-04", "hidden": True},
 ])
 
 # benchmark ETF override: a classificação de risco SRRI da CMVM (risk_class)
