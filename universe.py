@@ -112,10 +112,18 @@ MANUAL_OVERRIDES = [
     # ISINs não mudaram. Mapeamento confirmado por risk_class + TEC, que batem
     # 1:1 e são únicos — não pelo nome, que induz em erro: "Investimento" virou
     # "Moderado" e "Valorização" virou "Dinâmico", e não o contrário.
-    {"match": "bpi smart ações",       "isin": "PTYPIEHM0024"},  # ex-Reforma Global Equities, risco 5 / tec 2.09
-    {"match": "bpi smart moderado",    "isin": "PTYPIQLM0008"},  # ex-Reforma Investimento,    risco 3 / tec 2.05
-    {"match": "bpi smart obrigações",  "isin": "PTYPIRLM0007"},  # ex-Reforma Obrigações,      risco 3 / tec 1.13
-    {"match": "bpi smart dinâmico",    "isin": "PTYPJDLM0002"},  # ex-Reforma Valorização,     risco 4 / tec 2.24
+    # Em Ago/2026 o FT deixou de listar estes ISIN legados (o BPI emitiu ISIN
+    # por categoria, ver _BPI_SMART_CAT_ISINS). A linha-base e a Categoria A
+    # continuam só com o ISIN legado, logo passam a ir buscar a série ao Yahoo,
+    # cujos tickers batem certo com a última série FT (ex: Ações 7.5377 em
+    # 2026-07-01, igual ao último fecho que o FT dava). Yahoo só tem desde
+    # 2022-03, daí o seed em data/history_cache/ para o histórico anterior.
+    # Os overrides por categoria mais abaixo repõem source="cmvm" em M/P/R,
+    # que têm série FT própria e não devem ir ao Yahoo.
+    {"match": "bpi smart ações",       "isin": "PTYPIEHM0024", "yahoo_ticker": "0P0001ITBQ.F", "source": "yahoo"},  # ex-Reforma Global Equities, risco 5 / tec 2.09
+    {"match": "bpi smart moderado",    "isin": "PTYPIQLM0008", "yahoo_ticker": "0P000011K6.F", "source": "yahoo"},  # ex-Reforma Investimento,    risco 3 / tec 2.05
+    {"match": "bpi smart obrigações",  "isin": "PTYPIRLM0007", "yahoo_ticker": "0P000011K4.F", "source": "yahoo"},  # ex-Reforma Obrigações,      risco 3 / tec 1.13
+    {"match": "bpi smart dinâmico",    "isin": "PTYPJDLM0002", "yahoo_ticker": "0P000027GO.F", "source": "yahoo"},  # ex-Reforma Valorização,     risco 4 / tec 2.24
     # --- Caixa / CGD ---
     # ISIN correcto do Caixa ALG é PTCXGUHM0006 (o extractor CGD apanha
     # PTIXAEHM0006 que é outro fundo referenciado na página).
@@ -286,6 +294,41 @@ MANUAL_OVERRIDES.extend([
 # e o FT não tem símbolo para nenhum deles. Resultado: data_origin ficava
 # "cmvm" e o frontend, que filtra data_origin=="historical", nunca os mostrava.
 # Tickers resolvidos por ISIN via search do Yahoo e verificados um a um.
+# --- BPI Smart: ISINs por categoria (Ago/2026) ---
+# Até Ago/2026 as 5 linhas de cada família (base + Categorias A/M/P/R)
+# partilhavam o ISIN legado PTYPI*/PTYPJ* e o FT devolvia a série da família
+# para todas. Nessa altura o BPI passou a emitir ISIN próprio por categoria
+# (série PTBG2*) e retirou os legados do FT — resultado: as 16 categorias
+# ficaram sem símbolo FT e caíram do latest.json (159 -> 143 fundos).
+# ISINs confirmados um a um no markets.ft.com/data/searchapi/searchsecurities.
+# NOTA: a Categoria A e a linha-base não existem na série PTBG2* nem em
+# lado nenhum do FT; ficam sem série histórica (ver _BPI_SMART_LEGACY abaixo).
+_BPI_SMART_CAT_ISINS = [
+    ("bpi smart ações ppr/oicvm",                    {"m": "PTBG2PHM0003", "p": "PTBG2OHM0004", "r": "PTBG2NHM0005"}),
+    ("bpi smart moderado ppr/oicvm",                 {"m": "PTBG2SHM0000", "p": "PTBG2RHM0001", "r": "PTBG2QHM0002"}),
+    ("bpi smart obrigações ppr/oicvm de obrigações", {"m": "PTBG2VHM0005", "p": "PTBG2UHM0006", "r": "PTBG2THM0009"}),
+    ("bpi smart dinâmico ppr/oicvm",                 {"m": "PTBG2YHM0002", "p": "PTBG2XHM0003", "r": "PTBG2WHM0004"}),
+]
+# As Categorias M das 4 famílias arrancaram a 5,00 em 2026-05-05 e o FT publica
+# 65 observações todas exactamente a 5,00 — é o valor de lançamento, não NAV
+# viva (P e R das mesmas famílias variam normalmente). Ficam hidden para não
+# aparecerem no comparador como 0,00% desde o início; continuam no latest.json.
+# Rever quando a série começar a mexer.
+_BPI_SMART_CAT_HIDDEN = {"m"}
+
+for _fam, _isins in _BPI_SMART_CAT_ISINS:
+    for _cat, _isin in _isins.items():
+        # source/yahoo_ticker limpos: o override de família acima marcou toda a
+        # família como yahoo (para a base e a Categoria A). Estas categorias têm
+        # ISIN próprio no FT, e ft.py salta quem tem source="yahoo".
+        MANUAL_OVERRIDES.append({
+            "match": f"{_fam} - categoria {_cat}",
+            "isin": _isin,
+            "yahoo_ticker": None,
+            "source": "cmvm",
+            "hidden": _cat in _BPI_SMART_CAT_HIDDEN,
+        })
+
 MANUAL_OVERRIDES.extend([
     # Bankinter 100 — constituído 30/05/2025; já tem histórico (o comentário
     # antigo dizia que não existia, o que deixou de ser verdade).
