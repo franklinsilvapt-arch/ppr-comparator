@@ -66,6 +66,17 @@ NAME_TO_FUND_ID = {
     "sgf reforma stoik": "sgf-reforma-stoik",
     "sgf square ações": "sgf-square-acoes",
     "sgf ppr deco proteste": "sgf-deco-proteste",
+    # MoneyFlix: o Excel mudou de nomenclatura a meio. "PPR Moneyflix -
+    # Categoria X" cobre 10-16/Fev/2026 e "PPR Moneyflix X" de 17/Fev em
+    # diante; parse_excel agrega ambas no mesmo fund_id. A entrada
+    # "PPR SGF MONEYFLIX" (04-09/Fev) é anterior à criação das categorias e
+    # não é atribuível a nenhuma delas, pelo que fica deliberadamente de fora.
+    "ppr moneyflix - categoria i": "sgf-moneyflix-i",
+    "ppr moneyflix i": "sgf-moneyflix-i",
+    "ppr moneyflix - categoria ii": "sgf-moneyflix-ii",
+    "ppr moneyflix ii": "sgf-moneyflix-ii",
+    "ppr moneyflix - categoria iii": "sgf-moneyflix-iii",
+    "ppr moneyflix iii": "sgf-moneyflix-iii",
 }
 
 

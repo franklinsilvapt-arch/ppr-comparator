@@ -350,6 +350,38 @@ MANUAL_OVERRIDES.extend([
      "yahoo_ticker": "0P00001384.F", "source": "yahoo"},
 ])
 
+# --- Fundos lançados em 2026 que ficavam sem série por falta de ISIN (Ago/2026) ---
+# A lista da CMVM não traz ISIN, e ft.py salta quem não o tem, pelo que estes
+# caíam do latest.json com "sem dados". O FT não tem nenhum destes ISIN
+# (testado via tearsheet); o Yahoo tem, daí source="yahoo".
+MANUAL_OVERRIDES.extend([
+    # Sixty Degrees Ações Globais — ISIN e datas de sixty-degrees.com. Ambas as
+    # categorias arrancaram a 23/03/2026; o Yahoo só publica desde 13/04.
+    # Comissão de gestão 1%/ano (Founders) e 1,5%/ano (R); sem TEC publicada,
+    # por isso não se preenche `tec`. ISR 5 (a ficha dá o mesmo às duas
+    # categorias) => benchmark V80A.
+    {"match": "sixty degrees ações globais ppr / oicvm - categoria f",
+     "isin": "PTSTYAHM0006", "yahoo_ticker": "0P0002D4QJ.F", "source": "yahoo",
+     "risk_class": 5, "min_subs": 50000, "inception": "2026-03-23"},
+    {"match": "sixty degrees ações globais ppr / oicvm - categoria r",
+     "isin": "PTSTYBHM0005", "yahoo_ticker": "0P0002D4QK.F", "source": "yahoo",
+     "risk_class": 5, "min_subs": 25, "inception": "2026-03-23"},
+    # Caixa Ações Soberania Europeia — ISIN das 3 categorias do IFI de
+    # 15/05/2026; fundo constituído a 04/05/2026, ISR 6. min_subs = limite
+    # inferior do saldo de subscrições líquidas que aloca cada categoria.
+    # Só a Categoria A tem cotação no Yahoo; B e C não existem em nenhuma
+    # fonte testada (FT nem Yahoo) e ficam sem série histórica.
+    {"match": "caixa ações soberania europeia ppr/oicvm - categoria a",
+     "isin": "PTIXAJHM0001", "yahoo_ticker": "0P0002PNJY.F", "source": "yahoo",
+     "risk_class": 6, "min_subs": 100, "inception": "2026-05-04"},
+    {"match": "caixa ações soberania europeia ppr/oicvm - categoria b",
+     "isin": "PTIXAKHM0008", "risk_class": 6, "min_subs": 500001,
+     "inception": "2026-05-04"},
+    {"match": "caixa ações soberania europeia ppr/oicvm - categoria c",
+     "isin": "PTIXALHM0007", "risk_class": 6, "min_subs": 1000001,
+     "inception": "2026-05-04"},
+])
+
 # benchmark ETF override: a classificação de risco SRRI da CMVM (risk_class)
 # nem sempre reflecte a exposição accionista real. Para estes fundos, o ETF
 # de referência mais justo é o de exposição similar, não o que o risk_class
@@ -451,6 +483,20 @@ EXTRA_FUNDS = [
      "min_subs": 1500, "tec": 1.58, "risk_class": 3},  # ISIN não exposto no IFI
     {"id": "sgf-deco-proteste",              "name": "SGF PPR DECO PROTESTE",           "manager": "SGF",
      "isin": "PTFP00000770", "min_subs": 1500, "tec": 1.58, "risk_class": 4},
+    # PPR SGF MoneyFlix — Fundo de Pensões PPR (ASF), constituído 31/05/2020 mas
+    # só comercializado desde 02/02/2026. Dados do documento informativo de
+    # 01/06/2026 (goldensgf.pt). Cotações vêm do mesmo Excel dos restantes SGF.
+    # Sem ISIN nem TEC única publicados: a comissão de gestão varia por classe
+    # (I: 1% fixa / 0% variável; II: 0% + 15%; III: 0% + 10%), pelo que não há
+    # um valor de TEC comparável para pôr aqui — fica a None em vez de inventado.
+    # risk_class 6 (ISR do documento informativo) => benchmark IWDA por
+    # risk_to_ticker(), que é o pretendido para as três classes.
+    {"id": "sgf-moneyflix-i",                "name": "PPR SGF MoneyFlix I",             "manager": "Golden SGF",
+     "min_subs": 1500,   "risk_class": 6, "inception": "2026-02-05"},
+    {"id": "sgf-moneyflix-ii",               "name": "PPR SGF MoneyFlix II",            "manager": "Golden SGF",
+     "min_subs": 1500,   "risk_class": 6, "inception": "2026-02-05"},
+    {"id": "sgf-moneyflix-iii",              "name": "PPR SGF MoneyFlix III",           "manager": "Golden SGF",
+     "min_subs": 250000, "risk_class": 6, "inception": "2026-02-11"},
 ]
 
 
@@ -577,6 +623,10 @@ def get_funds() -> list[dict]:
             "tec": ex.get("tec"),
             "min_subs": ex.get("min_subs"),
             "risk_class": ex.get("risk_class"),
+            # Data de início da categoria. main.py corta a série a esta data:
+            # o Excel SGF publica cotações da fase pré-categorias, que não
+            # pertencem à classe específica (ex: MoneyFlix III só abriu 11/02).
+            "inception": ex.get("inception"),
             "cmvm_id": None,
             "cmvm_des_tip": None,
             # SGF são Fundos de Pensões PPR (regulados pela ASF), não
