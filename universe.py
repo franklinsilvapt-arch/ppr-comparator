@@ -498,17 +498,24 @@ EXTRA_FUNDS = [
     # PPR SGF MoneyFlix — Fundo de Pensões PPR (ASF), constituído 31/05/2020 mas
     # só comercializado desde 02/02/2026. Dados do documento informativo de
     # 01/06/2026 (goldensgf.pt). Cotações vêm do mesmo Excel dos restantes SGF.
-    # Sem ISIN nem TEC única publicados: a comissão de gestão varia por classe
-    # (I: 1% fixa / 0% variável; II: 0% + 15%; III: 0% + 10%), pelo que não há
-    # um valor de TEC comparável para pôr aqui — fica a None em vez de inventado.
+    # TEC = comissão de gestão fixa + depósito (0,08%/ano), a mesma convenção
+    # dos restantes fundos SGF acima (ex: sgf-stoik 1,08 = 1% + 0,08%, valores
+    # do Doc-Informativo dele). Classe I: 1% fixa; II e III: 0% fixa.
+    # ATENÇÃO: a TEC exclui, por definição, a comissão de gestão variável, que
+    # nas classes II e III é 15% e 10% das mais-valias. A TEC de 0,08% delas
+    # não representa o custo real — ver `notes`.
+    # Sem ISIN: nem o Doc-Informativo, nem o Regulamento de Gestão, nem o DPPI
+    # publicam ISIN para este fundo (os outros SGF trazem-no no Doc-Informativo).
     # risk_class 6 (ISR do documento informativo) => benchmark IWDA por
     # risk_to_ticker(), que é o pretendido para as três classes.
     {"id": "sgf-moneyflix-i",                "name": "PPR SGF MoneyFlix I",             "manager": "Golden SGF",
-     "min_subs": 1500,   "risk_class": 6, "inception": "2026-02-05"},
+     "min_subs": 1500,   "risk_class": 6, "inception": "2026-02-05", "tec": 1.08},
     {"id": "sgf-moneyflix-ii",               "name": "PPR SGF MoneyFlix II",            "manager": "Golden SGF",
-     "min_subs": 1500,   "risk_class": 6, "inception": "2026-02-05"},
+     "min_subs": 1500,   "risk_class": 6, "inception": "2026-02-05", "tec": 0.08,
+     "notes": "Acresce comissão de gestão variável de 15% sobre valorização acima do máximo histórico mensal."},
     {"id": "sgf-moneyflix-iii",              "name": "PPR SGF MoneyFlix III",           "manager": "Golden SGF",
-     "min_subs": 250000, "risk_class": 6, "inception": "2026-02-11"},
+     "min_subs": 250000, "risk_class": 6, "inception": "2026-02-11", "tec": 0.08,
+     "notes": "Acresce comissão de gestão variável de 10% sobre valorização acima do máximo histórico mensal."},
 ]
 
 
@@ -639,6 +646,7 @@ def get_funds() -> list[dict]:
             # o Excel SGF publica cotações da fase pré-categorias, que não
             # pertencem à classe específica (ex: MoneyFlix III só abriu 11/02).
             "inception": ex.get("inception"),
+            "notes": ex.get("notes"),
             "cmvm_id": None,
             "cmvm_des_tip": None,
             # SGF são Fundos de Pensões PPR (regulados pela ASF), não
