@@ -114,16 +114,22 @@ MANUAL_OVERRIDES = [
     # "Moderado" e "Valorização" virou "Dinâmico", e não o contrário.
     # Em Ago/2026 o FT deixou de listar estes ISIN legados (o BPI emitiu ISIN
     # por categoria, ver _BPI_SMART_CAT_ISINS). A linha-base e a Categoria A
-    # continuam só com o ISIN legado, logo passam a ir buscar a série ao Yahoo,
-    # cujos tickers batem certo com a última série FT (ex: Ações 7.5377 em
+    # continuam só com o ISIN legado, logo vão buscar a série ao Yahoo, cujos
+    # tickers batem certo com a última série FT (ex: Ações 7.5377 em
     # 2026-07-01, igual ao último fecho que o FT dava). Yahoo só tem desde
     # 2022-03, daí o seed em data/history_cache/ para o histórico anterior.
-    # Os overrides por categoria mais abaixo repõem source="cmvm" em M/P/R,
-    # que têm série FT própria e não devem ir ao Yahoo.
-    {"match": "bpi smart ações",       "isin": "PTYPIEHM0024", "yahoo_ticker": "0P0001ITBQ.F", "source": "yahoo"},  # ex-Reforma Global Equities, risco 5 / tec 2.09
-    {"match": "bpi smart moderado",    "isin": "PTYPIQLM0008", "yahoo_ticker": "0P000011K6.F", "source": "yahoo"},  # ex-Reforma Investimento,    risco 3 / tec 2.05
-    {"match": "bpi smart obrigações",  "isin": "PTYPIRLM0007", "yahoo_ticker": "0P000011K4.F", "source": "yahoo"},  # ex-Reforma Obrigações,      risco 3 / tec 1.13
-    {"match": "bpi smart dinâmico",    "isin": "PTYPJDLM0002", "yahoo_ticker": "0P000027GO.F", "source": "yahoo"},  # ex-Reforma Valorização,     risco 4 / tec 2.24
+    #
+    # hidden=True aplica-se aqui às 5 linhas de cada família; o bloco por
+    # categoria mais abaixo repõe hidden=False (e source="cmvm") nas que estão
+    # vivas. Motivo: a linha-base e a Categoria A SÃO as categorias extintas a
+    # 03/07/2026 — a NAV legada congelou a 01/07 e não volta a mexer, e o
+    # histórico delas passou a viver na Categoria R por encadeamento. Deixá-las
+    # visíveis seria mostrar duplicados mortos com uma data que envelhece.
+    # Continuam no latest.json; para as repor basta tirar o hidden.
+    {"match": "bpi smart ações",       "isin": "PTYPIEHM0024", "yahoo_ticker": "0P0001ITBQ.F", "source": "yahoo", "hidden": True},  # ex-Reforma Global Equities, risco 5 / tec 2.09
+    {"match": "bpi smart moderado",    "isin": "PTYPIQLM0008", "yahoo_ticker": "0P000011K6.F", "source": "yahoo", "hidden": True},  # ex-Reforma Investimento,    risco 3 / tec 2.05
+    {"match": "bpi smart obrigações",  "isin": "PTYPIRLM0007", "yahoo_ticker": "0P000011K4.F", "source": "yahoo", "hidden": True},  # ex-Reforma Obrigações,      risco 3 / tec 1.13
+    {"match": "bpi smart dinâmico",    "isin": "PTYPJDLM0002", "yahoo_ticker": "0P000027GO.F", "source": "yahoo", "hidden": True},  # ex-Reforma Valorização,     risco 4 / tec 2.24
     # --- Caixa / CGD ---
     # ISIN correcto do Caixa ALG é PTCXGUHM0006 (o extractor CGD apanha
     # PTIXAEHM0006 que é outro fundo referenciado na página).
