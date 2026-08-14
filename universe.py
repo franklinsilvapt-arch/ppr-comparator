@@ -435,6 +435,11 @@ MANUAL_OVERRIDES.extend([
      "isin": "PTSTYBHM0005", "yahoo_ticker": "0P0002D4QK.F", "source": "yahoo",
      "risk_class": 5, "benchmark_ticker_override": "IWDA",
      "min_subs": 25, "inception": "2026-03-23"},
+    # Invest Tendências Globais — a CMVM classifica-o como fundo de ações
+    # ("Fundo de Investimento Mobiliário Aberto de Acções de PR", confirmado
+    # também no FT). Com ISR 5 caía no LifeStrategy 80, que tem 20% de
+    # obrigações e por isso não é par justo para um fundo accionista.
+    {"match": "invest tendências globais", "benchmark_ticker_override": "IWDA"},
     # Bankinter Luso Euro Opportunities — ISIN, TEC e risco do IFI de
     # 17/04/2026 (data de constituição). Sem símbolo FT; o Yahoo tem-o e
     # publica desde 07/05. Min. subscrição 500€ (reforços 25€).

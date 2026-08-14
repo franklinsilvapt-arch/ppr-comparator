@@ -185,23 +185,49 @@ def main():
                     last = cache_df.index[-1].date()
                     print(f"[WARN] {fid}: fetch {src} falhou, a usar history_cache (last={last})")
                 else:
-                    # (b) Merge de tail
+                    # (b) Merge: o cache preenche TUDO o que falta ao scraper,
+                    #     não só o tail. O Yahoo tem buracos no meio da série
+                    #     (ex: Save & Grow, 42 dias sem cotação em Out/Nov 2023)
+                    #     que a versão antiga — só `cache_df.index < fresh_start`
+                    #     — deixava passar, porque olhava apenas para o início.
                     fresh_df = all_prices[fid].copy()
                     fresh_df.index = pd.to_datetime(fresh_df.index).tz_localize(None)
                     fresh_df = fresh_df.sort_index()
                     fresh_start = fresh_df.index[0]
-                    cache_tail = cache_df[cache_df.index < fresh_start]
-                    if len(cache_tail) > 0:
-                        # Usa coluna Close se existir, senão primeira coluna
-                        col = "Close" if "Close" in cache_tail.columns else cache_tail.columns[0]
-                        fresh_col = "Close" if "Close" in fresh_df.columns else fresh_df.columns[0]
+                    # Usa coluna Close se existir, senão primeira coluna
+                    col = "Close" if "Close" in cache_df.columns else cache_df.columns[0]
+                    fresh_col = "Close" if "Close" in fresh_df.columns else fresh_df.columns[0]
+
+                    # Só preenche se as duas séries estiverem na mesma escala:
+                    # cache e scraper podem vir de fontes diferentes (Investing
+                    # vs Yahoo) e uma delas pode estar rebaseada. Nesse caso
+                    # injectar pontos no meio criaria picos falsos, e limita-se
+                    # ao comportamento antigo (só o tail, antes do scraper).
+                    comum = cache_df.index.intersection(fresh_df.index)
+                    mesma_escala = True
+                    if len(comum) >= 5:
+                        dif = ((fresh_df.loc[comum, fresh_col] - cache_df.loc[comum, col]).abs()
+                               / cache_df.loc[comum, col].abs()).median()
+                        mesma_escala = bool(dif < 0.01)
+
+                    em_falta = cache_df.index.difference(fresh_df.index)
+                    if not mesma_escala:
+                        em_falta = em_falta[em_falta < fresh_start]
+                    if len(em_falta) > 0:
+                        n_tail = int((em_falta < fresh_start).sum())
+                        n_meio = len(em_falta) - n_tail
                         merged = pd.concat([
-                            cache_tail[[col]].rename(columns={col: "Close"}),
+                            cache_df.loc[em_falta, [col]].rename(columns={col: "Close"}),
                             fresh_df[[fresh_col]].rename(columns={fresh_col: "Close"}),
                         ]).sort_index()
                         merged = merged[~merged.index.duplicated(keep="last")]
                         all_prices[fid] = merged
-                        print(f"[cache-merge] {fid}: +{len(cache_tail)} obs pre-{fresh_start.date()} (legacy)")
+                        detalhe = f"+{n_tail} obs pre-{fresh_start.date()}"
+                        if n_meio:
+                            detalhe += f", +{n_meio} a preencher falhas no meio"
+                        if not mesma_escala:
+                            detalhe += " (escalas diferentes: só tail)"
+                        print(f"[cache-merge] {fid}: {detalhe}")
             except Exception as e:
                 print(f"[WARN] {fid}: cache read/merge falhou: {e}")
 
