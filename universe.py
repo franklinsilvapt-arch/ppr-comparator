@@ -637,14 +637,17 @@ EXTRA_FUNDS = [
     {"id": "golden-sgf-etf-start",           "name": "Golden SGF ETF Start",            "manager": "Golden SGF",
      "isin": "PTFP00000861", "min_subs": 1500, "tec": 1.08, "risk_class": 4,
      "benchmark_ticker_override": "V80A"},
+    # Documentos Informativos (maio/junho 2026): Stoik base 50% ações -> V40A,
+    # DECO PROTESTE base 74% ações -> V80A. Square Ações tem base 50% (apesar
+    # do nome) e fica no V40A que o ISR já dava.
     {"id": "sgf-stoik",                      "name": "PPR SGF Stoik",                   "manager": "SGF",
-     "isin": "PTFP00000390", "min_subs": 1500, "tec": 1.08, "risk_class": 4},
+     "isin": "PTFP00000390", "min_subs": 1500, "tec": 1.08, "risk_class": 4, "benchmark_ticker_override": "V40A"},
     {"id": "sgf-reforma-stoik",              "name": "SGF Reforma Stoik",               "manager": "SGF",
      "min_subs": 1500},   # IFI não fornecido — TEC/ISIN/risk TBD
     {"id": "sgf-square-acoes",               "name": "SGF Square Ações",                "manager": "SGF",
      "min_subs": 1500, "tec": 1.58, "risk_class": 3},  # ISIN não exposto no IFI
     {"id": "sgf-deco-proteste",              "name": "SGF PPR DECO PROTESTE",           "manager": "SGF",
-     "isin": "PTFP00000770", "min_subs": 1500, "tec": 1.58, "risk_class": 4},
+     "isin": "PTFP00000770", "min_subs": 1500, "tec": 1.58, "risk_class": 4, "benchmark_ticker_override": "V80A"},
     # PPR SGF MoneyFlix — Fundo de Pensões PPR (ASF), constituído 31/05/2020 mas
     # só comercializado desde 02/02/2026. Dados do documento informativo de
     # 01/06/2026 (goldensgf.pt). Cotações vêm do mesmo Excel dos restantes SGF.
