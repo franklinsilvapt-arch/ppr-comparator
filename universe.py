@@ -147,11 +147,19 @@ MANUAL_OVERRIDES = [
     {"match": "caixa wealth ações ppr/oicvm - categoria b", "isin": "PTIXAGHM0004"},
     {"match": "caixa wealth ações ppr/oicvm - categoria c", "isin": "PTIXAHHM0003"},
     {"match": "caixa wealth arrojado",         "isin": "PTCXGBHM0017"},
+    # ISIN por categoria (IFI/ficha CGD FII0003641552 e FII0003641550, 2026):
+    # o ISIN único antigo só era certo para a Cat. A (Arrojado) e D (Moderado).
+    {"match": "caixa wealth arrojado ppr/oicvm - categoria b", "isin": "PTCXGCHM0016"},
+    {"match": "caixa wealth arrojado ppr/oicvm - categoria c", "isin": "PTCXGDHM0015"},
+    {"match": "caixa wealth arrojado ppr/oicvm - categoria d", "isin": "PTCXGEHM0014"},
     {"match": "caixa wealth defensivo",        "isin": "PTCXGYHM0028"},
     {"match": "caixa wealth defensivo ppr/oicvm - categoria a", "isin": "PTCXGWHM0020"},
     {"match": "caixa wealth defensivo ppr/oicvm - categoria b", "isin": "PTCXGXHM0029"},
     {"match": "caixa wealth defensivo ppr/oicvm - categoria d", "isin": "PTCXGZHM0027"},
     {"match": "caixa wealth moderado",         "isin": "PTCXGPHM0011"},
+    {"match": "caixa wealth moderado ppr/oicvm - categoria a", "isin": "PTCXGMHM0014"},
+    {"match": "caixa wealth moderado ppr/oicvm - categoria b", "isin": "PTCXGNHM0013"},
+    {"match": "caixa wealth moderado ppr/oicvm - categoria c", "isin": "PTCXGOHM0012"},
     # Caixa (não-Wealth) individuais
     {"match": "caixa arrojado ppr",            "isin": "PTCXGHHM0011", "min_subs": 100},
     {"match": "caixa defensivo ppr",           "isin": "PTCXGFHM0013", "min_subs": 100},
@@ -511,6 +519,31 @@ MANUAL_OVERRIDES.extend([
     {"match": "caixa wealth defensivo", "benchmark_ticker_override": "V20A"},
     # IMGA Poupança: essencialmente obrigações, ações até 35% (IFI 14/05/2026).
     {"match": "imga poupança ppr", "benchmark_ticker_override": "V20A"},
+    # Segunda verificação (28/09/2026). Estes fundos só têm limite máximo de
+    # ações, sem alocação central: usa-se a exposição actual da ficha mensal
+    # (ago/2026) e, sem ela, o máximo e o comportamento histórico.
+    # Caixa Wealth Moderado: máx. 60%, 44% actual.
+    {"match": "caixa wealth moderado", "benchmark_ticker_override": "V40A"},
+    # IMGA Investimento: máx. 55%, sem ficha por classe de activo; vol ~6%.
+    {"match": "imga investimento ppr", "benchmark_ticker_override": "V40A"},
+    # BPI Smart Moderado: entre 15% e 30% em ações (IFI 03/07/2026).
+    {"match": "bpi smart moderado", "benchmark_ticker_override": "V20A"},
+    # Santander Poupança Prudente (máx. 10%, 0% actual) e Valorização (máx. 30%, ~19%).
+    {"match": "santander poupança prudente", "benchmark_ticker_override": "V20A"},
+    {"match": "santander poupança valorização", "benchmark_ticker_override": "V20A"},
+    # GNB PPR/OICVM: máx. 25% em ações. O match exacto evita o Global Equities.
+    {"match": "gnb ppr/oicvm", "benchmark_ticker_override": "V20A"},
+    {"match": "gnb ppr/oicvm global equities opportunities", "benchmark_ticker_override": "IWDA"},
+    # Optimize (IFI 29/05/2026): Moderado máx. 15% (14% actual), Equilibrado
+    # máx. 35% (34%), Agressivo até 100% (98%). Ativo (55%) fica V60A e o
+    # Leopardo (77,5%, 85-95% típico) fica V80A.
+    {"match": "optimize ppr/oicvm moderado", "benchmark_ticker_override": "V20A"},
+    {"match": "optimize ppr/oicvm equilibrado", "benchmark_ticker_override": "V40A"},
+    {"match": "optimize ppr/oicvm agressivo", "benchmark_ticker_override": "IWDA"},
+    # ABANCA Ciclo de Vida (prospecto 14/05/2026), máximos: -34 55% (V60A),
+    # 35-44 45% -> V40A, 45-54 35% (V40A), +55 15% -> V20A.
+    {"match": "abanca ppr/oicvm ciclo de vida 35-44", "benchmark_ticker_override": "V40A"},
+    {"match": "abanca ppr/oicvm ciclo de vida +55", "benchmark_ticker_override": "V20A"},
 ])
 
 # --- Caixa Wealth per-categoria min_subs ---
