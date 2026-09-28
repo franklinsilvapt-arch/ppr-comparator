@@ -553,10 +553,15 @@ EXTRA_FUNDS = [
      "isin": "PTFP00000382", "min_subs": 1500, "tec": 2.08, "risk_class": 4},
     {"id": "golden-sgf-poupanca-garantida",  "name": "Golden SGF Poupança Garantida",   "manager": "Golden SGF",
      "isin": "PTFP00000408", "min_subs": 1500, "tec": 1.58, "risk_class": 3},
+    # Golden SGF ETF (classes Plus e Start): o ISR 4 mapearia para o V60A, mas o
+    # Documento Informativo (03/2026) define uma base de 75% ações, 22,5%
+    # obrigações e 2,5% monetário, pelo que o par justo é o LifeStrategy 80.
     {"id": "golden-sgf-etf-plus",            "name": "Golden SGF ETF Plus",             "manager": "Golden SGF",
-     "isin": "PTFP00000762", "min_subs": 10000, "tec": 0.83, "risk_class": 4},
+     "isin": "PTFP00000762", "min_subs": 10000, "tec": 0.83, "risk_class": 4,
+     "benchmark_ticker_override": "V80A"},
     {"id": "golden-sgf-etf-start",           "name": "Golden SGF ETF Start",            "manager": "Golden SGF",
-     "isin": "PTFP00000861", "min_subs": 1500, "tec": 1.08, "risk_class": 4},
+     "isin": "PTFP00000861", "min_subs": 1500, "tec": 1.08, "risk_class": 4,
+     "benchmark_ticker_override": "V80A"},
     {"id": "sgf-stoik",                      "name": "PPR SGF Stoik",                   "manager": "SGF",
      "isin": "PTFP00000390", "min_subs": 1500, "tec": 1.08, "risk_class": 4},
     {"id": "sgf-reforma-stoik",              "name": "SGF Reforma Stoik",               "manager": "SGF",
