@@ -473,6 +473,21 @@ MANUAL_OVERRIDES.extend([
     {"match": "bankinter 25 ppr / oicvm - categoria a", "benchmark_ticker_override": "V20A"},
     {"match": "bankinter 25 ppr / oicvm - categoria b", "benchmark_ticker_override": "V20A"},
     {"match": "bankinter 25 ppr / oicvm - categoria c", "benchmark_ticker_override": "V20A"},
+    # Revisão de 28/09/2026. Fundos de ações (categoria CMVM "Fundos de Ações")
+    # vão todos ao IWDA, a mesma regra do Invest Tendências Globais: o
+    # LifeStrategy 80 tem 20% de obrigações e não é par de um fundo accionista.
+    # O GNB Global Equities tem ISR 3 mas vol ~11,5% e beta ~0,95 ao MSCI World.
+    {"match": "bpi smart ações ppr/oicvm", "benchmark_ticker_override": "IWDA"},
+    {"match": "caixa ações líderes globais", "benchmark_ticker_override": "IWDA"},
+    {"match": "imga crescimento ppr/oicvm", "benchmark_ticker_override": "IWDA"},
+    {"match": "gnb ppr/oicvm global equities opportunities", "benchmark_ticker_override": "IWDA"},
+    # Fundos de obrigações (categoria CMVM "Fundos de Obrigações"): o ISR 3-4
+    # levava-os ao V40A/V60A, mas a vol é de 2-3%. O par mais próximo é o V20A.
+    {"match": "bankinter obrigações ppr / oicvm", "benchmark_ticker_override": "V20A"},
+    {"match": "bankinter obrigações eur 2030", "benchmark_ticker_override": "V20A"},
+    {"match": "bpi smart obrigações ppr/oicvm", "benchmark_ticker_override": "V20A"},
+    # Bankinter 75: 75% em ações pelo nome/política, como o Golden SGF ETF -> V80A.
+    {"match": "bankinter 75 ppr / oicvm", "benchmark_ticker_override": "V80A"},
 ])
 
 # --- Caixa Wealth per-categoria min_subs ---
