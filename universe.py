@@ -137,9 +137,20 @@ MANUAL_OVERRIDES = [
      "isin": "PTCXGUHM0006", "min_subs": 100, "risk_class": 5},
     # Caixa Wealth: um ISIN por família (aplica-se a A/B/C/D). ISINs
     # confirmados pelo utilizador via FT tearsheet.
-    {"match": "caixa wealth ações",            "isin": "PTCXGWHM0020", "risk_class": 6},
+    # Correção 28/09/2026: PTCXGWHM0020 é o Wealth Defensivo Cat. A, não o
+    # Wealth Ações (a série mostrada era de um fundo defensivo). O Wealth Ações
+    # foi constituído a 05/03/2025 e tem ISIN próprio por categoria (ficha CGD
+    # FP0003642188, 31/08/2026). O Wealth Defensivo passa também a ISIN por
+    # categoria (IFI FII0003641551, 15/05/2026).
+    {"match": "caixa wealth ações",            "risk_class": 6},
+    {"match": "caixa wealth ações ppr/oicvm - categoria a", "isin": "PTIXAFHM0005"},
+    {"match": "caixa wealth ações ppr/oicvm - categoria b", "isin": "PTIXAGHM0004"},
+    {"match": "caixa wealth ações ppr/oicvm - categoria c", "isin": "PTIXAHHM0003"},
     {"match": "caixa wealth arrojado",         "isin": "PTCXGBHM0017"},
     {"match": "caixa wealth defensivo",        "isin": "PTCXGYHM0028"},
+    {"match": "caixa wealth defensivo ppr/oicvm - categoria a", "isin": "PTCXGWHM0020"},
+    {"match": "caixa wealth defensivo ppr/oicvm - categoria b", "isin": "PTCXGXHM0029"},
+    {"match": "caixa wealth defensivo ppr/oicvm - categoria d", "isin": "PTCXGZHM0027"},
     {"match": "caixa wealth moderado",         "isin": "PTCXGPHM0011"},
     # Caixa (não-Wealth) individuais
     {"match": "caixa arrojado ppr",            "isin": "PTCXGHHM0011", "min_subs": 100},
@@ -488,6 +499,18 @@ MANUAL_OVERRIDES.extend([
     {"match": "bpi smart obrigações ppr/oicvm", "benchmark_ticker_override": "V20A"},
     # Bankinter 75: 75% em ações pelo nome/política, como o Golden SGF ETF -> V80A.
     {"match": "bankinter 75 ppr / oicvm", "benchmark_ticker_override": "V80A"},
+    # Pela política de investimento nos documentos oficiais (o ISR empurrava
+    # estes fundos para um ETF mais agressivo do que a carteira):
+    # Smart Invest Conservador: ações 20% central / 30% máx (IFI 31/12/2025).
+    {"match": "smart invest ppr/oicvm conservador", "benchmark_ticker_override": "V20A"},
+    # Caixa Moderado: ações até 40% (IFI 15/05/2026), ~34% em jul/2026.
+    {"match": "caixa moderado ppr", "benchmark_ticker_override": "V40A"},
+    # Caixa Defensivo: ações até 20% (IFI 15/05/2026).
+    {"match": "caixa defensivo ppr", "benchmark_ticker_override": "V20A"},
+    # Caixa Wealth Defensivo: ações até 30% (IFI 15/05/2026).
+    {"match": "caixa wealth defensivo", "benchmark_ticker_override": "V20A"},
+    # IMGA Poupança: essencialmente obrigações, ações até 35% (IFI 14/05/2026).
+    {"match": "imga poupança ppr", "benchmark_ticker_override": "V20A"},
 ])
 
 # --- Caixa Wealth per-categoria min_subs ---
@@ -548,22 +571,26 @@ MANUAL_OVERRIDES.extend([
 EXTRA_FUNDS = [
     {"id": "sgf-dr-financas",                "name": "SGF DR FINANÇAS",                 "manager": "SGF",
      "isin": "PTFP00000465", "min_subs": 1500, "tec": 1.00, "risk_class": 5},
+    # ETF de referência dos Golden SGF pela alocação central do Regulamento de
+    # Gestão (em vigor desde 01/05/2026), não pelo ISR: Top Gestores 95% ações
+    # (80-100%) -> IWDA; Poupança Ativa 40% -> V40A; Poupança/Reforma
+    # Conservadora 10% e Equilibrada 20% -> V20A. Dinâmicas (70%) ficam V60A.
     {"id": "golden-sgf-top-gestores",        "name": "Golden SGF TOP GESTORES",         "manager": "Golden SGF",
-     "isin": "PTFP00000457", "min_subs": 1500, "tec": 1.58, "risk_class": 4},
+     "isin": "PTFP00000457", "min_subs": 1500, "tec": 1.58, "risk_class": 4, "benchmark_ticker_override": "IWDA"},
     {"id": "golden-sgf-reforma-conservadora","name": "Golden SGF Reforma Conservadora", "manager": "Golden SGF",
-     "isin": "PTFP00000515", "min_subs": 1500, "tec": 1.58, "risk_class": 3},
+     "isin": "PTFP00000515", "min_subs": 1500, "tec": 1.58, "risk_class": 3, "benchmark_ticker_override": "V20A"},
     {"id": "golden-sgf-reforma-equilibrada", "name": "Golden SGF Reforma Equilibrada",  "manager": "Golden SGF",
-     "isin": "PTFP00000507", "min_subs": 1500, "tec": 1.58, "risk_class": 3},
+     "isin": "PTFP00000507", "min_subs": 1500, "tec": 1.58, "risk_class": 3, "benchmark_ticker_override": "V20A"},
     {"id": "golden-sgf-reforma-dinamica",    "name": "Golden SGF Reforma Dinâmica",     "manager": "Golden SGF",
      "isin": "PTFP00000879", "min_subs": 1500, "tec": 1.58, "risk_class": 4},
     {"id": "golden-sgf-reforma-garantida",   "name": "Golden SGF Reforma Garantida",    "manager": "Golden SGF",
      "isin": "PTFP00000473", "min_subs": 1500, "tec": 1.08, "risk_class": 3},
     {"id": "golden-sgf-poupanca-ativa",      "name": "Golden SGF Poupança Ativa",       "manager": "Golden SGF",
-     "isin": "PTFP00000416", "min_subs": 1500, "tec": 2.06, "risk_class": 4},
+     "isin": "PTFP00000416", "min_subs": 1500, "tec": 2.06, "risk_class": 4, "benchmark_ticker_override": "V40A"},
     {"id": "golden-sgf-poupanca-conservadora","name": "Golden SGF Poupança Conservadora","manager": "Golden SGF",
-     "isin": "PTFP00000424", "min_subs": 1500, "tec": 1.58, "risk_class": 3},
+     "isin": "PTFP00000424", "min_subs": 1500, "tec": 1.58, "risk_class": 3, "benchmark_ticker_override": "V20A"},
     {"id": "golden-sgf-poupanca-equilibrada","name": "Golden SGF Poupança Equilibrada", "manager": "Golden SGF",
-     "isin": "PTFP00000432", "min_subs": 1500, "tec": 1.88, "risk_class": 4},
+     "isin": "PTFP00000432", "min_subs": 1500, "tec": 1.88, "risk_class": 4, "benchmark_ticker_override": "V20A"},
     {"id": "golden-sgf-poupanca-dinamica",   "name": "Golden SGF Poupança Dinâmica",    "manager": "Golden SGF",
      "isin": "PTFP00000382", "min_subs": 1500, "tec": 2.08, "risk_class": 4},
     {"id": "golden-sgf-poupanca-garantida",  "name": "Golden SGF Poupança Garantida",   "manager": "Golden SGF",
