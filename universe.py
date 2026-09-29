@@ -637,11 +637,13 @@ EXTRA_FUNDS = [
     {"id": "golden-sgf-etf-start",           "name": "Golden SGF ETF Start",            "manager": "Golden SGF",
      "isin": "PTFP00000861", "min_subs": 1500, "tec": 1.08, "risk_class": 4,
      "benchmark_ticker_override": "V80A"},
-    # Documentos Informativos (maio/junho 2026): Stoik base 50% ações -> V40A,
+    # Documentos Informativos (maio/junho 2026): Stoik base 50% ações, mas com
+    # 59% a 65% de ações nos relatórios de 2022-2025 e 64% a 30/06/2026, mais
+    # imobiliário e ouro -> V60A (par usado na análise do LF, set/2026).
     # DECO PROTESTE base 74% ações -> V80A. Square Ações tem base 50% (apesar
     # do nome) e fica no V40A que o ISR já dava.
     {"id": "sgf-stoik",                      "name": "PPR SGF Stoik",                   "manager": "SGF",
-     "isin": "PTFP00000390", "min_subs": 1500, "tec": 1.08, "risk_class": 4, "benchmark_ticker_override": "V40A"},
+     "isin": "PTFP00000390", "min_subs": 1500, "tec": 1.08, "risk_class": 4, "benchmark_ticker_override": "V60A"},
     {"id": "sgf-reforma-stoik",              "name": "SGF Reforma Stoik",               "manager": "SGF",
      "min_subs": 1500},   # IFI não fornecido — TEC/ISIN/risk TBD
     {"id": "sgf-square-acoes",               "name": "SGF Square Ações",                "manager": "SGF",
