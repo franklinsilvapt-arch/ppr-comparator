@@ -73,8 +73,11 @@ MODULE_INFO_URL = (
 )
 SCREEN_BUNDLE_NAME = "PInvestidor.Comparator.PPRList.mvc.js"
 CMVM_ORIGIN = "https://investidor.cmvm.pt"
+# O apiVersion é o último argumento em string antes do callback "function".
+# Em nov/2026 a CMVM passou a incluir o URL do endpoint como 3º argumento, pelo
+# que já não se pode assumir uma posição fixa (o run #42 de 16/Nov falhou assim).
 _API_VERSION_RE = re.compile(
-    r'callDataAction\(\s*"DataActionGetPPRs"\s*,\s*"[^"]+"\s*,\s*"([^"]+)"'
+    r'callDataAction\(\s*"DataActionGetPPRs"(?:\s*,\s*"[^"]*")*?\s*,\s*"([^"]+)"\s*,\s*function'
 )
 
 # Discriminador introduzido no redeploy de Jul/2026. A API devolve 200 com
